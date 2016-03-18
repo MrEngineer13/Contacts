@@ -1,7 +1,9 @@
-package com.zouag.contacts;
+package com.zouag.contacts.ui;
 
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+
+import com.zouag.contacts.R;
 
 public class MainActivity extends AppCompatActivity {
 
