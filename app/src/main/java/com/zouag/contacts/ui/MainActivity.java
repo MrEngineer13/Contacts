@@ -11,6 +11,7 @@ import com.zouag.contacts.adapters.ContactsAdapter;
 import com.zouag.contacts.models.Contact;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import butterknife.Bind;
@@ -59,6 +60,8 @@ public class MainActivity extends AppCompatActivity {
      * @return the full list of contacts.
      */
     private List<Contact> getContacts() {
-        return new ArrayList<>();
+        Contact contact1 = new Contact("name1", "email1", "phone1", "address1");
+        Contact contact2 = new Contact("name2", "email2", "phone2", "address2");
+        return Arrays.asList(contact1, contact2);
     }
 }
