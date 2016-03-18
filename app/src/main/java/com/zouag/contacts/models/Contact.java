@@ -1,7 +1,7 @@
 package com.zouag.contacts.models;
 
 /**
- * Created by Moham on 18/03/2016.
+ * Created by Mohammed Aouf ZOUAG on 18/03/2016.
  */
 public class Contact {
     private String name;

@@ -8,21 +8,26 @@ import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 /**
- * Created by Moham on 18/03/2016.
+ * Created by Mohammed Aouf ZOUAG on 18/03/2016.
  */
 public class DatabaseAdapter {
-    public static final String KEY_ROWID = "_id";
+    public static final String KEY_ROWID = "id";
     public static final String KEY_NAME = "name";
     public static final String KEY_EMAIL = "email";
-    private static final String TAG = "DBAdapter";
-    private static final String DATABASE_NAME = "MyDB";
+    public static final String KEY_PHONE = "phone";
+    public static final String KEY_ADDRESS = "address";
+
+    private static final String TAG = DatabaseAdapter.class.getSimpleName();
+    private static final String DATABASE_NAME = "contactsDatabase";
     private static final String DATABASE_TABLE = "contacts";
     private static final int DATABASE_VERSION = 1;
     private static final String TABLES_CREATE =
             "CREATE TABLE " + DATABASE_TABLE + " (" +
-                    KEY_ROWID + " integer primary key autoincrement, " +
-                    KEY_NAME + " text not null, " +
-                    KEY_EMAIL + " text not null)";
+                    KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
+                    KEY_NAME + " TEXT NOT NULL, " +
+                    KEY_EMAIL + " TEXT NOT NULL, " +
+                    KEY_PHONE + " TEXT NOT NULL, " +
+                    KEY_ADDRESS + " TEXT NOT NULL)";
     private final Context context;
     private DatabaseHelper dbHelper;
     private SQLiteDatabase db;
