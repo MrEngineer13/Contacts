@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.zouag.contacts.models.Contact;
+
 /**
  * Created by Mohammed Aouf ZOUAG on 18/03/2016.
  */
@@ -28,12 +30,10 @@ public class DatabaseAdapter {
                     KEY_EMAIL + " TEXT NOT NULL, " +
                     KEY_PHONE + " TEXT NOT NULL, " +
                     KEY_ADDRESS + " TEXT NOT NULL)";
-    private final Context context;
     private DatabaseHelper dbHelper;
     private SQLiteDatabase db;
 
     public DatabaseAdapter(Context context) {
-        this.context = context;
         dbHelper = new DatabaseHelper(context);
     }
 
@@ -46,10 +46,12 @@ public class DatabaseAdapter {
         dbHelper.close();
     }
 
-    public long insertContact(String name, String email) {
+    public long insertContact(Contact contact) {
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, name);
-        values.put(KEY_EMAIL, email);
+        values.put(KEY_NAME, contact.getName());
+        values.put(KEY_EMAIL, contact.getEmail());
+        values.put(KEY_PHONE, contact.getPhoneNumber());
+        values.put(KEY_ADDRESS, contact.getAddress());
 
         return db.insert(DATABASE_TABLE, null, values);
     }

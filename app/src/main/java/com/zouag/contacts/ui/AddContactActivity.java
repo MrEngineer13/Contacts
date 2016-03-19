@@ -1,16 +1,18 @@
 package com.zouag.contacts.ui;
 
 import android.content.DialogInterface;
+import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.view.View;
 import android.widget.EditText;
 
 import com.zouag.contacts.R;
+import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
 
 import butterknife.Bind;
+import butterknife.ButterKnife;
 
 public class AddContactActivity extends AppCompatActivity {
 
@@ -23,10 +25,15 @@ public class AddContactActivity extends AppCompatActivity {
     @Bind(R.id.contactAddress)
     EditText contactAddress;
 
+    private DatabaseAdapter databaseAdapter;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
+        ButterKnife.bind(this);
+
+        databaseAdapter = new DatabaseAdapter(this).open();
     }
 
     /**
@@ -36,6 +43,7 @@ public class AddContactActivity extends AppCompatActivity {
      */
     public void onCancel(View view) {
         // Terminate the activity
+        setResult(RESULT_CANCELED);
         finish();
     }
 
@@ -51,6 +59,10 @@ public class AddContactActivity extends AppCompatActivity {
         String address = contactAddress.getText().toString();
 
         Contact newContact = validateFields(name, phoneNumber, email, address);
+        databaseAdapter.insertContact(newContact);
+
+        setResult(RESULT_OK);
+        finish();
     }
 
     /**
@@ -88,10 +100,8 @@ public class AddContactActivity extends AppCompatActivity {
             dialogMessage = "Please enter the phone number of the new contact.";
         }
 
-        if (!dialogMessage.equals("")) {
-            // Show the error dialog.
-            showDialog(dialogTitle, dialogMessage, "GOT IT", null);
-        }
+        // Something went wrong: show the error dialog.
+        showDialog(dialogTitle, dialogMessage, "GOT IT", null);
 
         return null;
     }

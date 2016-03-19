@@ -2,6 +2,7 @@ package com.zouag.contacts.ui;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -20,6 +21,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class MainActivity extends AppCompatActivity {
+
+    private static final int REQUEST_ADD_NEW = 100;
 
     /**
      * The main contacts' ListView.
@@ -50,7 +53,8 @@ public class MainActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                startActivity(new Intent(this, AddContactActivity.class));
+                startActivityForResult(
+                        new Intent(this, AddContactActivity.class), REQUEST_ADD_NEW);
                 return true;
         }
 
@@ -73,6 +77,26 @@ public class MainActivity extends AppCompatActivity {
         // Setup the adapter & the ListView
         ContactsAdapter adapter = new ContactsAdapter(this, contacts);
         contactsListView.setAdapter(adapter);
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_ADD_NEW:
+                String message = ""; // Message to be displayed in the snack bar
+
+                switch (resultCode) {
+                    case RESULT_OK:
+                        message = "Contact successfully added.";
+                        break;
+                    case RESULT_CANCELED:
+                        message = "Adding contact discarded.";
+                        break;
+                }
+
+                Snackbar.make(getWindow().getDecorView(),
+                        message, Snackbar.LENGTH_LONG).show();
+        }
     }
 
     /**

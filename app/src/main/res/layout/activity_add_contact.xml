@@ -29,6 +29,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="80"
+            android:inputType="textPersonName"
             android:hint="@string/name" />
     </LinearLayout>
 
@@ -51,6 +52,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_weight="70"
+            android:inputType="phone"
             android:hint="@string/phone_number" />
     </LinearLayout>
 
