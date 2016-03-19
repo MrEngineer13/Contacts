@@ -9,29 +9,32 @@
     android:paddingTop="@dimen/activity_vertical_margin"
     tools:context="com.zouag.contacts.ui.AddContactActivity">
 
-    <LinearLayout
+    <RelativeLayout
         android:id="@+id/nameLayout"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginBottom="50dp"
-        android:orientation="horizontal">
+        android:layout_height="wrap_content">
 
         <ImageView
             android:id="@+id/contactImage"
-            android:layout_width="0dp"
-            android:layout_height="match_parent"
+            android:layout_width="100dp"
+            android:layout_height="100dp"
             android:layout_weight="20"
             android:contentDescription="@string/contact_img_desc"
-            android:src="@drawable/ic_action_user" />
+            android:src="@drawable/ic_action_user"
+            android:layout_marginBottom="50dp"
+            android:onClick="onImageClicked" />
 
         <EditText
             android:id="@+id/contactName"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_weight="80"
             android:inputType="textPersonName"
-            android:hint="@string/name" />
-    </LinearLayout>
+            android:hint="@string/name"
+            android:layout_toRightOf="@+id/contactImage"
+            android:layout_alignTop="@+id/contactImage"
+            android:layout_alignBottom="@+id/contactImage" />
+    </RelativeLayout>
 
     <LinearLayout
         android:id="@+id/phoneLayout"

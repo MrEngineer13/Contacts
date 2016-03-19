@@ -9,6 +9,7 @@ public class Contact {
     private String email;
     private String phoneNumber;
     private String address;
+    private String imgPath;
 
     public static class Builder {
         private int id;
@@ -16,6 +17,7 @@ public class Contact {
         private String email;
         private String phoneNumber;
         private String address;
+        private String imgPath;
 
         public Contact createContact() {
             return new Contact(this);
@@ -45,13 +47,20 @@ public class Contact {
             this.address = address;
             return this;
         }
+
+        public Builder imgPath(String imgPath) {
+            this.imgPath = imgPath;
+            return this;
+        }
     }
 
     public Contact(Builder builder) {
+        this.id = builder.id;
         this.name = builder.name;
         this.email = builder.email;
         this.phoneNumber = builder.phoneNumber;
         this.address = builder.address;
+        this.imgPath = builder.imgPath;
     }
 
     public int getId() {
@@ -92,6 +101,14 @@ public class Contact {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    public String getImgPath() {
+        return imgPath;
+    }
+
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
     }
 
     @Override

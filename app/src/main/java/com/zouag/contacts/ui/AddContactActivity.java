@@ -6,6 +6,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.DatabaseAdapter;
@@ -65,6 +66,29 @@ public class AddContactActivity extends AppCompatActivity {
             setResult(RESULT_OK);
             finish();
         }
+    }
+
+    /**
+     * Invoked when the contact's image is clicked.
+     *
+     * @param view the button.
+     */
+    public void onImageClicked(View view) {
+        CharSequence options[] = new CharSequence[] {"Gallery", "Camera"};
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Choose image from ...");
+        builder.setItems(options, (dialog, which) -> {
+            switch (which) {
+                case 0:
+                    Toast.makeText(this, "Gallery", Toast.LENGTH_SHORT).show();
+                    break;
+                case 1:
+                    Toast.makeText(this, "Camera", Toast.LENGTH_SHORT).show();
+                    break;
+            }
+        });
+        builder.show();
     }
 
     /**
