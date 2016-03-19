@@ -2,4 +2,12 @@
     <string name="app_name">Contacts</string>
     <string name="no_contacts">There are no entries in your contacts list.</string>
     <string name="add_contact">Add contact</string>
+    <string name="name">Name</string>
+    <string name="mobile">Mobile</string>
+    <string name="phone_number">Phone number</string>
+    <string name="email">Email</string>
+    <string name="address">Address</string>
+    <string name="save">Save</string>
+    <string name="cancel">Cancel</string>
+    <string name="contact_img_desc">The image of the contact.</string>
 </resources>

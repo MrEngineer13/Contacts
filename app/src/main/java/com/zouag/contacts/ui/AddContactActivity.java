@@ -50,9 +50,21 @@ public class AddContactActivity extends AppCompatActivity {
         String email = contactEmail.getText().toString();
         String address = contactAddress.getText().toString();
 
+        Contact newContact = validateFields(name, phoneNumber, email, address);
+    }
+
+    /**
+     * @param name        of the contact
+     * @param phoneNumber of the contact
+     * @param email       of the contact
+     * @param address     of the contact
+     * @return a new Contact object if it passed validation, or null otherwise.
+     */
+    private Contact validateFields(String name, String phoneNumber,
+                                   String email, String address) {
         String dialogTitle;
         // The error message to be displayed in case the validation failed.
-        String dialogMessage = "";
+        String dialogMessage;
 
         boolean nameStatus = name.length() > 0;
         boolean phoneStatus = phoneNumber.length() == 10;
@@ -60,34 +72,28 @@ public class AddContactActivity extends AppCompatActivity {
         boolean addressStatus = address.length() != 0;
 
         if (nameStatus && phoneStatus) {
-            Contact newContact = new Contact.Builder()
+            return new Contact.Builder()
                     .name(name)
                     .phoneNumber(phoneNumber)
                     .email(emailStatus ? email : "")
                     .address(addressStatus ? address : "")
                     .createContact();
-
-            return;
-        }
-        else if(!nameStatus) {
+        } else if (!nameStatus) {
             // Invalid contact name.
             dialogTitle = "Invalid contact name.";
             dialogMessage = "Please enter the name of the new contact.";
-        }
-        else {
+        } else {
             // Invalid phone number.
             dialogTitle = "Invalid phone number.";
             dialogMessage = "Please enter the phone number of the new contact.";
         }
 
         if (!dialogMessage.equals("")) {
-            AlertDialog.Builder builder =
-                    new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
-            builder.setTitle(dialogTitle);
-            builder.setMessage(dialogMessage);
-            builder.setPositiveButton("GOT IT", null);
-            builder.show();
+            // Show the error dialog.
+            showDialog(dialogTitle, dialogMessage, "GOT IT", null);
         }
+
+        return null;
     }
 
     /**
