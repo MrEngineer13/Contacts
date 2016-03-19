@@ -89,4 +89,25 @@ public class AddContactActivity extends AppCompatActivity {
             builder.show();
         }
     }
+
+    /**
+     * Shows a custom dialog.
+     *
+     * @param title      of the dialog
+     * @param message    of the dialog
+     * @param actionText text of the dialog's action button
+     * @param listener   on the action button
+     */
+    public void showDialog(final String title, final String message, final String actionText,
+                           final DialogInterface.OnClickListener listener) {
+
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setTitle(title);
+        builder.setMessage(message);
+        builder.setPositiveButton(actionText, listener);
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.show();
+    }
 }
