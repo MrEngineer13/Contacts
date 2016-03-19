@@ -31,9 +31,13 @@ import butterknife.ButterKnife;
 
 public class AddContactActivity extends AppCompatActivity {
 
+    // Request codes
     private static final int REQUEST_OPEN_GALLERY = 10;
     private static final int REQUEST_OPEN_CAMERA = 11;
 
+    /**
+     * The path of the currently selected image.
+     */
     private String current_img_path = "";
 
     @Bind(R.id.contactName)
@@ -66,6 +70,7 @@ public class AddContactActivity extends AppCompatActivity {
                 switch (resultCode) {
                     case RESULT_OK:
                         Uri imageData = data.getData();
+                        // Save the path of the retrieved image
                         current_img_path = getRealPathFromURI(imageData);
                         contactImage.setImageURI(imageData);
                         break;
@@ -101,12 +106,12 @@ public class AddContactActivity extends AppCompatActivity {
         // 3. Create a file name
         // 4. Create the file
         Date now = new Date();
+        // The format of the names of the images to be saved
         String timestamp = new SimpleDateFormat("yyyy-MM-dd_HH-mm-ss", Locale.US).format(now);
         String path = mediaStorageDir.getPath() + File.separator;
 
-        // Save the path of the image
+        // Save the path of the retrieved image
         current_img_path = path + "IMG_" + timestamp + ".jpg";
-        Log.i("CONTACTS", "Camera path: " + current_img_path);
         File mediaFile = new File(current_img_path);
 
         FileOutputStream out = null;

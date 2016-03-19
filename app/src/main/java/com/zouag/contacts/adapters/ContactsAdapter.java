@@ -50,11 +50,7 @@ public class ContactsAdapter extends ArrayAdapter<Contact> {
 
         Contact contact = contacts.get(position);
         viewHolder.nameText.setText(contact.getName());
-
-        Log.i("TEST1", contact.toString());
-        Log.i("TEST2", contact.getImgPath());
-        viewHolder.contactImage
-                .setImageURI(Uri.fromFile(new File(contact.getImgPath())));
+        viewHolder.contactImage.setImageURI(Uri.fromFile(new File(contact.getImgPath())));
 
         return convertView;
     }

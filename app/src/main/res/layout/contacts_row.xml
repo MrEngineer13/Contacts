@@ -20,6 +20,7 @@
         android:id="@+id/rowContactImage"
         android:layout_alignTop="@+id/nameText"
         android:layout_alignBottom="@+id/nameText"
-        android:src="@drawable/ic_action_user" />
+        android:src="@drawable/ic_action_user"
+        android:scaleType="fitCenter" />
 
 </RelativeLayout>
