@@ -1,11 +1,14 @@
 package com.zouag.contacts.ui;
 
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.zouag.contacts.R;
@@ -17,6 +20,8 @@ import butterknife.ButterKnife;
 
 public class AddContactActivity extends AppCompatActivity {
 
+    private static final int REQUEST_OPEN_GALLERY = 10;
+
     @Bind(R.id.contactName)
     EditText contactName;
     @Bind(R.id.contactNumber)
@@ -25,6 +30,9 @@ public class AddContactActivity extends AppCompatActivity {
     EditText contactEmail;
     @Bind(R.id.contactAddress)
     EditText contactAddress;
+
+    @Bind(R.id.contactImage)
+    ImageView contactImage;
 
     private DatabaseAdapter databaseAdapter;
 
@@ -35,6 +43,19 @@ public class AddContactActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         databaseAdapter = new DatabaseAdapter(this).open();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_OPEN_GALLERY:
+                switch (resultCode) {
+                    case RESULT_OK:
+                        Uri imageData = data.getData();
+                        contactImage.setImageURI(imageData);
+                        break;
+                }
+        }
     }
 
     /**
@@ -81,7 +102,9 @@ public class AddContactActivity extends AppCompatActivity {
         builder.setItems(options, (dialog, which) -> {
             switch (which) {
                 case 0:
-                    Toast.makeText(this, "Gallery", Toast.LENGTH_SHORT).show();
+                    Intent gallery = new Intent(Intent.ACTION_PICK,
+                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    startActivityForResult(gallery, REQUEST_OPEN_GALLERY);
                     break;
                 case 1:
                     Toast.makeText(this, "Camera", Toast.LENGTH_SHORT).show();
