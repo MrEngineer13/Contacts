@@ -12,6 +12,7 @@ import android.widget.TextView;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsAdapter;
+import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
 
 import java.util.ArrayList;
@@ -23,6 +24,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_ADD_NEW = 100;
+    private DatabaseAdapter databaseAdapter;
 
     /**
      * The main contacts' ListView.
@@ -41,6 +43,8 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
+
+        databaseAdapter = new DatabaseAdapter(this).open();
     }
 
     @Override
@@ -103,6 +107,6 @@ public class MainActivity extends AppCompatActivity {
      * @return the full list of contacts.
      */
     private List<Contact> getContacts() {
-        return new ArrayList<>();
+        return databaseAdapter.getAllContacts();
     }
 }

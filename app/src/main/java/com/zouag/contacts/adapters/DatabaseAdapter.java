@@ -9,6 +9,9 @@ import android.util.Log;
 
 import com.zouag.contacts.models.Contact;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by Mohammed Aouf ZOUAG on 18/03/2016.
  */
@@ -73,9 +76,29 @@ public class DatabaseAdapter {
                 null);
     }
 
-    public Cursor getAllContacts() {
-        return db.query(DATABASE_TABLE, new String[]{KEY_ROWID, KEY_NAME, KEY_EMAIL},
+    /**
+     * @return a list of all contacts.
+     */
+    public List<Contact> getAllContacts() {
+        Cursor cursor = db.query(DATABASE_TABLE,
+                new String[]{KEY_ROWID, KEY_NAME, KEY_EMAIL, KEY_PHONE, KEY_ADDRESS},
                 null, null, null, null, null);
+
+        List<Contact> contacts = new ArrayList<>();
+
+        if (cursor.moveToFirst()) {
+            do {
+                contacts.add(new Contact.Builder()
+                        .id(cursor.getInt(0))
+                        .name(cursor.getString(1))
+                        .email(cursor.getString(2))
+                        .phoneNumber(cursor.getString(3))
+                        .address(cursor.getString(4))
+                        .createContact());
+            } while (cursor.moveToNext());
+        }
+
+        return contacts;
     }
 
     public boolean updateContact(long rowId, String name, String email) {
