@@ -43,7 +43,7 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
-        databaseAdapter = new DatabaseAdapter(this).open();
+        databaseAdapter = DatabaseAdapter.getInstance(this);
     }
 
     @Override

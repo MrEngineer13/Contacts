@@ -60,7 +60,7 @@ public class AddContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_contact);
         ButterKnife.bind(this);
 
-        databaseAdapter = new DatabaseAdapter(this).open();
+        databaseAdapter = DatabaseAdapter.getInstance(this);
     }
 
     @Override

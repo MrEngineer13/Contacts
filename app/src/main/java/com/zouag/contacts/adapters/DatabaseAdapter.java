@@ -16,6 +16,12 @@ import java.util.List;
  * Created by Mohammed Aouf ZOUAG on 18/03/2016.
  */
 public class DatabaseAdapter {
+
+    /**
+     * The singleton instance.
+     */
+    private static DatabaseAdapter instance;
+
     public static final String KEY_ROWID = "id";
     public static final String KEY_NAME = "name";
     public static final String KEY_EMAIL = "email";
@@ -38,11 +44,28 @@ public class DatabaseAdapter {
     private DatabaseHelper dbHelper;
     private SQLiteDatabase db;
 
-    public DatabaseAdapter(Context context) {
+    /**
+     * A static factory method.
+     *
+     * @param context
+     * @return the singleton instance of the DatabaseAdapter.
+     */
+    public static DatabaseAdapter getInstance(Context context) {
+        if (instance == null) {
+            synchronized (DatabaseAdapter.class) {
+                if (instance == null)
+                    instance = new DatabaseAdapter(context).open();
+            }
+        }
+
+        return instance;
+    }
+
+    private DatabaseAdapter(Context context) {
         dbHelper = new DatabaseHelper(context);
     }
 
-    public DatabaseAdapter open() {
+    private DatabaseAdapter open() {
         db = dbHelper.getWritableDatabase();
         return this;
     }
