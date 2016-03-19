@@ -21,18 +21,20 @@ public class DatabaseAdapter {
     public static final String KEY_EMAIL = "email";
     public static final String KEY_PHONE = "phone";
     public static final String KEY_ADDRESS = "address";
+    public static final String KEY_IMG_PATH = "imgPath";
 
     private static final String TAG = DatabaseAdapter.class.getSimpleName();
     private static final String DATABASE_NAME = "contactsDatabase";
     private static final String DATABASE_TABLE = "contacts";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 2;
     private static final String TABLES_CREATE =
             "CREATE TABLE " + DATABASE_TABLE + " (" +
                     KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
                     KEY_NAME + " TEXT NOT NULL, " +
                     KEY_EMAIL + " TEXT NOT NULL, " +
                     KEY_PHONE + " TEXT NOT NULL, " +
-                    KEY_ADDRESS + " TEXT NOT NULL)";
+                    KEY_ADDRESS + " TEXT NOT NULL, " +
+                    KEY_IMG_PATH + " TEXT NOT NULL)";
     private DatabaseHelper dbHelper;
     private SQLiteDatabase db;
 
@@ -55,6 +57,7 @@ public class DatabaseAdapter {
         values.put(KEY_EMAIL, contact.getEmail());
         values.put(KEY_PHONE, contact.getPhoneNumber());
         values.put(KEY_ADDRESS, contact.getAddress());
+        values.put(KEY_IMG_PATH, contact.getImgPath());
 
         return db.insert(DATABASE_TABLE, null, values);
     }
