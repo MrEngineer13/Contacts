@@ -59,10 +59,12 @@ public class AddContactActivity extends AppCompatActivity {
         String address = contactAddress.getText().toString();
 
         Contact newContact = validateFields(name, phoneNumber, email, address);
-        databaseAdapter.insertContact(newContact);
+        if (newContact != null) {
+            databaseAdapter.insertContact(newContact);
 
-        setResult(RESULT_OK);
-        finish();
+            setResult(RESULT_OK);
+            finish();
+        }
     }
 
     /**

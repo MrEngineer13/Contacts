@@ -15,7 +15,6 @@ import com.zouag.contacts.adapters.ContactsAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;

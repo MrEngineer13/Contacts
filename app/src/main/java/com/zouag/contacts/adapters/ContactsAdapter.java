@@ -44,6 +44,8 @@ public class ContactsAdapter extends ArrayAdapter<Contact> {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
+        viewHolder.nameText.setText(contacts.get(position).getName());
+
         return convertView;
     }
 

@@ -1,14 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.v7.widget.CardView xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
+    android:layout_height="60dp"
     android:orientation="vertical">
 
     <TextView
         android:id="@+id/nameText"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="match_parent"
         android:text="New Text"
-        android:gravity="center" />
+        android:layout_toRightOf="@+id/rowContactImage"
+        android:gravity="left|center_vertical"
+        android:paddingLeft="10dp"
+        android:textSize="24sp" />
 
-</android.support.v7.widget.CardView>
+    <ImageView
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:id="@+id/rowContactImage"
+        android:layout_alignTop="@+id/nameText"
+        android:layout_alignBottom="@+id/nameText"
+        android:src="@drawable/ic_action_user" />
+
+</RelativeLayout>
