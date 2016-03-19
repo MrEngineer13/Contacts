@@ -19,7 +19,7 @@
         <ImageView
             android:layout_width="0dp"
             android:layout_height="match_parent"
-            android:id="@+id/imageView"
+            android:id="@+id/contactImage"
             android:layout_alignParentTop="true"
             android:layout_alignParentStart="true"
             android:src="@drawable/ic_action_user"
@@ -28,7 +28,7 @@
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/editText"
+            android:id="@+id/contactName"
             android:layout_weight="80"
             android:hint="Name" />
     </LinearLayout>
@@ -44,13 +44,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Mobile"
-            android:id="@+id/textView"
+            android:id="@+id/mobileLabel"
             android:layout_weight="30" />
 
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/editText2"
+            android:id="@+id/contactNumber"
             android:layout_weight="70"
             android:hint="Phone number" />
     </LinearLayout>
@@ -67,13 +67,13 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Email"
-            android:id="@+id/textView2"
+            android:id="@+id/emailLabel"
             android:layout_weight="30" />
 
         <EditText
             android:layout_width="0dp"
             android:layout_height="wrap_content"
-            android:id="@+id/editText3"
+            android:id="@+id/contactEmail"
             android:layout_weight="70"
             android:hint="Email" />
     </LinearLayout>
@@ -90,7 +90,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:text="Address"
-            android:id="@+id/textView3"
+            android:id="@+id/addressLabel"
             android:layout_weight="30" />
 
         <EditText
@@ -98,7 +98,7 @@
             android:layout_height="wrap_content"
             android:inputType="textMultiLine"
             android:ems="10"
-            android:id="@+id/addressArea"
+            android:id="@+id/contactAddress"
             android:layout_weight="70"
             android:hint="Address" />
 
@@ -110,7 +110,8 @@
         android:text="Save"
         android:id="@+id/button"
         android:layout_alignParentBottom="true"
-        android:layout_alignParentEnd="true" />
+        android:layout_alignParentEnd="true"
+        android:onClick="onSave" />
 
     <Button
         android:layout_width="wrap_content"

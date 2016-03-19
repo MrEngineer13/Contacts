@@ -19,22 +19,22 @@ public class Contact {
             return new Contact(this);
         }
 
-        private Builder name(String name) {
+        public Builder name(String name) {
             this.name = name;
             return this;
         }
 
-        private Builder email(String email) {
+        public Builder email(String email) {
             this.email = email;
             return this;
         }
 
-        private Builder phoneNumber(String phoneNumber) {
+        public Builder phoneNumber(String phoneNumber) {
             this.phoneNumber = phoneNumber;
             return this;
         }
 
-        private Builder address(String address) {
+        public Builder address(String address) {
             this.address = address;
             return this;
         }
