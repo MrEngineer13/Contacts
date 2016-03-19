@@ -26,7 +26,7 @@ public class DatabaseAdapter {
     private static final String TAG = DatabaseAdapter.class.getSimpleName();
     private static final String DATABASE_NAME = "contactsDatabase";
     private static final String DATABASE_TABLE = "contacts";
-    private static final int DATABASE_VERSION = 2;
+    private static final int DATABASE_VERSION = 1;
     private static final String TABLES_CREATE =
             "CREATE TABLE " + DATABASE_TABLE + " (" +
                     KEY_ROWID + " INTEGER PRIMARY KEY AUTOINCREMENT, " +
@@ -83,22 +83,23 @@ public class DatabaseAdapter {
      * @return a list of all contacts.
      */
     public List<Contact> getAllContacts() {
-        Cursor cursor = db.query(DATABASE_TABLE,
-                new String[]{KEY_ROWID, KEY_NAME, KEY_EMAIL, KEY_PHONE, KEY_ADDRESS},
-                null, null, null, null, null);
-
         List<Contact> contacts = new ArrayList<>();
 
-        if (cursor.moveToFirst()) {
-            do {
-                contacts.add(new Contact.Builder()
-                        .id(cursor.getInt(0))
-                        .name(cursor.getString(1))
-                        .email(cursor.getString(2))
-                        .phoneNumber(cursor.getString(3))
-                        .address(cursor.getString(4))
-                        .createContact());
-            } while (cursor.moveToNext());
+        try (Cursor cursor = db.query(DATABASE_TABLE,
+                new String[]{KEY_ROWID, KEY_NAME, KEY_EMAIL, KEY_PHONE, KEY_ADDRESS, KEY_IMG_PATH},
+                null, null, null, null, null)) {
+            if (cursor.moveToFirst()) {
+                do {
+                    contacts.add(new Contact.Builder()
+                            .id(cursor.getInt(0))
+                            .name(cursor.getString(1))
+                            .email(cursor.getString(2))
+                            .phoneNumber(cursor.getString(3))
+                            .address(cursor.getString(4))
+                            .imgPath(cursor.getString(5))
+                            .createContact());
+                } while (cursor.moveToNext());
+            }
         }
 
         return contacts;

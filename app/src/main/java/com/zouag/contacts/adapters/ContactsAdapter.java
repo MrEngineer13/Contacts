@@ -1,16 +1,20 @@
 package com.zouag.contacts.adapters;
 
 import android.content.Context;
+import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.models.Contact;
 
+import java.io.File;
 import java.util.List;
 
 /**
@@ -37,19 +41,26 @@ public class ContactsAdapter extends ArrayAdapter<Contact> {
             // Setup the ViewHolder
             viewHolder = new ViewHolder();
             viewHolder.nameText = (TextView) convertView.findViewById(R.id.nameText);
+            viewHolder.contactImage = (ImageView) convertView.findViewById(R.id.rowContactImage);
 
             convertView.setTag(viewHolder);
-        }
-        else {
+        } else {
             viewHolder = (ViewHolder) convertView.getTag();
         }
 
-        viewHolder.nameText.setText(contacts.get(position).getName());
+        Contact contact = contacts.get(position);
+        viewHolder.nameText.setText(contact.getName());
+
+        Log.i("TEST1", contact.toString());
+        Log.i("TEST2", contact.getImgPath());
+        viewHolder.contactImage
+                .setImageURI(Uri.fromFile(new File(contact.getImgPath())));
 
         return convertView;
     }
 
     private static class ViewHolder {
         TextView nameText;
+        ImageView contactImage;
     }
 }

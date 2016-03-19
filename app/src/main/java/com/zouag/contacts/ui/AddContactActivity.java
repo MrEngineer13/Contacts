@@ -66,7 +66,7 @@ public class AddContactActivity extends AppCompatActivity {
                 switch (resultCode) {
                     case RESULT_OK:
                         Uri imageData = data.getData();
-                        Log.i("CONTACTS", getRealPathFromURI(imageData));
+                        current_img_path = getRealPathFromURI(imageData);
                         contactImage.setImageURI(imageData);
                         break;
                 }
