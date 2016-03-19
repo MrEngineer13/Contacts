@@ -9,11 +9,42 @@ public class Contact {
     private String phoneNumber;
     private String address;
 
-    public Contact(String name, String email, String phoneNumber, String address) {
-        this.name = name;
-        this.email = email;
-        this.phoneNumber = phoneNumber;
-        this.address = address;
+    public static class Builder {
+        private String name;
+        private String email;
+        private String phoneNumber;
+        private String address;
+
+        public Contact createContact() {
+            return new Contact(this);
+        }
+
+        private Builder name(String name) {
+            this.name = name;
+            return this;
+        }
+
+        private Builder email(String email) {
+            this.email = email;
+            return this;
+        }
+
+        private Builder phoneNumber(String phoneNumber) {
+            this.phoneNumber = phoneNumber;
+            return this;
+        }
+
+        private Builder address(String address) {
+            this.address = address;
+            return this;
+        }
+    }
+
+    public Contact(Builder builder) {
+        this.name = builder.name;
+        this.email = builder.email;
+        this.phoneNumber = builder.phoneNumber;
+        this.address = builder.address;
     }
 
     public String getName() {
@@ -46,35 +77,6 @@ public class Contact {
 
     public void setAddress(String address) {
         this.address = address;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o)
-            return true;
-        if (o == null || getClass() != o.getClass())
-            return false;
-
-        Contact contact = (Contact) o;
-
-        if (!name.equals(contact.name))
-            return false;
-        if (email != null ? !email.equals(contact.email) : contact.email != null)
-            return false;
-        if (!phoneNumber.equals(contact.phoneNumber))
-            return false;
-
-        return !(address != null ? !address.equals(contact.address) : contact.address != null);
-
-    }
-
-    @Override
-    public int hashCode() {
-        int result = name.hashCode();
-        result = 31 * result + (email != null ? email.hashCode() : 0);
-        result = 31 * result + phoneNumber.hashCode();
-        result = 31 * result + (address != null ? address.hashCode() : 0);
-        return result;
     }
 
     @Override
