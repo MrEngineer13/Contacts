@@ -1,6 +1,7 @@
 package com.zouag.contacts.adapters;
 
 import android.content.Context;
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -12,6 +13,7 @@ import android.widget.TextView;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.ui.ViewContactActivity;
 
 import java.io.File;
 import java.util.List;
@@ -50,6 +52,12 @@ public class ContactsAdapter extends ArrayAdapter<Contact> {
         Contact contact = contacts.get(position);
         viewHolder.nameText.setText(contact.getName());
         viewHolder.contactImage.setImageURI(Uri.fromFile(new File(contact.getImgPath())));
+
+        convertView.setOnClickListener(view -> {
+            Intent intent = new Intent(context, ViewContactActivity.class);
+            intent.putExtra("contact", contact);
+            context.startActivity(intent);
+        });
 
         return convertView;
     }
