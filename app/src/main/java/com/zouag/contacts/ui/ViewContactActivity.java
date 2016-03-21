@@ -4,6 +4,7 @@ import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.ImageView;
+import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zouag.contacts.R;
@@ -20,6 +21,8 @@ public class ViewContactActivity extends AppCompatActivity {
     TextView profilName;
     @Bind(R.id.profilImage)
     ImageView profilImage;
+    @Bind(R.id.detailsListview)
+    ListView detailsListview;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -33,5 +36,7 @@ public class ViewContactActivity extends AppCompatActivity {
 
         // Set the contact's image
         profilImage.setImageURI(Uri.fromFile(new File(contact.getImgPath())));
+
+
     }
 }

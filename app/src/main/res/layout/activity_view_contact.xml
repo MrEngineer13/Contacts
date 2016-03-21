@@ -49,7 +49,7 @@
             android:src="@drawable/ic_action_sms" />
 
         <ListView
-            android:id="@+id/listView"
+            android:id="@+id/detailsListview"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_below="@+id/imageButton"
