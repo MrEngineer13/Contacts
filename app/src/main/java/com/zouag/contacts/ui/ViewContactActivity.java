@@ -3,6 +3,7 @@ package com.zouag.contacts.ui;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.view.Menu;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -46,6 +47,12 @@ public class ViewContactActivity extends AppCompatActivity {
 
         setupContactData(contact);
         setupDetailsListView();
+    }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_view_contact, menu);
+        return true;
     }
 
     /**
