@@ -14,6 +14,7 @@ import com.zouag.contacts.R;
 import com.zouag.contacts.models.Contact;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -30,7 +31,7 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
 
     public ContactsRecyclerAdapter(Context context, List<Contact> contacts) {
         mContext = context;
-        mContacts = contacts;
+        mContacts = new ArrayList<>(contacts);
     }
 
     @Override
@@ -43,21 +44,8 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
 
     @Override
     public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        TextView contactName = viewHolder.nameText;
-        ImageView contactImage = viewHolder.contactImage;
-
         Contact contact = mContacts.get(position);
-
-        contactName.setText(contact.getName());
-
-        String imgPath = contact.getImgPath();
-        if ("".equals(imgPath)) {
-            // Set default contact image
-            contactImage.setImageResource(R.drawable.ic_action_user);
-        } else {
-            // Set the contact's image
-            contactImage.setImageURI(Uri.fromFile(new File(imgPath)));
-        }
+        viewHolder.bind(contact);
     }
 
     @Override
@@ -126,6 +114,19 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
 
             // Notify the activity to display the contact
             v.setOnClickListener(view -> listener.showContact(mContacts.get(getLayoutPosition())));
+        }
+
+        public void bind(Contact contact) {
+            nameText.setText(contact.getName());
+
+            String imgPath = contact.getImgPath();
+            if ("".equals(imgPath)) {
+                // Set default contact image
+                contactImage.setImageResource(R.drawable.ic_action_user);
+            } else {
+                // Set the contact's image
+                contactImage.setImageURI(Uri.fromFile(new File(imgPath)));
+            }
         }
     }
 

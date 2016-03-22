@@ -8,19 +8,12 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
-import com.annimon.stream.Collectors;
-import com.annimon.stream.Stream;
 import com.zouag.contacts.R;
-import com.zouag.contacts.adapters.ContactsAdapter;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
@@ -110,9 +103,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             intent.putExtra("contact", contact);
             startActivityForResult(intent, REQUEST_VIEW_CONTACT);
         });
-        contactsRecyclerView.setLayoutManager(
-                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
-        contactsRecyclerView.setHasFixedSize(true);
+        contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
         contactsRecyclerView.setAdapter(mAdapter);
     }
 
@@ -171,15 +162,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     /**
      * @param contacts to be filtered
-     * @param query based upon the contacts will be filtered
+     * @param query    based upon the contacts will be filtered
      * @return the filtered list of contacts
      */
     private List<Contact> filter(List<Contact> contacts, String query) {
         query = query.toLowerCase();
-        final String finalQuery = query;
 
-        return Stream.of(contacts)
-                .filter(contact -> contact.getName().toLowerCase().contains(finalQuery))
-                .collect(Collectors.toList());
+        final List<Contact> filteredContacts = new ArrayList<>();
+        for (Contact contact : contacts) {
+            final String text = contact.getName().toLowerCase();
+            if (text.contains(query)) {
+                filteredContacts.add(contact);
+            }
+        }
+        return filteredContacts;
     }
 }
