@@ -3,6 +3,7 @@ package com.zouag.contacts.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -91,6 +92,10 @@ public class ViewContactActivity extends AppCompatActivity {
                         // Refresh the Activity's details after returning from
                         // the AlterContactActivity (an update occured)
                         requestNewContactInfo();
+
+                        Snackbar.make(getWindow().getDecorView(),
+                                "Contact successfully updated.",
+                                Snackbar.LENGTH_LONG).show();
                         break;
                 }
                 break;

@@ -15,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.DatabaseAdapter;
@@ -23,8 +24,10 @@ import com.zouag.contacts.utils.ResultCodes;
 import com.zouag.contacts.utils.Validation;
 
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
@@ -37,6 +40,11 @@ public class AlterContactActivity extends AppCompatActivity {
     // Request codes
     private static final int REQUEST_OPEN_GALLERY = 10;
     private static final int REQUEST_OPEN_CAMERA = 11;
+
+    /**
+     * The maximum size of the contacts' profile images.
+     */
+    private static final int IMAGE_SIZE_LIMIT = 1024 * 1024; // 1 second
 
     /**
      * The path of the currently selected image.
@@ -89,10 +97,22 @@ public class AlterContactActivity extends AppCompatActivity {
                 switch (resultCode) {
                     case RESULT_OK:
                         Uri imageData = data.getData();
-                        // Save the path of the retrieved image
-                        current_img_path = getRealPathFromURI(imageData);
-                        contactImage.setImageURI(imageData);
-                        break;
+
+                        // Check the selected image's size
+                        if (isSizeAppropriate(imageData)) {
+                            // Save the path of the retrieved image
+                            current_img_path = getRealPathFromURI(imageData);
+                            contactImage.setImageURI(imageData);
+                            break;
+                        }
+                        else {
+                            Toast.makeText(this,
+                                    String.format(
+                                            "Maximum image size exceeded. " +
+                                                    "(%d MB)\nPlease try a different one.",
+                                            IMAGE_SIZE_LIMIT / (1024 * 1024)),
+                                    Toast.LENGTH_LONG).show();
+                        }
                 }
                 break;
             case REQUEST_OPEN_CAMERA:
@@ -106,6 +126,33 @@ public class AlterContactActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    /**
+     * @param image to be checked
+     * @return true if the image's size is below the maximum size, and false otherwise.
+     */
+    private boolean isSizeAppropriate(Uri image) {
+        int filesize = 0;
+
+        try (InputStream inputStream =
+                     getContentResolver().openInputStream(image)) {
+            filesize = inputStream.available();
+
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+            Toast.makeText(this,
+                    "There was an error opening the image.",
+                    Toast.LENGTH_LONG).show();
+        } catch (IOException e) {
+            e.printStackTrace();
+            Toast.makeText(this,
+                    "An unknown error occured. " +
+                            "Please try again with a different image.",
+                    Toast.LENGTH_LONG).show();
+        }
+
+        return filesize < IMAGE_SIZE_LIMIT;
     }
 
     /**
@@ -125,7 +172,11 @@ public class AlterContactActivity extends AppCompatActivity {
             currentContactID = contact.getId();
 
             // Setup the inputs
-            contactImage.setImageURI(Uri.fromFile(new File(contact.getImgPath())));
+            String imgPath = contact.getImgPath();
+            if ("".equals(imgPath))
+                contactImage.setImageResource(R.drawable.ic_action_user);
+            else
+                contactImage.setImageURI(Uri.fromFile(new File(imgPath)));
             contactName.setText(contact.getName());
             contactNumber.setText(contact.getPhoneNumber());
             contactEmail.setText(contact.getEmail());
@@ -167,7 +218,7 @@ public class AlterContactActivity extends AppCompatActivity {
         String path = mediaStorageDir.getPath() + File.separator;
 
         // Save the path of the retrieved image
-        current_img_path = path + "IMG_" + timestamp + ".jpg";
+        current_img_path = path + "IMG_" + timestamp + ".png";
         File mediaFile = new File(current_img_path);
 
         FileOutputStream out = null;
@@ -265,8 +316,8 @@ public class AlterContactActivity extends AppCompatActivity {
         builder.setItems(options, (dialog, which) -> {
             switch (which) {
                 case 0:
-                    Intent gallery = new Intent(Intent.ACTION_PICK,
-                            android.provider.MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                    Intent gallery = new Intent(Intent.ACTION_GET_CONTENT);
+                    gallery.setType("image/*");
                     startActivityForResult(gallery, REQUEST_OPEN_GALLERY);
                     break;
                 case 1:
