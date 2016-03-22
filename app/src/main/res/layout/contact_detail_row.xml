@@ -1,43 +1,44 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="80dp"
     android:orientation="vertical"
-    android:paddingLeft="20dp"
-    android:paddingTop="10dp"
     android:paddingBottom="10dp"
-    android:paddingRight="20dp">
+    android:paddingLeft="20dp"
+    android:paddingRight="20dp"
+    android:paddingTop="10dp">
 
     <TextView
+        android:id="@+id/description"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Mobile"
-        android:id="@+id/description"
-        android:layout_alignParentTop="true"
-        android:layout_alignParentStart="true"
-        android:textSize="18sp"
         android:layout_alignLeft="@+id/data"
+        android:layout_alignParentStart="true"
+        android:layout_alignParentTop="true"
         android:layout_alignRight="@+id/data"
-        android:gravity="left|center_vertical" />
+        android:gravity="left|center_vertical"
+        android:text="@string/mobile"
+        android:textSize="18sp" />
 
     <TextView
+        android:id="@+id/data"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="06 94 36 30 53"
-        android:id="@+id/data"
-        android:layout_below="@+id/description"
         android:layout_alignParentStart="true"
-        android:textSize="20sp"
+        android:layout_below="@+id/description"
         android:gravity="center"
-        android:textColor="#000000" />
+        android:textColor="#000000"
+        android:textSize="20sp"
+        tools:text="06 94 36 30 53" />
 
     <ImageView
+        android:id="@+id/detailIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:id="@+id/detailIcon"
-        android:layout_alignParentTop="true"
+        android:layout_alignBottom="@+id/data"
         android:layout_alignParentEnd="true"
-        android:src="@drawable/ic_action_sms"
+        android:layout_alignParentTop="true"
         android:layout_alignTop="@+id/description"
-        android:layout_alignBottom="@+id/data" />
+        android:src="@drawable/ic_action_sms" />
 </RelativeLayout>

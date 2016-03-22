@@ -8,19 +8,20 @@
         android:id="@+id/nameText"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:text="New Text"
         android:layout_toRightOf="@+id/rowContactImage"
         android:gravity="left|center_vertical"
         android:paddingLeft="10dp"
+        android:text="New Text"
         android:textSize="24sp" />
 
     <ImageView
+        android:id="@+id/rowContactImage"
         android:layout_width="60dp"
         android:layout_height="60dp"
-        android:id="@+id/rowContactImage"
-        android:layout_alignTop="@+id/nameText"
         android:layout_alignBottom="@+id/nameText"
+        android:layout_alignTop="@+id/nameText"
+        android:scaleType="fitCenter"
         android:src="@drawable/ic_action_user"
-        android:scaleType="fitCenter" />
+        android:contentDescription="@string/contact_row_img_desc" />
 
 </RelativeLayout>

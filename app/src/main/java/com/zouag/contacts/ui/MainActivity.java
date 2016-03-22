@@ -12,10 +12,10 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.zouag.contacts.R;
-import com.zouag.contacts.ResultCodes;
 import com.zouag.contacts.adapters.ContactsAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.utils.ResultCodes;
 
 import java.util.List;
 
@@ -118,8 +118,9 @@ public class MainActivity extends AppCompatActivity {
                         break;
                 }
 
-                Snackbar.make(getWindow().getDecorView(),
-                        message, Snackbar.LENGTH_LONG).show();
+                if (!"".equals(message))
+                    Snackbar.make(getWindow().getDecorView(),
+                            message, Snackbar.LENGTH_LONG).show();
                 break;
         }
     }

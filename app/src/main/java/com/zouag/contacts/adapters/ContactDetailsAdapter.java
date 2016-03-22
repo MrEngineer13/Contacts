@@ -16,6 +16,8 @@ import java.util.List;
 
 /**
  * Created by Mohammed Aouf ZOUAG on 21/03/2016.
+ *
+ * The adapter of the contacts' details list view.
  */
 public class ContactDetailsAdapter extends ArrayAdapter<ContactData> {
 

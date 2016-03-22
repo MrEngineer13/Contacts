@@ -1,10 +1,7 @@
 package com.zouag.contacts.ui;
 
-import android.content.DialogInterface;
-import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
@@ -14,11 +11,11 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zouag.contacts.R;
-import com.zouag.contacts.ResultCodes;
 import com.zouag.contacts.adapters.ContactDetailsAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
 import com.zouag.contacts.models.ContactData;
+import com.zouag.contacts.utils.ResultCodes;
 
 import java.io.File;
 import java.util.ArrayList;

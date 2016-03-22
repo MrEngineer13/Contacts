@@ -1,8 +1,8 @@
-package com.zouag.contacts;
+package com.zouag.contacts.utils;
 
 /**
  * Created by Mohammed Aouf ZOUAG on 22/03/2016.
- *
+ * <p>
  * This class holds a variety of result codes to be used when
  * communicating between the AlterContactActivity and the MainActivity.
  */

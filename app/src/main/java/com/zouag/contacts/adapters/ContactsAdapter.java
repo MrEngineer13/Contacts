@@ -1,7 +1,6 @@
 package com.zouag.contacts.adapters;
 
 import android.content.Context;
-import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
@@ -14,13 +13,14 @@ import android.widget.TextView;
 import com.annimon.stream.function.FunctionalInterface;
 import com.zouag.contacts.R;
 import com.zouag.contacts.models.Contact;
-import com.zouag.contacts.ui.ViewContactActivity;
 
 import java.io.File;
 import java.util.List;
 
 /**
  * Created by Mohammed Aouf ZOUAG on 18/03/2016.
+ *
+ * The adapter of the main list of contacts.
  */
 public class ContactsAdapter extends ArrayAdapter<Contact> {
 
@@ -74,6 +74,9 @@ public class ContactsAdapter extends ArrayAdapter<Contact> {
         this.listener = listener;
     }
 
+    /**
+     * An outer activity listener on the click events over the items of the adapter.
+     */
     @FunctionalInterface
     public interface ContactClickListener {
         void showContact(Contact contact);

@@ -2,6 +2,8 @@ package com.zouag.contacts.models;
 
 /**
  * Created by Mohammed Aouf ZOUAG on 21/03/2016.
+ *
+ * A model class used to hold the data of the contacts' informations.
  */
 public class ContactData {
     private String description;

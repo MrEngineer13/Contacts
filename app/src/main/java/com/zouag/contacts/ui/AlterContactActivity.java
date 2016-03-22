@@ -133,6 +133,10 @@ public class AlterContactActivity extends AppCompatActivity {
         Log.i("CONTACTS", "Image successfully saved.");
     }
 
+    /**
+     * @param contentURI of the image
+     * @return the path of this image in disk.
+     */
     private String getRealPathFromURI(Uri contentURI) {
         String result;
         Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
