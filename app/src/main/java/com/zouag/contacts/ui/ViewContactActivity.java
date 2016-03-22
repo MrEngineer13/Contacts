@@ -67,6 +67,10 @@ public class ViewContactActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.action_edit_contact:
+                // Edit contact
+                return true;
+            case R.id.action_delete_contact:
+                // Delete contact
                 return true;
         }
 
