@@ -44,7 +44,7 @@ public class AlterContactActivity extends AppCompatActivity {
     /**
      * The maximum size of the contacts' profile images.
      */
-    private static final int IMAGE_SIZE_LIMIT = 1024 * 1024; // 1 second
+    private static final int IMAGE_SIZE_LIMIT = 1024 * 1024; // 1 MB
 
     /**
      * The path of the currently selected image.
