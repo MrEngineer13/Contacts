@@ -5,6 +5,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -51,6 +52,8 @@ public class ViewContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_contact);
         ButterKnife.bind(this);
 
+        currentContact = getIntent().getExtras().getParcelable("contact");
+
         setupContactData();
         setupActionbar();
         setupDetailsListView();
@@ -79,13 +82,39 @@ public class ViewContactActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        switch (requestCode) {
+            case REQUEST_UPDATE_CONTACT:
+                switch (resultCode) {
+                    case ResultCodes.CONTACT_UPDATED:
+                        // Refresh the Activity's details after returning from
+                        // the AlterContactActivity (an update occured)
+                        requestNewContactInfo();
+                        break;
+                }
+                break;
+        }
+    }
+
+    /**
+     * Refreshes the informations of the currently displayed contact after modification.
+     */
+    private void requestNewContactInfo() {
+        DatabaseAdapter databaseAdapter = DatabaseAdapter.getInstance(this);
+        currentContact = databaseAdapter.getContact(currentContact.getId());
+
+        setupContactData();
+        setupActionbar();
+        setupDetailsListView();
+    }
+
     /**
      * Basic setup for the details of the currently displayed contact.
      * These details will be passed to a custom adapter to be displayed.
      */
     private void setupContactData() {
         // Set the contact's name
-        currentContact = getIntent().getExtras().getParcelable("contact");
         profilName.setText(currentContact.getName());
 
         // Set the contact's image

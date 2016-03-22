@@ -41,6 +41,10 @@ public class AlterContactActivity extends AppCompatActivity {
      * The path of the currently selected image.
      */
     private String current_img_path = "";
+    /**
+     * The ID of the currently-being-modified contact.
+     */
+    private int currentContactID;
 
     @Bind(R.id.contactName)
     EditText contactName;
@@ -116,12 +120,18 @@ public class AlterContactActivity extends AppCompatActivity {
 
             setupActionbar();
 
+            // Save the ID of the currently-being-modified contact
+            currentContactID = contact.getId();
+
             // Setup the inputs
             contactImage.setImageURI(Uri.fromFile(new File(contact.getImgPath())));
             contactName.setText(contact.getName());
             contactNumber.setText(contact.getPhoneNumber());
             contactEmail.setText(contact.getEmail());
             contactAddress.setText(contact.getAddress());
+
+            // Setup the current contact's image path
+            current_img_path = contact.getImgPath();
         }
     }
 
@@ -225,6 +235,7 @@ public class AlterContactActivity extends AppCompatActivity {
             boolean isUpdating = getIntent().getBooleanExtra("isUpdating", false);
             if (isUpdating) {
                 // Update contact
+                databaseAdapter.updateContact(currentContactID, newContact);
 
                 // Contact successfully updated
                 setResult(ResultCodes.CONTACT_UPDATED);

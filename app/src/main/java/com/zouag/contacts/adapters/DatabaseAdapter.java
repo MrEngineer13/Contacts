@@ -74,6 +74,10 @@ public class DatabaseAdapter {
         dbHelper.close();
     }
 
+    /**
+     * @param contact to be added
+     * @return
+     */
     public long insertContact(Contact contact) {
         ContentValues values = new ContentValues();
         values.put(KEY_NAME, contact.getName());
@@ -85,21 +89,38 @@ public class DatabaseAdapter {
         return db.insert(DATABASE_TABLE, null, values);
     }
 
+    /**
+     * @param rowId the ID of the contact to delete
+     * @return true if the contact associated with the passed-in ID was successfully
+     * deleted, or false otherwise.
+     */
     public boolean deleteContact(long rowId) {
         return db.delete(DATABASE_TABLE, KEY_ROWID + "=" + rowId, null) > 0;
     }
 
-    public Cursor getContact(long rowId) {
-        return db.query(
+    /**
+     * @param rowId the ID of the contact to retrieve
+     * @return the Contact object associated with the passed-in ID, or null otherwise.
+     */
+    public Contact getContact(long rowId) {
+        try (Cursor cursor = db.query(
                 true, // distinct
                 DATABASE_TABLE, // table name
-                new String[]{KEY_ROWID, KEY_NAME, KEY_EMAIL}, // columns
-                KEY_ROWID + "=" + rowId, // selection
-                null,
-                null,
-                null,
-                null,
-                null);
+                new String[]{KEY_ROWID, KEY_NAME, KEY_EMAIL, KEY_PHONE, KEY_ADDRESS, KEY_IMG_PATH},
+                KEY_ROWID + "=" + rowId, null, null, null, null, null)) {
+            if (cursor.moveToFirst()) {
+                return new Contact.Builder()
+                        .id(cursor.getInt(0))
+                        .name(cursor.getString(1))
+                        .email(cursor.getString(2))
+                        .phoneNumber(cursor.getString(3))
+                        .address(cursor.getString(4))
+                        .imgPath(cursor.getString(5))
+                        .createContact();
+            }
+        }
+
+        return null;
     }
 
     /**
@@ -128,10 +149,18 @@ public class DatabaseAdapter {
         return contacts;
     }
 
-    public boolean updateContact(long rowId, String name, String email) {
+    /**
+     * @param rowId of the contact to update
+     * @param newContact
+     * @return true if the update was successful, and false otherwise.
+     */
+    public boolean updateContact(long rowId, Contact newContact) {
         ContentValues values = new ContentValues();
-        values.put(KEY_NAME, name);
-        values.put(KEY_EMAIL, email);
+        values.put(KEY_NAME, newContact.getName());
+        values.put(KEY_EMAIL, newContact.getEmail());
+        values.put(KEY_PHONE, newContact.getPhoneNumber());
+        values.put(KEY_ADDRESS, newContact.getAddress());
+        values.put(KEY_IMG_PATH, newContact.getImgPath());
 
         return db.update(DATABASE_TABLE, values, KEY_ROWID + "=" + rowId, null) > 0;
     }
