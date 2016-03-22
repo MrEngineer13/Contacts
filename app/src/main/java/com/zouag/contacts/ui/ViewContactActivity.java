@@ -1,9 +1,11 @@
 package com.zouag.contacts.ui;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
@@ -38,6 +40,9 @@ public class ViewContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_contact);
         ButterKnife.bind(this);
 
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         // Set the contact's name
         Contact contact = getIntent().getExtras().getParcelable("contact");
         profilName.setText(contact.getName());
@@ -53,6 +58,19 @@ public class ViewContactActivity extends AppCompatActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_view_contact, menu);
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                finish();
+                break;
+            case R.id.action_edit_contact:
+                return true;
+        }
+
+        return super.onOptionsItemSelected(item);
     }
 
     /**
