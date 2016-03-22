@@ -17,7 +17,7 @@ public class Validation {
      * @return true if alphabetic, false otherwise.
      */
     public static boolean isAlpha(String name) {
-        return name.matches("[a-zA-Z]+");
+        return name.matches("[a-zA-Z ]+");
     }
 
     /**

@@ -9,36 +9,42 @@
     android:paddingRight="20dp"
     android:paddingTop="10dp">
 
-    <TextView
-        android:id="@+id/description"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignLeft="@+id/data"
-        android:layout_alignParentStart="true"
-        android:layout_alignParentTop="true"
-        android:gravity="left|center_vertical"
-        android:text="@string/mobile"
-        android:textSize="18sp" />
-
-    <TextView
-        android:id="@+id/data"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_alignParentStart="true"
-        android:layout_below="@+id/description"
-        android:textColor="#000000"
-        android:textSize="20sp"
-        tools:text="06 94 36 30 53"
-        android:layout_toLeftOf="@+id/detailIcon"
-        android:gravity="left|center_vertical" />
-
     <ImageView
         android:id="@+id/detailIcon"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignBottom="@+id/data"
         android:layout_alignParentEnd="true"
         android:layout_alignParentTop="true"
-        android:layout_alignTop="@+id/description"
-        android:src="@drawable/ic_action_sms" />
+        android:src="@drawable/ic_action_sms"
+        android:layout_alignParentBottom="true" />
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:id="@+id/infoLayout">
+
+        <TextView
+            android:id="@+id/data"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:gravity="left|center_vertical"
+            android:textColor="#000000"
+            android:textSize="20sp"
+            tools:text="06 94 36 30 53"
+            android:layout_weight="50"
+            android:layout_gravity="bottom" />
+
+        <TextView
+            android:id="@+id/description"
+            android:layout_width="wrap_content"
+            android:layout_height="0dp"
+            android:layout_alignLeft="@+id/data"
+            android:gravity="left|center_vertical"
+            android:text="@string/mobile"
+            android:textSize="18sp"
+            android:layout_below="@+id/data"
+            android:layout_weight="50"
+            android:layout_gravity="top" />
+    </LinearLayout>
 </RelativeLayout>

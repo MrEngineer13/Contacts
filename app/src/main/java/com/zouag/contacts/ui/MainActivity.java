@@ -104,6 +104,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             startActivityForResult(intent, REQUEST_VIEW_CONTACT);
         });
         contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        contactsRecyclerView.setHasFixedSize(true);
         contactsRecyclerView.setAdapter(mAdapter);
     }
 

@@ -161,12 +161,15 @@ public class AlterContactActivity extends AppCompatActivity {
      * & fill the contact fields accordingly.
      */
     private void initializeUI() {
+        setupActionbar();
+
         Intent intent = getIntent();
         if (intent.getBooleanExtra("isUpdating", false)) {
             // We're updating, retrieve the passed-in contact
             Contact contact = intent.getParcelableExtra("contact");
 
-            setupActionbar();
+            // Set the action bar's title
+            getSupportActionBar().setTitle(R.string.update_contact);
 
             // Save the ID of the currently-being-modified contact
             currentContactID = contact.getId();
@@ -191,9 +194,6 @@ public class AlterContactActivity extends AppCompatActivity {
         // Show the back arrow button
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        // Set the action bar's title
-        getSupportActionBar().setTitle(R.string.update_contact);
     }
 
     private void saveImageToDisk(Bitmap image) {
