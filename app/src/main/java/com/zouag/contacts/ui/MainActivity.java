@@ -3,16 +3,22 @@ package com.zouag.contacts.ui;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
+import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
+import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsAdapter;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
@@ -20,18 +26,23 @@ import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
 import com.zouag.contacts.utils.ResultCodes;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
     private static final int REQUEST_ADD_NEW = 100;
     private static final int REQUEST_VIEW_CONTACT = 101;
 
     private DatabaseAdapter databaseAdapter;
     private List<Contact> mContacts;
+    /**
+     * The RecyclerView's adapter.
+     */
+    private ContactsRecyclerAdapter mAdapter;
 
     /**
      * The main contacts' RecyclerView.
@@ -57,6 +68,10 @@ public class MainActivity extends AppCompatActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+
+        final MenuItem item = menu.findItem(R.id.action_search);
+        final SearchView searchView = (SearchView) MenuItemCompat.getActionView(item);
+        searchView.setOnQueryTextListener(this);
         return true;
     }
 
@@ -89,8 +104,8 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void setupRecyclerView() {
-        ContactsRecyclerAdapter adapter = new ContactsRecyclerAdapter(this, mContacts);
-        adapter.setContactClickListener(contact -> {
+        mAdapter = new ContactsRecyclerAdapter(this, mContacts);
+        mAdapter.setContactClickListener(contact -> {
             Intent intent = new Intent(this, ViewContactActivity.class);
             intent.putExtra("contact", contact);
             startActivityForResult(intent, REQUEST_VIEW_CONTACT);
@@ -98,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
         contactsRecyclerView.setLayoutManager(
                 new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         contactsRecyclerView.setHasFixedSize(true);
-        contactsRecyclerView.setAdapter(adapter);
+        contactsRecyclerView.setAdapter(mAdapter);
     }
 
     @Override
@@ -139,5 +154,32 @@ public class MainActivity extends AppCompatActivity {
      */
     private List<Contact> getContacts() {
         return databaseAdapter.getAllContacts();
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        final List<Contact> filteredContacts = filter(mContacts, newText);
+        mAdapter.animateTo(filteredContacts);
+        contactsRecyclerView.scrollToPosition(0);
+        return true;
+    }
+
+    /**
+     * @param contacts to be filtered
+     * @param query based upon the contacts will be filtered
+     * @return the filtered list of contacts
+     */
+    private List<Contact> filter(List<Contact> contacts, String query) {
+        query = query.toLowerCase();
+        final String finalQuery = query;
+
+        return Stream.of(contacts)
+                .filter(contact -> contact.getName().toLowerCase().contains(finalQuery))
+                .collect(Collectors.toList());
     }
 }

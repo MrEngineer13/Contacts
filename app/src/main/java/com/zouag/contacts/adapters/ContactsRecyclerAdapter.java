@@ -65,6 +65,55 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         return mContacts.size();
     }
 
+    public Contact removeItem(int position) {
+        final Contact contact = mContacts.remove(position);
+        notifyItemRemoved(position);
+        return contact;
+    }
+
+    public void addItem(int position, Contact contact) {
+        mContacts.add(position, contact);
+        notifyItemInserted(position);
+    }
+
+    public void moveItem(int fromPosition, int toPosition) {
+        final Contact contact = mContacts.remove(fromPosition);
+        mContacts.add(toPosition, contact);
+        notifyItemMoved(fromPosition, toPosition);
+    }
+
+    public void animateTo(List<Contact> contacts) {
+        applyAndAnimateRemovals(contacts);
+        applyAndAnimateAdditions(contacts);
+        applyAndAnimateMovedItems(contacts);
+    }
+
+    private void applyAndAnimateRemovals(List<Contact> newContacts) {
+        for (int i = mContacts.size() - 1; i >= 0; i--) {
+            final Contact contact = mContacts.get(i);
+            if (!newContacts.contains(contact))
+                removeItem(i);
+        }
+    }
+
+    private void applyAndAnimateAdditions(List<Contact> newContacts) {
+        for (int i = 0, count = newContacts.size(); i < count; i++) {
+            final Contact contact = newContacts.get(i);
+            if (!mContacts.contains(contact))
+                addItem(i, contact);
+        }
+    }
+
+    private void applyAndAnimateMovedItems(List<Contact> newContacts) {
+        for (int toPosition = newContacts.size() - 1; toPosition >= 0; toPosition--) {
+            final Contact contact = newContacts.get(toPosition);
+            final int fromPosition = mContacts.indexOf(contact);
+
+            if (fromPosition >= 0 && fromPosition != toPosition)
+                moveItem(fromPosition, toPosition);
+        }
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView nameText;
