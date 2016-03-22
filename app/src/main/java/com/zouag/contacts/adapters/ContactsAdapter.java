@@ -11,6 +11,7 @@ import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import com.annimon.stream.function.FunctionalInterface;
 import com.zouag.contacts.R;
 import com.zouag.contacts.models.Contact;
 import com.zouag.contacts.ui.ViewContactActivity;
@@ -22,6 +23,11 @@ import java.util.List;
  * Created by Mohammed Aouf ZOUAG on 18/03/2016.
  */
 public class ContactsAdapter extends ArrayAdapter<Contact> {
+
+    /**
+     * A listener on the items handled by this adapter.
+     */
+    private ContactClickListener listener;
 
     private Context context;
     private List<Contact> contacts;
@@ -53,11 +59,8 @@ public class ContactsAdapter extends ArrayAdapter<Contact> {
         viewHolder.nameText.setText(contact.getName());
         viewHolder.contactImage.setImageURI(Uri.fromFile(new File(contact.getImgPath())));
 
-        convertView.setOnClickListener(view -> {
-            Intent intent = new Intent(context, ViewContactActivity.class);
-            intent.putExtra("contact", contact);
-            context.startActivity(intent);
-        });
+        // Notify the activity to display the contact
+        convertView.setOnClickListener(view -> listener.showContact(contact));
 
         return convertView;
     }
@@ -65,5 +68,14 @@ public class ContactsAdapter extends ArrayAdapter<Contact> {
     private static class ViewHolder {
         TextView nameText;
         ImageView contactImage;
+    }
+
+    public void setContactClickListener(ContactClickListener listener) {
+        this.listener = listener;
+    }
+
+    @FunctionalInterface
+    public interface ContactClickListener {
+        void showContact(Contact contact);
     }
 }

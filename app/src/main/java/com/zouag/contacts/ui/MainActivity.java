@@ -9,8 +9,10 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zouag.contacts.R;
+import com.zouag.contacts.ResultCodes;
 import com.zouag.contacts.adapters.ContactsAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
@@ -23,6 +25,7 @@ import butterknife.ButterKnife;
 public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_ADD_NEW = 100;
+    private static final int REQUEST_VIEW_CONTACT = 101;
     private DatabaseAdapter databaseAdapter;
 
     /**
@@ -79,14 +82,21 @@ public class MainActivity extends AppCompatActivity {
 
         // Setup the adapter & the ListView
         ContactsAdapter adapter = new ContactsAdapter(this, contacts);
+        adapter.setContactClickListener(contact -> {
+            Intent intent = new Intent(this, ViewContactActivity.class);
+            intent.putExtra("contact", contact);
+            startActivityForResult(intent, REQUEST_VIEW_CONTACT);
+        });
         contactsListView.setAdapter(adapter);
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String message = ""; // Message to be displayed in the snack bar
+
         switch (requestCode) {
             case REQUEST_ADD_NEW:
-                String message = ""; // Message to be displayed in the snack bar
+                Toast.makeText(this, "Result code: " + resultCode, Toast.LENGTH_LONG).show();
 
                 switch (resultCode) {
                     case RESULT_OK:
@@ -99,6 +109,18 @@ public class MainActivity extends AppCompatActivity {
 
                 Snackbar.make(getWindow().getDecorView(),
                         message, Snackbar.LENGTH_LONG).show();
+                break;
+            case REQUEST_VIEW_CONTACT:
+                switch (resultCode) {
+                    case ResultCodes.CONTACT_DELETED:
+                        // A contact has been deleted
+                        message = "The contact has been removed from your directory.";
+                        break;
+                }
+
+                Snackbar.make(getWindow().getDecorView(),
+                        message, Snackbar.LENGTH_LONG).show();
+                break;
         }
     }
 

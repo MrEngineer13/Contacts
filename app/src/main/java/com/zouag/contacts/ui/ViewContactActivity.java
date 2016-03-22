@@ -1,6 +1,7 @@
 package com.zouag.contacts.ui;
 
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
@@ -13,6 +14,7 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zouag.contacts.R;
+import com.zouag.contacts.ResultCodes;
 import com.zouag.contacts.adapters.ContactDetailsAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
@@ -83,7 +85,7 @@ public class ViewContactActivity extends AppCompatActivity {
                 // TODO: Edit contact
                 return true;
             case R.id.action_delete_contact:
-//                deleteContact();
+                deleteContact();
                 return true;
         }
 
@@ -119,5 +121,27 @@ public class ViewContactActivity extends AppCompatActivity {
     private void setupDetailsListView() {
         ContactDetailsAdapter adapter = new ContactDetailsAdapter(this, contactDataList);
         detailsListview.setAdapter(adapter);
+    }
+
+    /**
+     * Deletes a contact from the local database.
+     */
+    private void deleteContact() {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setTitle("Delete contact");
+        builder.setMessage("Are you sure that you want to delete this contact ?\n" +
+                "This operation cannot be undone.");
+        builder.setPositiveButton("I'm positive", (dialog, which) -> {
+            DatabaseAdapter databaseAdapter =
+                    DatabaseAdapter.getInstance(ViewContactActivity.this);
+            databaseAdapter.deleteContact(currentContact.getId());
+
+            setResult(ResultCodes.CONTACT_DELETED);
+            finish();
+        });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.show();
     }
 }
