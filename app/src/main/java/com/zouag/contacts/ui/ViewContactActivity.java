@@ -1,7 +1,10 @@
 package com.zouag.contacts.ui;
 
+import android.content.DialogInterface;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -11,6 +14,7 @@ import android.widget.TextView;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactDetailsAdapter;
+import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
 import com.zouag.contacts.models.ContactData;
 
@@ -30,6 +34,13 @@ public class ViewContactActivity extends AppCompatActivity {
     @Bind(R.id.detailsListview)
     ListView detailsListview;
 
+    /**
+     * The currently viewed contact.
+     */
+    private Contact currentContact;
+    /**
+     * A list of this contact's data. (Phone + Email + Address)
+     */
     private List<ContactData> contactDataList;
 
     @Override
@@ -38,18 +49,21 @@ public class ViewContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_view_contact);
         ButterKnife.bind(this);
 
+        // Show the back arrow button
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         // Set the contact's name
-        Contact contact = getIntent().getExtras().getParcelable("contact");
-        profilName.setText(contact.getName());
-        getSupportActionBar().setTitle(contact.getName());
+        currentContact = getIntent().getExtras().getParcelable("contact");
+        profilName.setText(currentContact.getName());
+
+        // Set the action bar's title
+        getSupportActionBar().setTitle(currentContact.getName());
 
         // Set the contact's image
-        profilImage.setImageURI(Uri.fromFile(new File(contact.getImgPath())));
+        profilImage.setImageURI(Uri.fromFile(new File(currentContact.getImgPath())));
 
-        setupContactData(contact);
+        setupContactData();
         setupDetailsListView();
     }
 
@@ -69,7 +83,7 @@ public class ViewContactActivity extends AppCompatActivity {
                 // TODO: Edit contact
                 return true;
             case R.id.action_delete_contact:
-                // TODO: Delete contact
+//                deleteContact();
                 return true;
         }
 
@@ -79,28 +93,26 @@ public class ViewContactActivity extends AppCompatActivity {
     /**
      * Basic setup for the details of the currently displayed contact.
      * These details will be passed to a custom adapter to be displayed.
-     *
-     * @param contact to be setup
      */
-    private void setupContactData(Contact contact) {
+    private void setupContactData() {
         contactDataList = new ArrayList<>();
 
-        if (!"".equals(contact.getPhoneNumber())) {
+        if (!"".equals(currentContact.getPhoneNumber())) {
             contactDataList.add(
                     new ContactData(
-                            "Mobile", contact.getPhoneNumber(), R.drawable.ic_action_phone_start));
+                            "Mobile", currentContact.getPhoneNumber(), R.drawable.ic_action_phone_start));
         }
 
-        if (!"".equals(contact.getEmail())) {
+        if (!"".equals(currentContact.getEmail())) {
             contactDataList.add(
                     new ContactData(
-                            "Email", contact.getEmail(), R.drawable.ic_action_attachment));
+                            "Email", currentContact.getEmail(), R.drawable.ic_action_attachment));
         }
 
-        if (!"".equals(contact.getAddress())) {
+        if (!"".equals(currentContact.getAddress())) {
             contactDataList.add(
                     new ContactData(
-                            "Address", contact.getAddress(), R.drawable.ic_action_location));
+                            "Address", currentContact.getAddress(), R.drawable.ic_action_location));
         }
     }
 

@@ -19,7 +19,7 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".ui.AddContactActivity"
+            android:name=".ui.AlterContactActivity"
             android:label="@string/add_new_contact" />
         <activity android:name=".ui.ViewContactActivity" />
     </application>

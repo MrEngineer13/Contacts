@@ -57,7 +57,7 @@ public class MainActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case R.id.action_add:
                 startActivityForResult(
-                        new Intent(this, AddContactActivity.class), REQUEST_ADD_NEW);
+                        new Intent(this, AlterContactActivity.class), REQUEST_ADD_NEW);
                 return true;
         }
 
