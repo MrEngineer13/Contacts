@@ -8,9 +8,14 @@ import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zouag.contacts.R;
+import com.zouag.contacts.adapters.ContactDetailsAdapter;
 import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.models.ContactData;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -23,6 +28,8 @@ public class ViewContactActivity extends AppCompatActivity {
     ImageView profilImage;
     @Bind(R.id.detailsListview)
     ListView detailsListview;
+
+    private List<ContactData> contactDataList;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -37,6 +44,40 @@ public class ViewContactActivity extends AppCompatActivity {
         // Set the contact's image
         profilImage.setImageURI(Uri.fromFile(new File(contact.getImgPath())));
 
+        setupContactData(contact);
+        setupDetailsListView();
+    }
 
+    /**
+     * Basic setup for the details of the currently displayed contact.
+     * These details will be passed to a custom adapter to be displayed.
+     *
+     * @param contact to be setup
+     */
+    private void setupContactData(Contact contact) {
+        contactDataList = new ArrayList<>();
+
+        if (!"".equals(contact.getPhoneNumber())) {
+            contactDataList.add(
+                    new ContactData(
+                            "Mobile", contact.getPhoneNumber(), R.drawable.ic_action_phone_start));
+        }
+
+        if (!"".equals(contact.getEmail())) {
+            contactDataList.add(
+                    new ContactData(
+                            "Email", contact.getEmail(), R.drawable.ic_action_attachment));
+        }
+
+        if (!"".equals(contact.getAddress())) {
+            contactDataList.add(
+                    new ContactData(
+                            "Address", contact.getAddress(), R.drawable.ic_action_location));
+        }
+    }
+
+    private void setupDetailsListView() {
+        ContactDetailsAdapter adapter = new ContactDetailsAdapter(this, contactDataList);
+        detailsListview.setAdapter(adapter);
     }
 }
