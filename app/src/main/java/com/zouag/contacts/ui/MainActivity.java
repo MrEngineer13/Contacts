@@ -99,7 +99,7 @@ public class MainActivity extends AppCompatActivity {
                 Toast.makeText(this, "Result code: " + resultCode, Toast.LENGTH_LONG).show();
 
                 switch (resultCode) {
-                    case RESULT_OK:
+                    case ResultCodes.CONTACT_CREATED:
                         message = "Contact successfully added.";
                         break;
                     case RESULT_CANCELED:

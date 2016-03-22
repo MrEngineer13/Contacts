@@ -18,6 +18,7 @@ import android.widget.ImageView;
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.utils.ResultCodes;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -177,7 +178,8 @@ public class AlterContactActivity extends AppCompatActivity {
         if (newContact != null) {
             databaseAdapter.insertContact(newContact);
 
-            setResult(RESULT_OK);
+            // Contact successfully created
+            setResult(ResultCodes.CONTACT_CREATED);
             finish();
         }
     }

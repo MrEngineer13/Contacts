@@ -57,7 +57,16 @@ public class ContactsAdapter extends ArrayAdapter<Contact> {
 
         Contact contact = contacts.get(position);
         viewHolder.nameText.setText(contact.getName());
-        viewHolder.contactImage.setImageURI(Uri.fromFile(new File(contact.getImgPath())));
+
+        String imgPath = contact.getImgPath();
+        if ("".equals(imgPath)) {
+            // Set default contact image
+            viewHolder.contactImage.setImageResource(R.drawable.ic_action_user);
+        }
+        else {
+            // Set the contact's image
+            viewHolder.contactImage.setImageURI(Uri.fromFile(new File(imgPath)));
+        }
 
         // Notify the activity to display the contact
         convertView.setOnClickListener(view -> listener.showContact(contact));
