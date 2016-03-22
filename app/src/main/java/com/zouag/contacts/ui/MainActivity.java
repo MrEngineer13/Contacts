@@ -26,6 +26,7 @@ public class MainActivity extends AppCompatActivity {
 
     private static final int REQUEST_ADD_NEW = 100;
     private static final int REQUEST_VIEW_CONTACT = 101;
+
     private DatabaseAdapter databaseAdapter;
 
     /**

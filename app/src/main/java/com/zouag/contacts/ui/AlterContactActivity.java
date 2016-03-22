@@ -62,6 +62,7 @@ public class AlterContactActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         databaseAdapter = DatabaseAdapter.getInstance(this);
+        initializeUI();
     }
 
     @Override
@@ -88,6 +89,37 @@ public class AlterContactActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    /**
+     * This method checks whether we will be creating or updating a contact.
+     * If updating, retrieve the contact associated with the passed-in intent
+     * & fill the contact fields accordingly.
+     */
+    private void initializeUI() {
+        Intent intent = getIntent();
+        if (intent.getBooleanExtra("isUpdating", false)) {
+            // We're updating, retrieve the passed-in contact
+            Contact contact = intent.getParcelableExtra("contact");
+
+            setupActionbar();
+
+            // Setup the inputs
+            contactImage.setImageURI(Uri.fromFile(new File(contact.getImgPath())));
+            contactName.setText(contact.getName());
+            contactNumber.setText(contact.getPhoneNumber());
+            contactEmail.setText(contact.getEmail());
+            contactAddress.setText(contact.getAddress());
+        }
+    }
+
+    private void setupActionbar() {
+        // Show the back arrow button
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        // Set the action bar's title
+        getSupportActionBar().setTitle(R.string.update_contact);
     }
 
     private void saveImageToDisk(Bitmap image) {
@@ -176,10 +208,23 @@ public class AlterContactActivity extends AppCompatActivity {
 
         Contact newContact = validateFields(name, phoneNumber, email, address);
         if (newContact != null) {
-            databaseAdapter.insertContact(newContact);
+            // This boolean flag indicates whether we're creating a new contact,
+            // or updating an old one.
+            boolean isUpdating = getIntent().getBooleanExtra("isUpdating", false);
+            if (isUpdating) {
+                // Update contact
 
-            // Contact successfully created
-            setResult(ResultCodes.CONTACT_CREATED);
+                // Contact successfully updated
+                setResult(ResultCodes.CONTACT_UPDATED);
+            }
+            else {
+                // Insert contact
+                databaseAdapter.insertContact(newContact);
+
+                // Contact successfully created
+                setResult(ResultCodes.CONTACT_CREATED);
+            }
+
             finish();
         }
     }

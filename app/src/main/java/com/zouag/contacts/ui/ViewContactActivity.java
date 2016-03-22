@@ -1,5 +1,6 @@
 package com.zouag.contacts.ui;
 
+import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AlertDialog;
@@ -25,6 +26,8 @@ import butterknife.Bind;
 import butterknife.ButterKnife;
 
 public class ViewContactActivity extends AppCompatActivity {
+
+    private static final int REQUEST_UPDATE_CONTACT = 200;
 
     @Bind(R.id.profilName)
     TextView profilName;
@@ -66,7 +69,7 @@ public class ViewContactActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.action_edit_contact:
-                // TODO: Edit contact
+                updateContact();
                 return true;
             case R.id.action_delete_contact:
                 deleteContact();
@@ -147,5 +150,16 @@ public class ViewContactActivity extends AppCompatActivity {
         AlertDialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);
         alertDialog.show();
+    }
+
+    /**
+     * Updates the selected contact.
+     * This method will start the activity that will proceed with the update.
+     */
+    private void updateContact() {
+        Intent intent = new Intent(this, AlterContactActivity.class);
+        intent.putExtra("isUpdating", true);
+        intent.putExtra("contact", currentContact);
+        startActivityForResult(intent, REQUEST_UPDATE_CONTACT);
     }
 }
