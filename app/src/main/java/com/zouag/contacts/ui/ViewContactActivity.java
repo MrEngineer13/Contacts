@@ -1,9 +1,8 @@
 package com.zouag.contacts.ui;
 
-import android.content.Intent;
 import android.net.Uri;
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -18,7 +17,6 @@ import com.zouag.contacts.models.ContactData;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -46,6 +44,7 @@ public class ViewContactActivity extends AppCompatActivity {
         // Set the contact's name
         Contact contact = getIntent().getExtras().getParcelable("contact");
         profilName.setText(contact.getName());
+        getSupportActionBar().setTitle(contact.getName());
 
         // Set the contact's image
         profilImage.setImageURI(Uri.fromFile(new File(contact.getImgPath())));
@@ -67,10 +66,10 @@ public class ViewContactActivity extends AppCompatActivity {
                 finish();
                 break;
             case R.id.action_edit_contact:
-                // Edit contact
+                // TODO: Edit contact
                 return true;
             case R.id.action_delete_contact:
-                // Delete contact
+                // TODO: Delete contact
                 return true;
         }
 

@@ -12,4 +12,5 @@
     <string name="contact_img_desc">The image of the contact.</string>
     <string name="edit_contact">Edit contact</string>
     <string name="delete_contact">Delete contact</string>
+    <string name="add_new_contact">Add a new contact</string>
 </resources>
