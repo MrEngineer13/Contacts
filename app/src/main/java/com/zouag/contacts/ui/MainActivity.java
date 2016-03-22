@@ -4,6 +4,8 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -13,6 +15,7 @@ import android.widget.Toast;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsAdapter;
+import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
 import com.zouag.contacts.utils.ResultCodes;
@@ -28,12 +31,13 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_VIEW_CONTACT = 101;
 
     private DatabaseAdapter databaseAdapter;
+    private List<Contact> mContacts;
 
     /**
-     * The main contacts' ListView.
+     * The main contacts' RecyclerView.
      */
     @Bind(R.id.contactsList)
-    ListView contactsListView;
+    RecyclerView contactsRecyclerView;
 
     /**
      * The TextView to be displayed in case there were no stored contacts.
@@ -73,22 +77,28 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
 
         // Get the list of contacts
-        List<Contact> contacts = getContacts();
+        mContacts = getContacts();
 
         /* Set the visibility of the empty view & the contactsListView
         according to the contacts' state */
-        emptyView.setVisibility(contacts.size() == 0 ? View.VISIBLE : View.INVISIBLE);
-        contactsListView.setVisibility(contacts.size() == 0 ?
-                View.INVISIBLE : View.VISIBLE);
+        emptyView.setVisibility(mContacts.size() == 0 ? View.VISIBLE : View.INVISIBLE);
+        contactsRecyclerView.setVisibility(mContacts.size() == 0 ? View.INVISIBLE : View.VISIBLE);
 
-        // Setup the adapter & the ListView
-        ContactsAdapter adapter = new ContactsAdapter(this, contacts);
+        // Setup the adapter & the RecyclerView
+        setupRecyclerView();
+    }
+
+    private void setupRecyclerView() {
+        ContactsRecyclerAdapter adapter = new ContactsRecyclerAdapter(this, mContacts);
         adapter.setContactClickListener(contact -> {
             Intent intent = new Intent(this, ViewContactActivity.class);
             intent.putExtra("contact", contact);
             startActivityForResult(intent, REQUEST_VIEW_CONTACT);
         });
-        contactsListView.setAdapter(adapter);
+        contactsRecyclerView.setLayoutManager(
+                new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        contactsRecyclerView.setHasFixedSize(true);
+        contactsRecyclerView.setAdapter(adapter);
     }
 
     @Override
