@@ -20,6 +20,7 @@ import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
 import com.zouag.contacts.utils.ResultCodes;
+import com.zouag.contacts.utils.Validation;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -239,8 +240,7 @@ public class AlterContactActivity extends AppCompatActivity {
 
                 // Contact successfully updated
                 setResult(ResultCodes.CONTACT_UPDATED);
-            }
-            else {
+            } else {
                 // Insert contact
                 databaseAdapter.insertContact(newContact);
 
@@ -287,31 +287,56 @@ public class AlterContactActivity extends AppCompatActivity {
      */
     private Contact validateFields(String name, String phoneNumber,
                                    String email, String address) {
-        String dialogTitle;
+        String dialogTitle = "";
         // The error message to be displayed in case the validation failed.
-        String dialogMessage;
+        String dialogMessage = "";
 
-        boolean nameStatus = name.length() > 0;
-        boolean phoneStatus = phoneNumber.length() == 10;
-        boolean emailStatus = email.length() != 0;
-        boolean addressStatus = address.length() != 0;
+        boolean nameLengthStatus = name.length() > 0;
+        boolean nameValidStatus = Validation.isAlpha(name);
+        boolean phoneStatus = (phoneNumber.length() == 10);
+        boolean emailLengthStatus = email.length() != 0;
 
-        if (nameStatus && phoneStatus) {
-            return new Contact.Builder()
+        if (nameLengthStatus && nameValidStatus && phoneStatus) {
+
+            boolean emailValidStatus = Validation.isValidEmail(email);
+            boolean addressStatus = address.length() != 0;
+
+            Contact.Builder contactBuilder = new Contact.Builder()
                     .name(name)
                     .phoneNumber(phoneNumber)
-                    .email(emailStatus ? email : "")
-                    .address(addressStatus ? address : "")
-                    .imgPath(current_img_path)
-                    .createContact();
-        } else if (!nameStatus) {
+                    .imgPath(current_img_path);
+
+            if (emailLengthStatus) {
+                // An email has been specified, verify it.
+                if (!emailValidStatus) {
+                    // Invalid Email address.
+                    dialogTitle = "Invalid Email address.";
+                    dialogMessage = "Please enter a valid email address.";
+
+                    showDialog(dialogTitle, dialogMessage, "GOT IT", null);
+                    return null;
+                } else
+                    contactBuilder.email(email);
+            } else {
+                contactBuilder.email("");
+            }
+
+            contactBuilder.address(addressStatus ? address : "");
+            return contactBuilder.createContact();
+
+        } else if (!nameLengthStatus) {
             // Invalid contact name.
             dialogTitle = "Invalid contact name.";
             dialogMessage = "Please enter the name of the new contact.";
-        } else {
+        } else if (!nameValidStatus) {
+            // Invalid contact name.
+            dialogTitle = "Invalid contact name.";
+            dialogMessage = "Please enter a valid contact name.";
+        } else if (!phoneStatus) {
             // Invalid phone number.
             dialogTitle = "Invalid phone number.";
             dialogMessage = "Please enter the phone number of the new contact.";
+            contactNumber.setError("10 digits");
         }
 
         // Something went wrong: show the error dialog.

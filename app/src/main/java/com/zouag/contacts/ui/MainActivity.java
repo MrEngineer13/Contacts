@@ -97,8 +97,6 @@ public class MainActivity extends AppCompatActivity {
 
         switch (requestCode) {
             case REQUEST_ADD_NEW:
-                Toast.makeText(this, "Result code: " + resultCode, Toast.LENGTH_LONG).show();
-
                 switch (resultCode) {
                     case ResultCodes.CONTACT_CREATED:
                         message = "Contact successfully added.";
