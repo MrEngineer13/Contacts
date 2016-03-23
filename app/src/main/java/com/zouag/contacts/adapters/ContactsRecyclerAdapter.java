@@ -17,6 +17,8 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 
+import de.hdodenhof.circleimageview.CircleImageView;
+
 /**
  * Created by Mohammed Aouf ZOUAG on 22/03/2016.
  */
@@ -105,12 +107,12 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView nameText;
-        private final ImageView contactImage;
+        private final CircleImageView contactImage;
 
         ViewHolder(View v) {
             super(v);
             nameText = (TextView) v.findViewById(R.id.nameText);
-            contactImage = (ImageView) v.findViewById(R.id.rowContactImage);
+            contactImage = (CircleImageView) v.findViewById(R.id.mainContactImage);
 
             // Notify the activity to display the contact
             v.setOnClickListener(view -> listener.showContact(mContacts.get(getLayoutPosition())));

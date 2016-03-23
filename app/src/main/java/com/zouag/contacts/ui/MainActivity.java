@@ -17,6 +17,7 @@ import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.utils.SpacesItemDecoration;
 import com.zouag.contacts.utils.ResultCodes;
 
 import java.util.ArrayList;
@@ -56,6 +57,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         ButterKnife.bind(this);
 
         databaseAdapter = DatabaseAdapter.getInstance(this);
+        contactsRecyclerView.addItemDecoration(new SpacesItemDecoration(20));
     }
 
     @Override
