@@ -49,19 +49,31 @@ public class ContactDetailsAdapter extends RecyclerView.Adapter<ContactDetailsAd
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         TextView description;
-        TextView data;
+        TextView itemData;
         ImageView icon;
 
         ViewHolder(View v) {
             super(v);
             description = (TextView) v.findViewById(R.id.description);
-            data = (TextView) v.findViewById(R.id.data);
+            itemData = (TextView) v.findViewById(R.id.data);
             icon = (ImageView) v.findViewById(R.id.detailIcon);
         }
 
         public void bind(ContactData dat) {
+            String desc = dat.getDescription();
+            if (desc.equals(mContext.getString(R.string.mobile))) {
+
+                // Show the telephone number as a series of 2 numbers separated by a space.
+
+                String data = dat.getData();
+                for (int i = 2; i < data.length(); i += 3)
+                    data = data.substring(0, i) + " " + data.substring(i);
+
+                dat.setData(data);
+            }
+
             description.setText(dat.getDescription());
-            data.setText(dat.getData());
+            itemData.setText(dat.getData());
             icon.setImageResource(dat.getIcon());
         }
     }

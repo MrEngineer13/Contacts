@@ -28,6 +28,10 @@ public class ContactData {
         return icon;
     }
 
+    public void setData(String data) {
+        this.data = data;
+    }
+
     @Override
     public String toString() {
         return "ContactData{" +
