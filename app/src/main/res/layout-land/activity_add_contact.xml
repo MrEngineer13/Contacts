@@ -101,7 +101,7 @@
         android:layout_width="0dp"
         android:layout_height="match_parent"
         android:layout_weight="1"
-        android:background="#CE93D8" />
+        android:background="#616161" />
 
     <RelativeLayout
         android:id="@+id/nameLayout"
