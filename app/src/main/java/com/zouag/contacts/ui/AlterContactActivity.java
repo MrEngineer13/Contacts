@@ -108,8 +108,7 @@ public class AlterContactActivity extends AppCompatActivity {
                         else {
                             Toast.makeText(this,
                                     String.format(
-                                            "Maximum image size exceeded. " +
-                                                    "(%d MB)\nPlease try a different one.",
+                                            getString(R.string.maximum_img_size_exceeded),
                                             IMAGE_SIZE_LIMIT / (1024 * 1024)),
                                     Toast.LENGTH_LONG).show();
                         }
@@ -142,13 +141,12 @@ public class AlterContactActivity extends AppCompatActivity {
         } catch (FileNotFoundException e) {
             e.printStackTrace();
             Toast.makeText(this,
-                    "There was an error opening the image.",
+                    R.string.error_opening_img,
                     Toast.LENGTH_LONG).show();
         } catch (IOException e) {
             e.printStackTrace();
             Toast.makeText(this,
-                    "An unknown error occured. " +
-                            "Please try again with a different image.",
+                    R.string.unknown_error,
                     Toast.LENGTH_LONG).show();
         }
 
@@ -312,7 +310,7 @@ public class AlterContactActivity extends AppCompatActivity {
         CharSequence options[] = new CharSequence[]{"Gallery", "Camera"};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Choose image from ...");
+        builder.setTitle(getString(R.string.choose_img_from));
         builder.setItems(options, (dialog, which) -> {
             switch (which) {
                 case 0:
@@ -361,10 +359,10 @@ public class AlterContactActivity extends AppCompatActivity {
                 // An email has been specified, verify it.
                 if (!emailValidStatus) {
                     // Invalid Email address.
-                    dialogTitle = "Invalid Email address.";
-                    dialogMessage = "Please enter a valid email address.";
+                    dialogTitle = getString(R.string.invalid_email);
+                    dialogMessage = getString(R.string.enter_valid_email);
 
-                    showDialog(dialogTitle, dialogMessage, "GOT IT", null);
+                    showDialog(dialogTitle, dialogMessage, getString(R.string.ok), null);
                     return null;
                 } else
                     contactBuilder.email(email);
@@ -377,21 +375,21 @@ public class AlterContactActivity extends AppCompatActivity {
 
         } else if (!nameLengthStatus) {
             // Invalid contact name.
-            dialogTitle = "Invalid contact name.";
-            dialogMessage = "Please enter the name of the new contact.";
+            dialogTitle = getString(R.string.invalid_contact);
+            dialogMessage = getString(R.string.enter_contact_name);
         } else if (!nameValidStatus) {
             // Invalid contact name.
-            dialogTitle = "Invalid contact name.";
-            dialogMessage = "Please enter a valid contact name.";
+            dialogTitle = getString(R.string.invalid_contact);
+            dialogMessage = getString(R.string.enter_valid_contact_name);
         } else if (!phoneStatus) {
             // Invalid phone number.
-            dialogTitle = "Invalid phone number.";
-            dialogMessage = "Please enter the phone number of the new contact.";
+            dialogTitle = getString(R.string.invalid_phone);
+            dialogMessage = getString(R.string.enter_valid_phone);
             contactNumber.setError("10 digits");
         }
 
         // Something went wrong: show the error dialog.
-        showDialog(dialogTitle, dialogMessage, "GOT IT", null);
+        showDialog(dialogTitle, dialogMessage, getString(R.string.ok), null);
 
         return null;
     }

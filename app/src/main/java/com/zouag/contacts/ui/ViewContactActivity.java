@@ -97,7 +97,7 @@ public class ViewContactActivity extends AppCompatActivity {
                         requestNewContactInfo();
 
                         Snackbar.make(getWindow().getDecorView(),
-                                "Contact successfully updated.",
+                                R.string.contact_updated,
                                 Snackbar.LENGTH_LONG).show();
                         break;
                 }
@@ -134,19 +134,25 @@ public class ViewContactActivity extends AppCompatActivity {
         if (!"".equals(currentContact.getPhoneNumber())) {
             contactDataList.add(
                     new ContactData(
-                            "Mobile", currentContact.getPhoneNumber(), R.drawable.ic_action_phone_start));
+                            getString(R.string.mobile),
+                            currentContact.getPhoneNumber(),
+                            R.drawable.ic_action_phone_start));
         }
 
         if (!"".equals(currentContact.getEmail())) {
             contactDataList.add(
                     new ContactData(
-                            "Email", currentContact.getEmail(), R.drawable.ic_action_attachment));
+                            getString(R.string.email),
+                            currentContact.getEmail(),
+                            R.drawable.ic_action_attachment));
         }
 
         if (!"".equals(currentContact.getAddress())) {
             contactDataList.add(
                     new ContactData(
-                            "Address", currentContact.getAddress(), R.drawable.ic_action_location));
+                            getString(R.string.address),
+                            currentContact.getAddress(),
+                            R.drawable.ic_action_location));
         }
     }
 
@@ -171,11 +177,10 @@ public class ViewContactActivity extends AppCompatActivity {
      */
     private void deleteContact() {
         AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
-        builder.setTitle("Delete contact");
-        builder.setMessage("Are you sure that you want to delete this contact ?\n" +
-                "This operation cannot be undone.");
-        builder.setNegativeButton("Cancel", null)
-                .setPositiveButton("I'm positive", (dialog, which) -> {
+        builder.setTitle(getString(R.string.delete_contact));
+        builder.setMessage(getString(R.string.are_you_sure_delete_contact));
+        builder.setNegativeButton(getString(R.string.cancel), null)
+                .setPositiveButton(getString(R.string.positive), (dialog, which) -> {
                     DatabaseAdapter databaseAdapter =
                             DatabaseAdapter.getInstance(ViewContactActivity.this);
                     databaseAdapter.deleteContact(currentContact.getId());

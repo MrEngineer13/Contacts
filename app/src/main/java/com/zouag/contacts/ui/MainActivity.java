@@ -132,10 +132,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             case REQUEST_ADD_NEW:
                 switch (resultCode) {
                     case ResultCodes.CONTACT_CREATED:
-                        message = "Contact successfully added.";
+                        message = getString(R.string.contact_added);
                         break;
                     case RESULT_CANCELED:
-                        message = "Adding contact discarded.";
+                        message = getString(R.string.adding_contact_discarded);
                         break;
                 }
 
@@ -146,7 +146,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 switch (resultCode) {
                     case ResultCodes.CONTACT_DELETED:
                         // A contact has been deleted
-                        message = "The contact has been removed from your directory.";
+                        message = getString(R.string.contact_removed);
                         break;
                 }
 
