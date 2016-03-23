@@ -177,7 +177,7 @@ public class AlterContactActivity extends AppCompatActivity {
             // Setup the inputs
             String imgPath = contact.getImgPath();
             if ("".equals(imgPath))
-                contactImage.setImageResource(R.drawable.ic_action_user);
+                contactImage.setImageResource(R.drawable.ic_action_user_grey);
             else
                 contactImage.setImageURI(Uri.fromFile(new File(imgPath)));
             contactName.setText(contact.getName());

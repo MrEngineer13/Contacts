@@ -116,7 +116,7 @@
             android:layout_centerHorizontal="true"
             android:contentDescription="@string/contact_img_desc"
             android:onClick="onImageClicked"
-            android:src="@drawable/ic_action_user" />
+            android:src="@drawable/ic_action_user_grey" />
 
         <EditText
             android:id="@+id/contactName"
