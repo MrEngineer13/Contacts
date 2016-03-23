@@ -1,6 +1,5 @@
 <resources>
     <string name="app_name">Contacts</string>
-    <string name="no_contacts">There are no entries in your contacts list.</string>
     <string name="add_contact">Add contact</string>
     <string name="name">Name</string>
     <string name="mobile">Mobile</string>

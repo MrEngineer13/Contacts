@@ -16,12 +16,33 @@
         android:layout_height="match_parent"
         android:divider="@null" />
 
-    <TextView
-        android:id="@+id/noContactsEmptyView"
+    <RelativeLayout
+        android:id="@+id/emptyLayout"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:gravity="center"
-        android:text="@string/no_contacts"
-        android:textStyle="italic" />
+        android:nestedScrollingEnabled="false"
+        android:onClick="onEmptyViewClicked">
+
+        <TextView
+            android:id="@+id/noContactsEmptyView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="Add a new contact"
+            android:textColor="#ffffffff"
+            android:textStyle="italic"
+            android:layout_marginTop="10dp"
+            android:layout_centerInParent="true"
+            android:layout_below="@+id/addImageView" />
+
+        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
+            android:id="@+id/addImageView"
+            android:layout_width="60dp"
+            android:layout_height="60dp"
+            android:src="@drawable/ic_action_add"
+            app:civ_border_color="#FFFFFFFF"
+            app:civ_border_width="1dp"
+            android:layout_centerInParent="true" />
+    </RelativeLayout>
 
 </RelativeLayout>

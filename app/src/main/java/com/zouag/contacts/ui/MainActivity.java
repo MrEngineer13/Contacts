@@ -11,14 +11,14 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.TextView;
+import android.widget.RelativeLayout;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
-import com.zouag.contacts.utils.SpacesItemDecoration;
 import com.zouag.contacts.utils.ResultCodes;
+import com.zouag.contacts.utils.SpacesItemDecoration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,8 +47,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     /**
      * The TextView to be displayed in case there were no stored contacts.
      */
-    @Bind(R.id.noContactsEmptyView)
-    TextView emptyView;
+    @Bind(R.id.emptyLayout)
+    RelativeLayout emptyView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -74,8 +74,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case R.id.action_add:
-                startActivityForResult(
-                        new Intent(this, AlterContactActivity.class), REQUEST_ADD_NEW);
+                startAddContactActivity();
                 return true;
             case R.id.action_quit:
                 finish();
@@ -83,6 +82,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void startAddContactActivity() {
+        startActivityForResult(
+                new Intent(this, AlterContactActivity.class), REQUEST_ADD_NEW);
+    }
+
+    /**
+     * @param view the empty view of the activity.
+     */
+    public void onEmptyViewClicked(View view) {
+        startAddContactActivity();
     }
 
     @Override
