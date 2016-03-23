@@ -4,7 +4,7 @@ import android.text.TextUtils;
 
 /**
  * Created by Mohammed Aouf ZOUAG on 22/03/2016.
- *
+ * <p>
  * This class holds several methods to validate the contents
  * of different inputs of the application.
  */

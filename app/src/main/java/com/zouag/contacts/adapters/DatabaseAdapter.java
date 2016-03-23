@@ -150,7 +150,7 @@ public class DatabaseAdapter {
     }
 
     /**
-     * @param rowId of the contact to update
+     * @param rowId      of the contact to update
      * @param newContact
      * @return true if the update was successful, and false otherwise.
      */

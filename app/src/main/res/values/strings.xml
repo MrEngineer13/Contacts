@@ -16,4 +16,5 @@
     <string name="update_contact">Update existing contact</string>
     <string name="search">Search</string>
     <string name="close_app">Close the app</string>
+    <string name="no_contacts_add_new">Add a new contact</string>
 </resources>

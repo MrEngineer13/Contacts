@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="60dp"
+    android:background="?android:attr/selectableItemBackground"
     android:orientation="horizontal"
     tools:background="@color/colorPrimaryDark">
 
@@ -27,6 +28,7 @@
         android:layout_weight="70"
         android:gravity="left|center_vertical"
         android:paddingLeft="10dp"
+        android:singleLine="true"
         android:text="New Text"
         android:textColor="#ffffffff"
         android:textSize="24sp" />
