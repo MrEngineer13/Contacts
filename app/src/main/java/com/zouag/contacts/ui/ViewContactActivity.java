@@ -8,6 +8,7 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -31,10 +32,6 @@ public class ViewContactActivity extends AppCompatActivity {
 
     private static final int REQUEST_UPDATE_CONTACT = 200;
 
-    @Bind(R.id.profilName)
-    TextView profilName;
-    @Bind(R.id.profilImage)
-    ImageView profilImage;
     @Bind(R.id.detailsRecyclerview)
     RecyclerView detailsRecyclerView;
 
@@ -54,6 +51,9 @@ public class ViewContactActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         currentContact = getIntent().getExtras().getParcelable("contact");
+
+        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
+        setSupportActionBar(toolbar);
 
         setupContactData();
         setupActionbar();
@@ -120,14 +120,14 @@ public class ViewContactActivity extends AppCompatActivity {
      */
     private void setupContactData() {
         // Set the contact's name
-        profilName.setText(currentContact.getName());
+        /*profilName.setText(currentContact.getName());
 
         // Set the contact's image
         String imgPath = currentContact.getImgPath();
         if ("".equals(imgPath))
             profilImage.setImageResource(R.drawable.ic_action_user);
         else
-            profilImage.setImageURI(Uri.fromFile(new File(imgPath)));
+            profilImage.setImageURI(Uri.fromFile(new File(imgPath)));*/
 
         contactDataList = new ArrayList<>();
 
