@@ -1,17 +1,21 @@
 package com.zouag.contacts.ui;
 
 import android.content.Intent;
+import android.graphics.Bitmap;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.design.widget.Snackbar;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
@@ -19,12 +23,23 @@ import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
 import com.zouag.contacts.utils.ResultCodes;
 import com.zouag.contacts.utils.SpacesItemDecoration;
+import com.zouag.contacts.utils.VCFContactConverter;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStreamWriter;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import ezvcard.Ezvcard;
+import ezvcard.VCard;
+import ezvcard.VCardVersion;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
@@ -91,7 +106,48 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * Exports the list of contacts to a .vcf file.
      */
     private void exportContacts() {
+        List<VCard> cards = VCFContactConverter.parse(mContacts);
+        writeContactsToFile(cards);
+        Log.i("TESTING VCF", cards.toString());
+    }
 
+    private void writeContactsToFile(List<VCard> cards) {
+        String appName = getString(R.string.app_name);
+        File mediaStorageDir = new File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
+                appName);
+
+        if (!mediaStorageDir.exists()) {
+            if (!mediaStorageDir.mkdirs()) {
+                Log.e("CONTACTS", "Failed to create directory.");
+            }
+        }
+
+        String path = mediaStorageDir.getPath() + File.separator + "contacts_save.vcf";
+        File vcfFile = new File(path);
+
+        FileOutputStream out = null;
+        try {
+            out = new FileOutputStream(vcfFile);
+            OutputStreamWriter writer = new OutputStreamWriter(out);
+
+            String vcardString = Ezvcard.write(cards).version(VCardVersion.V4_0).go();
+
+            writer.write(vcardString);
+            writer.close();
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                if (out != null) {
+                    out.close();
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
+        Toast.makeText(this, "VCF successfully saved !", Toast.LENGTH_LONG).show();
     }
 
     private void startAddContactActivity() {
