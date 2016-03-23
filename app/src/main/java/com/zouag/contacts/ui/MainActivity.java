@@ -76,12 +76,22 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             case R.id.action_add:
                 startAddContactActivity();
                 return true;
+            case R.id.action_export_contacts:
+                exportContacts();
+                return true;
             case R.id.action_quit:
                 finish();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Exports the list of contacts to a .vcf file.
+     */
+    private void exportContacts() {
+
     }
 
     private void startAddContactActivity() {

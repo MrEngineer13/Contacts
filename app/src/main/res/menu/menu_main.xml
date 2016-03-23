@@ -2,14 +2,19 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
-        android:id="@+id/action_quit"
+        android:id="@+id/action_export_contacts"
         android:orderInCategory="100"
+        android:title="Export contacts"
+        app:showAsAction="never" />
+    <item
+        android:id="@+id/action_quit"
+        android:orderInCategory="101"
         android:title="@string/close_app"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_add"
         android:icon="@drawable/ic_action_add"
-        android:orderInCategory="101"
+        android:orderInCategory="102"
         android:title="@string/add_contact"
         app:showAsAction="always" />
 
