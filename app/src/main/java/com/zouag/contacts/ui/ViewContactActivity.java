@@ -6,10 +6,11 @@ import android.os.Bundle;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.ListView;
 import android.widget.TextView;
 
 import com.zouag.contacts.R;
@@ -34,8 +35,8 @@ public class ViewContactActivity extends AppCompatActivity {
     TextView profilName;
     @Bind(R.id.profilImage)
     ImageView profilImage;
-    @Bind(R.id.detailsListview)
-    ListView detailsListview;
+    @Bind(R.id.detailsRecyclerview)
+    RecyclerView detailsRecyclerView;
 
     /**
      * The currently viewed contact.
@@ -56,7 +57,7 @@ public class ViewContactActivity extends AppCompatActivity {
 
         setupContactData();
         setupActionbar();
-        setupDetailsListView();
+        setupDetailsRecyclerView();
     }
 
     @Override
@@ -110,7 +111,7 @@ public class ViewContactActivity extends AppCompatActivity {
 
         setupContactData();
         setupActionbar();
-        setupDetailsListView();
+        setupDetailsRecyclerView();
     }
 
     /**
@@ -158,9 +159,11 @@ public class ViewContactActivity extends AppCompatActivity {
         getSupportActionBar().setTitle(currentContact.getName());
     }
 
-    private void setupDetailsListView() {
+    private void setupDetailsRecyclerView() {
         ContactDetailsAdapter adapter = new ContactDetailsAdapter(this, contactDataList);
-        detailsListview.setAdapter(adapter);
+        detailsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        detailsRecyclerView.setHasFixedSize(true);
+        detailsRecyclerView.setAdapter(adapter);
     }
 
     /**
@@ -171,14 +174,15 @@ public class ViewContactActivity extends AppCompatActivity {
         builder.setTitle("Delete contact");
         builder.setMessage("Are you sure that you want to delete this contact ?\n" +
                 "This operation cannot be undone.");
-        builder.setPositiveButton("I'm positive", (dialog, which) -> {
-            DatabaseAdapter databaseAdapter =
-                    DatabaseAdapter.getInstance(ViewContactActivity.this);
-            databaseAdapter.deleteContact(currentContact.getId());
+        builder.setNegativeButton("Cancel", null)
+                .setPositiveButton("I'm positive", (dialog, which) -> {
+                    DatabaseAdapter databaseAdapter =
+                            DatabaseAdapter.getInstance(ViewContactActivity.this);
+                    databaseAdapter.deleteContact(currentContact.getId());
 
-            setResult(ResultCodes.CONTACT_DELETED);
-            finish();
-        });
+                    setResult(ResultCodes.CONTACT_DELETED);
+                    finish();
+                });
 
         AlertDialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(false);

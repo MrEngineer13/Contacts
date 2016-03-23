@@ -1,65 +1,68 @@
 package com.zouag.contacts.adapters;
 
 import android.content.Context;
-import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.models.ContactData;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Created by Mohammed Aouf ZOUAG on 21/03/2016.
- * <p>
- * The adapter of the contacts' details list view.
+ * Created by Mohammed Aouf ZOUAG on 22/03/2016.
  */
-public class ContactDetailsAdapter extends ArrayAdapter<ContactData> {
+public class ContactDetailsAdapter extends RecyclerView.Adapter<ContactDetailsAdapter.ViewHolder> {
 
-    private Context context;
-    private List<ContactData> details;
+    private Context mContext;
+    private List<ContactData> contactData;
 
-    public ContactDetailsAdapter(Context context, List<ContactData> details) {
-        super(context, -1, details);
-
-        this.context = context;
-        this.details = details;
+    public ContactDetailsAdapter(Context context, List<ContactData> contactData) {
+        mContext = context;
+        this.contactData = new ArrayList<>(contactData);
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
-        ViewHolder viewHolder;
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+        View v = LayoutInflater.from(viewGroup.getContext())
+                .inflate(R.layout.contact_detail_row, viewGroup, false);
 
-        if (convertView == null) {
-            LayoutInflater inflater = ((AppCompatActivity) context).getLayoutInflater();
-            convertView = inflater.inflate(R.layout.contact_detail_row, parent, false);
-            // Setup the ViewHolder
-            viewHolder = new ViewHolder();
-            viewHolder.description = (TextView) convertView.findViewById(R.id.description);
-            viewHolder.data = (TextView) convertView.findViewById(R.id.data);
-            viewHolder.icon = (ImageView) convertView.findViewById(R.id.detailIcon);
-
-            convertView.setTag(viewHolder);
-        } else {
-            viewHolder = (ViewHolder) convertView.getTag();
-        }
-
-        ContactData contactData = details.get(position);
-        viewHolder.description.setText(contactData.getDescription());
-        viewHolder.data.setText(contactData.getData());
-        viewHolder.icon.setImageResource(contactData.getIcon());
-
-        return convertView;
+        return new ViewHolder(v);
     }
 
-    private static class ViewHolder {
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        ContactData data = contactData.get(position);
+        viewHolder.bind(data);
+    }
+
+    @Override
+    public int getItemCount() {
+        return contactData.size();
+    }
+
+    public class ViewHolder extends RecyclerView.ViewHolder {
+
         TextView description;
         TextView data;
         ImageView icon;
+
+        ViewHolder(View v) {
+            super(v);
+            description = (TextView) v.findViewById(R.id.description);
+            data = (TextView) v.findViewById(R.id.data);
+            icon = (ImageView) v.findViewById(R.id.detailIcon);
+        }
+
+        public void bind(ContactData dat) {
+            description.setText(dat.getDescription());
+            data.setText(dat.getData());
+            icon.setImageResource(dat.getIcon());
+        }
     }
 }

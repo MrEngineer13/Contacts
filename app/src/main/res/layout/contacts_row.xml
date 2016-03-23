@@ -28,7 +28,6 @@
         android:layout_weight="70"
         android:gravity="left|center_vertical"
         android:paddingLeft="10dp"
-        android:singleLine="true"
         android:text="New Text"
         android:textColor="#ffffffff"
         android:textSize="24sp" />

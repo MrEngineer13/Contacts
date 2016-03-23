@@ -19,6 +19,7 @@
         android:layout_marginTop="10dp"
         android:layout_toLeftOf="@+id/detailIcon"
         android:gravity="left|center_vertical"
+        android:singleLine="true"
         android:textColor="#000000"
         android:textSize="20sp"
         tools:text="06 94 36 30 53" />
