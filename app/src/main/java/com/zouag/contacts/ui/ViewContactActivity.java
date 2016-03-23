@@ -35,6 +35,9 @@ public class ViewContactActivity extends AppCompatActivity {
     @Bind(R.id.detailsRecyclerview)
     RecyclerView detailsRecyclerView;
 
+    @Bind(R.id.profileImage)
+    ImageView profileImage;
+
     /**
      * The currently viewed contact.
      */
@@ -119,15 +122,12 @@ public class ViewContactActivity extends AppCompatActivity {
      * These details will be passed to a custom adapter to be displayed.
      */
     private void setupContactData() {
-        // Set the contact's name
-        /*profilName.setText(currentContact.getName());
-
         // Set the contact's image
         String imgPath = currentContact.getImgPath();
         if ("".equals(imgPath))
-            profilImage.setImageResource(R.drawable.ic_action_user);
+            profileImage.setImageResource(R.drawable.ic_action_user);
         else
-            profilImage.setImageURI(Uri.fromFile(new File(imgPath)));*/
+            profileImage.setImageURI(Uri.fromFile(new File(imgPath)));
 
         contactDataList = new ArrayList<>();
 
