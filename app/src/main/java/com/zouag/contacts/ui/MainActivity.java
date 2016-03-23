@@ -77,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 startActivityForResult(
                         new Intent(this, AlterContactActivity.class), REQUEST_ADD_NEW);
                 return true;
+            case R.id.action_quit:
+                finish();
+                return true;
         }
 
         return super.onOptionsItemSelected(item);

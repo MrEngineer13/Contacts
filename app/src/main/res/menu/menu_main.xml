@@ -2,11 +2,16 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto">
     <item
+        android:id="@+id/action_quit"
+        android:orderInCategory="100"
+        android:title="@string/close_app"
+        app:showAsAction="never" />
+    <item
         android:id="@+id/action_add"
         android:icon="@drawable/ic_action_add"
-        android:orderInCategory="100"
+        android:orderInCategory="101"
         android:title="@string/add_contact"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
     <item
         android:id="@+id/action_search"
