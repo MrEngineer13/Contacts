@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.annimon.stream.Stream;
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
@@ -25,8 +26,11 @@ import com.zouag.contacts.utils.SpacesItemDecoration;
 import com.zouag.contacts.utils.VCFContactConverter;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,6 +91,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             case R.id.action_add:
                 startAddContactActivity();
                 return true;
+            case R.id.action_import_contacts:
+                importContacts();
+                return true;
             case R.id.action_export_contacts:
                 exportContacts();
                 return true;
@@ -96,6 +103,25 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Imports the list of contacts that are present in the .vcf file.
+     */
+    private void importContacts() {
+        // Get the .vcf file
+        File file = new File(VCFContactConverter.getVCFSavePath(this));
+        try {
+            FileInputStream fis = new FileInputStream(file);
+            InputStreamReader reader = new InputStreamReader(fis);
+
+            List<VCard> vCards = Ezvcard.parse(reader).all();
+            Stream.of(vCards)
+                    .forEach(card -> Log.i("CARD", card.toString()));
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -119,7 +145,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         }
 
-        String path = mediaStorageDir.getPath() + File.separator + "contacts_save.vcf";
+        String path = VCFContactConverter.getVCFSavePath(this);
         File vcfFile = new File(path);
 
         FileOutputStream out = null;

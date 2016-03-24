@@ -1,9 +1,14 @@
 package com.zouag.contacts.utils;
 
+import android.content.Context;
+import android.os.Environment;
+
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
+import com.zouag.contacts.R;
 import com.zouag.contacts.models.Contact;
 
+import java.io.File;
 import java.util.List;
 
 import ezvcard.VCard;
@@ -39,5 +44,18 @@ public class VCFContactConverter {
                     return vCard;
                 })
                 .collect(Collectors.toList());
+    }
+
+    /**
+     * @param context
+     * @return the path of the file where the contacts' .vcf file will be created.
+     */
+    public static String getVCFSavePath(Context context) {
+        String appName = context.getString(R.string.app_name);
+        File mediaStorageDir = new File(
+                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
+                appName);
+
+        return mediaStorageDir.getPath() + File.separator + "contacts_save.vcf";
     }
 }
