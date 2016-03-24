@@ -17,6 +17,8 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
+import com.annimon.stream.Collectors;
+import com.annimon.stream.Stream;
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
@@ -118,6 +120,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             // Get the list of VCards stored inside the .vcf file
             List<VCard> vCards = Ezvcard.parse(reader).all();
 
+            // Convert those cards to Contact objects
+            mContacts = VCFContactConverter.parseVCards(vCards);
+
             // Show alert dialog
             CharSequence options[] = new CharSequence[]
                     {"Append to existing contacts", "Overwrite existing contacts"};
@@ -128,10 +133,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         switch (which) {
                             case 0:
                                 // Append
+                                appendContacts(mContacts);
                                 break;
                             case 1:
                                 // Overwrite
-                                overwriteContacts(vCards);
+                                overwriteContacts(mContacts);
                                 break;
                         }
 
@@ -153,15 +159,29 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * Converts the passed-in list of VCards to Contact objects, deletes all
-     * existing contacts & adds the new ones.
+     * Appends these contacts to the list of existing contacts.
      *
-     * @param vCards to be converted & saved
+     * @param contacts to be appended
      */
-    private void overwriteContacts(List<VCard> vCards) {
-        // Convert those cards to Contact objects
-        mContacts = VCFContactConverter.parseVCards(vCards);
+    private void appendContacts(List<Contact> contacts) {
+        List<Contact> filteredContacts = filterExistingContacts(contacts);
 
+        // Save new contacts to database
+        databaseAdapter.insertContacts(filteredContacts);
+    }
+
+    private List<Contact> filterExistingContacts(List<Contact> contacts) {
+        return Stream.of(contacts)
+                .filter(contact -> !mContacts.contains(contact))
+                .collect(Collectors.toList());
+    }
+
+    /**
+     * Deletes all existing contacts & adds the new ones.
+     *
+     * @param contacts to be saved
+     */
+    private void overwriteContacts(List<Contact> contacts) {
         // Drop all existing contacts
         databaseAdapter.deleteAllContacts();
 
