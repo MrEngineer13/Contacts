@@ -27,7 +27,6 @@ import com.zouag.contacts.utils.VCFContactConverter;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -128,7 +127,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * Exports the list of contacts to a .vcf file.
      */
     private void exportContacts() {
-        List<VCard> cards = VCFContactConverter.parse(mContacts);
+        List<VCard> cards = VCFContactConverter.parseContacts(mContacts);
         writeContactsToFile(cards);
         Log.i("TESTING VCF", cards.toString());
     }
