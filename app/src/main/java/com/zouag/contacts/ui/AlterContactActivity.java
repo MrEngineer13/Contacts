@@ -2,6 +2,7 @@ package com.zouag.contacts.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -56,6 +57,7 @@ public class AlterContactActivity extends AppCompatActivity {
      * The ID of the currently-being-modified contact.
      */
     private int currentContactID;
+    private DatabaseAdapter databaseAdapter;
 
     @Bind(R.id.contactName)
     EditText contactName;
@@ -65,17 +67,17 @@ public class AlterContactActivity extends AppCompatActivity {
     EditText contactEmail;
     @Bind(R.id.contactAddress)
     EditText contactAddress;
-
     @Bind(R.id.contactImage)
     ImageView contactImage;
-
-    private DatabaseAdapter databaseAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_contact);
         ButterKnife.bind(this);
+
+        if (savedInstanceState != null)
+            current_img_path = savedInstanceState.getString("imgPath");
 
         databaseAdapter = DatabaseAdapter.getInstance(this);
         initializeUI();
@@ -90,6 +92,14 @@ public class AlterContactActivity extends AppCompatActivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle outState) {
+        // Save the path of the selected image on orientation change
+        outState.putString("imgPath", current_img_path);
+
+        super.onSaveInstanceState(outState);
     }
 
     @Override
@@ -173,19 +183,29 @@ public class AlterContactActivity extends AppCompatActivity {
             // Save the ID of the currently-being-modified contact
             currentContactID = contact.getId();
 
-            // Setup the inputs
-            String imgPath = contact.getImgPath();
-            if ("".equals(imgPath))
-                contactImage.setImageResource(R.drawable.ic_action_user_grey);
-            else
-                contactImage.setImageURI(Uri.fromFile(new File(imgPath)));
+            if (!"".equals(current_img_path)) {
+                // An image has been saved from the previous device's orientation change
+
+                contactImage.setImageURI(Uri.fromFile(new File(current_img_path)));
+            } else {
+                // Setup the inputs
+                String imgPath = contact.getImgPath();
+                if ("".equals(imgPath)) {
+                    if (!"".equals(current_img_path)) {
+                        contactImage.setImageURI(Uri.fromFile(new File(current_img_path)));
+                    } else
+                        contactImage.setImageResource(R.drawable.ic_action_user_grey);
+
+                } else
+                    contactImage.setImageURI(Uri.fromFile(new File(imgPath)));
+
+                current_img_path = imgPath;
+            }
+
             contactName.setText(contact.getName());
             contactNumber.setText(contact.getPhoneNumber());
             contactEmail.setText(contact.getEmail());
             contactAddress.setText(contact.getAddress());
-
-            // Setup the current contact's image path
-            current_img_path = contact.getImgPath();
         }
     }
 

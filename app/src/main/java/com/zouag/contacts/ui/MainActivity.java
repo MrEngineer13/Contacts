@@ -15,7 +15,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -114,9 +113,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         // Show alert dialog
         CharSequence options[] = new CharSequence[]
-                {"Append to existing contacts", "Overwrite existing contacts"};
+                {"Append", "Overwrite"};
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Import options")
                 .setItems(options, (dialog, which) -> {
 
@@ -131,9 +130,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                         // Convert those cards to Contact objects
                         List<Contact> newContacts = VCFContactConverter.parseVCards(vCards);
-
-                        Log.i(TAG, mContacts.size() + " AFTER IMPORT MEMORY - " + mContacts);
-                        Log.i(TAG, getContacts().size() + " AFTER IMPORT DATABASE - " + getContacts());
 
                         switch (which) {
                             case 0:
@@ -171,14 +167,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void appendContacts(List<Contact> contacts) {
         List<Contact> filteredContacts = filterExistingContacts(contacts);
 
-        Log.i(TAG, filteredContacts.size() + " FILTERED - " + filteredContacts);
-        Log.i(TAG, mContacts.size() + " BEFORE APPEND MEMORY - " + mContacts);
-        Log.i(TAG, getContacts().size() + " BEFORE APPEND DATABASE - " + getContacts());
         // Save new contacts to database
         databaseAdapter.insertContacts(filteredContacts);
         mContacts = getContacts();
-        Log.i(TAG, mContacts.size() + " AFTER APPEND MEMORY - " + mContacts);
-        Log.i(TAG, getContacts().size() + " AFTER APPEND DATABASE - " + getContacts());
     }
 
     private List<Contact> filterExistingContacts(List<Contact> contacts) {
@@ -193,18 +184,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * @param contacts to be saved
      */
     private void overwriteContacts(List<Contact> contacts) {
-        Log.i(TAG, mContacts.size() + " BEFORE OVERWRITE MEMORY - " + mContacts);
-        Log.i(TAG, getContacts().size() + " BEFORE OVERWRITE DATABASE - " + getContacts());
         // Drop all existing contacts
         databaseAdapter.deleteAllContacts();
-        Log.i(TAG, mContacts.size() + " MIDDLE OVERWRITE MEMORY - " + mContacts);
-        Log.i(TAG, getContacts().size() + " MIDDLE OVERWRITE DATABASE - " + getContacts());
 
         // Save new contacts to database
         databaseAdapter.insertContacts(contacts);
         mContacts = getContacts();
-        Log.i(TAG, mContacts.size() + " AFTER OVERWRITE MEMORY - " + mContacts);
-        Log.i(TAG, getContacts().size() + " AFTER OVERWRITE DATABASE - " + getContacts());
     }
 
     /**
@@ -215,8 +200,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Snackbar.make(getWindow().getDecorView(),
                     "There are no contacts to export.", Snackbar.LENGTH_LONG).show();
         else {
-            Log.i(TAG, mContacts.size() + " BEFORE EXPORT MEMORY - " + mContacts);
-            Log.i(TAG, getContacts().size() + " BEFORE EXPORT DATABASE - " + getContacts());
             List<VCard> cards = VCFContactConverter.parseContacts(mContacts);
             writeContactsToFile(cards);
         }
@@ -349,9 +332,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         mContacts = getContacts();
                         break;
                 }
-
-                Log.i(TAG, mContacts.size() + " ACTUAL MEMORY - " + mContacts);
-                Log.i(TAG, getContacts().size() + " ACTUAL DATABASE - " + getContacts());
                 break;
         }
     }
