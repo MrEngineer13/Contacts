@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:alertDialogStyle">@style/AppCompatAlertDialogStyle</item>
     </style>
 
     <style name="NoActionBarActivityStyle" parent="Theme.AppCompat.Light.NoActionBar">

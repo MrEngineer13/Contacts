@@ -1,5 +1,6 @@
 package com.zouag.contacts.ui;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Environment;
@@ -104,16 +105,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
-     * Truncates the contacts' database table.
-     */
-    private void deleteAllContacts() {
-        databaseAdapter.deleteAllContacts();
-    }
-
-    /**
      * Imports the list of contacts that are present in the .vcf file.
      */
     private void importContacts() {
+
         // Get the .vcf file
         File file = new File(VCFContactConverter.getVCFSavePath(this));
         try {
@@ -123,25 +118,55 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             // Get the list of VCards stored inside the .vcf file
             List<VCard> vCards = Ezvcard.parse(reader).all();
 
-            // Convert those cards to Contact objects
-            mContacts = VCFContactConverter.parseVCards(vCards);
+            // Show alert dialog
+            CharSequence options[] = new CharSequence[]
+                    {"Append to existing contacts", "Overwrite existing contacts"};
 
-            // Drop all existing contacts
-            deleteAllContacts();
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+            builder.setTitle("Import options")
+                    .setItems(options, (dialog, which) -> {
+                        switch (which) {
+                            case 0:
+                                // Append
+                                break;
+                            case 1:
+                                // Overwrite
+                                overwriteContacts(vCards);
+                                break;
+                        }
 
-            // Save new contacts to database
-            databaseAdapter.insertContacts(mContacts);
+                        // Show contacts
+                        toggleRecyclerviewState();
+                        setupRecyclerView();
 
-            // Show contacts
-            toggleRecyclerviewState();
-            setupRecyclerView();
-
-            Toast.makeText(this, "Contacts successfully loaded.", Toast.LENGTH_LONG).show();
+                        Snackbar.make(getWindow().getDecorView(),
+                                "Contacts successfully loaded.", Snackbar.LENGTH_LONG).show();
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.setCanceledOnTouchOutside(true);
+            alertDialog.show();
 
         } catch (IOException e) {
             Snackbar.make(getWindow().getDecorView(),
                     "The save file cannot be found.", Snackbar.LENGTH_LONG).show();
         }
+    }
+
+    /**
+     * Converts the passed-in list of VCards to Contact objects, deletes all
+     * existing contacts & adds the new ones.
+     *
+     * @param vCards to be converted & saved
+     */
+    private void overwriteContacts(List<VCard> vCards) {
+        // Convert those cards to Contact objects
+        mContacts = VCFContactConverter.parseVCards(vCards);
+
+        // Drop all existing contacts
+        databaseAdapter.deleteAllContacts();
+
+        // Save new contacts to database
+        databaseAdapter.insertContacts(mContacts);
     }
 
     /**
@@ -157,6 +182,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
     }
 
+    /**
+     * Writes a list of VCards to external storage.
+     *
+     * @param cards to be saved
+     */
     private void writeContactsToFile(List<VCard> cards) {
         String appName = getString(R.string.app_name);
         File mediaStorageDir = new File(
@@ -193,7 +223,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         }
 
-        Toast.makeText(this, "VCF successfully saved !", Toast.LENGTH_LONG).show();
+        Snackbar.make(getWindow().getDecorView(),
+                "Contacts successfully exported.", Snackbar.LENGTH_LONG).show();
     }
 
     private void startAddContactActivity() {
@@ -220,6 +251,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setupRecyclerView();
     }
 
+    /**
+     * Toggles the visibility of the RecyclerView & the empty view associated with it.
+     */
     private void toggleRecyclerviewState() {
         /* Set the visibility of the empty view & the contactsListView
         according to the contacts' state */
