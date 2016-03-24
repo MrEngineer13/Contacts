@@ -7,6 +7,7 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
+import com.annimon.stream.Stream;
 import com.zouag.contacts.models.Contact;
 
 import java.util.ArrayList;
@@ -72,6 +73,16 @@ public class DatabaseAdapter {
 
     public void close() {
         dbHelper.close();
+    }
+
+    /**
+     * Inserts a list of contacts into the database.
+     *
+     * @param contacts to be inserted.
+     */
+    public void insertContacts(List<Contact> contacts) {
+        Stream.of(contacts)
+                .forEach(this::insertContact);
     }
 
     /**
@@ -163,6 +174,14 @@ public class DatabaseAdapter {
         values.put(KEY_IMG_PATH, newContact.getImgPath());
 
         return db.update(DATABASE_TABLE, values, KEY_ROWID + "=" + rowId, null) > 0;
+    }
+
+    /**
+     * Removes all contacts from the database.
+     */
+    public void deleteAllContacts() {
+        db.execSQL("DROP TABLE " + DATABASE_TABLE);
+        db.execSQL(TABLES_CREATE);
     }
 
     private static class DatabaseHelper extends SQLiteOpenHelper {

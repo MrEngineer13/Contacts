@@ -68,6 +68,9 @@ public class ViewContactActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        DatabaseAdapter databaseAdapter = DatabaseAdapter.getInstance(this);
+        Log.i("WATCH2", databaseAdapter.getAllContacts().size() + "");
+
         // Show the back arrow button
         getSupportActionBar().setDisplayShowHomeEnabled(true);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);

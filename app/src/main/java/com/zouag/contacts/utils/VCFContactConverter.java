@@ -34,6 +34,7 @@ public class VCFContactConverter {
                     VCard vCard = new VCard();
 
                     vCard.setVersion(VCardVersion.V4_0);
+                    vCard.setExtendedProperty("id", String.valueOf(contact.getId()));
                     vCard.setFormattedName(contact.getName());
                     vCard.addTelephoneNumber(contact.getPhoneNumber());
                     vCard.addEmail(new Email(contact.getEmail()));
@@ -57,6 +58,7 @@ public class VCFContactConverter {
         return Stream.of(cards)
                 .map(card -> {
                     Contact.Builder builder = new Contact.Builder()
+                            .id(Integer.parseInt(card.getExtendedProperty("id").getValue()))
                             .name(card.getFormattedName().getValue())
                             .phoneNumber(card.getTelephoneNumbers().get(0).getText());
 

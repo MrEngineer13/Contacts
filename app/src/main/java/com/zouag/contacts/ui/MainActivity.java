@@ -105,6 +105,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     }
 
     /**
+     * Truncates the contacts' database table.
+     */
+    private void deleteAllContacts() {
+        databaseAdapter.deleteAllContacts();
+    }
+
+    /**
      * Imports the list of contacts that are present in the .vcf file.
      */
     private void importContacts() {
@@ -119,6 +126,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
             // Convert those cards to Contact objects
             mContacts = VCFContactConverter.parseVCards(vCards);
+
+            // Drop all existing contacts
+            deleteAllContacts();
+
+            // Save new contacts to database
+            databaseAdapter.insertContacts(mContacts);
+
+            // Show contacts
             toggleRecyclerviewState();
             setupRecyclerView();
 
@@ -135,7 +150,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void exportContacts() {
         List<VCard> cards = VCFContactConverter.parseContacts(mContacts);
         writeContactsToFile(cards);
-        Log.i("TESTING VCF", cards.toString());
     }
 
     private void writeContactsToFile(List<VCard> cards) {
@@ -255,6 +269,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 if (!"".equals(message))
                     Snackbar.make(getWindow().getDecorView(),
                             message, Snackbar.LENGTH_LONG).show();
+                Log.i("WATCH", getContacts().size() + "");
                 break;
         }
     }

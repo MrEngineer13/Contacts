@@ -8,18 +8,18 @@
         app:showAsAction="never" />
     <item
         android:id="@+id/action_export_contacts"
-        android:orderInCategory="1001"
+        android:orderInCategory="101"
         android:title="Export contacts"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_quit"
-        android:orderInCategory="102"
+        android:orderInCategory="103"
         android:title="@string/close_app"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_add"
         android:icon="@drawable/ic_action_add"
-        android:orderInCategory="103"
+        android:orderInCategory="104"
         android:title="@string/add_contact"
         app:showAsAction="always" />
 
