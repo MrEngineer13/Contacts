@@ -16,7 +16,6 @@ import android.view.View;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
-import com.annimon.stream.Stream;
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
@@ -140,7 +139,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Toast.makeText(this, "Contacts successfully loaded.", Toast.LENGTH_LONG).show();
 
         } catch (IOException e) {
-            e.printStackTrace();
+            Snackbar.make(getWindow().getDecorView(),
+                    "The save file cannot be found.", Snackbar.LENGTH_LONG).show();
         }
     }
 
@@ -148,8 +148,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * Exports the list of contacts to a .vcf file.
      */
     private void exportContacts() {
-        List<VCard> cards = VCFContactConverter.parseContacts(mContacts);
-        writeContactsToFile(cards);
+        if (mContacts.size() == 0)
+            Snackbar.make(getWindow().getDecorView(),
+                    "There are no contacts to export.", Snackbar.LENGTH_LONG).show();
+        else {
+            List<VCard> cards = VCFContactConverter.parseContacts(mContacts);
+            writeContactsToFile(cards);
+        }
     }
 
     private void writeContactsToFile(List<VCard> cards) {

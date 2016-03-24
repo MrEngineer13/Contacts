@@ -4,12 +4,12 @@
     <item
         android:id="@+id/action_import_contacts"
         android:orderInCategory="100"
-        android:title="Import contacts"
+        android:title="Import"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_export_contacts"
         android:orderInCategory="101"
-        android:title="Export contacts"
+        android:title="Export"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_quit"

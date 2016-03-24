@@ -10,11 +10,9 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.Toast;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactDetailsAdapter;
@@ -67,9 +65,6 @@ public class ViewContactActivity extends AppCompatActivity {
 
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-
-        DatabaseAdapter databaseAdapter = DatabaseAdapter.getInstance(this);
-        Log.i("WATCH2", databaseAdapter.getAllContacts().size() + "");
 
         // Show the back arrow button
         getSupportActionBar().setDisplayShowHomeEnabled(true);

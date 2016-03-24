@@ -104,8 +104,7 @@ public class AlterContactActivity extends AppCompatActivity {
                             current_img_path = getRealPathFromURI(imageData);
                             contactImage.setImageURI(imageData);
                             break;
-                        }
-                        else {
+                        } else {
                             Toast.makeText(this,
                                     String.format(
                                             getString(R.string.maximum_img_size_exceeded),

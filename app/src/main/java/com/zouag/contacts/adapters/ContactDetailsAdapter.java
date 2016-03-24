@@ -11,7 +11,6 @@ import android.widget.TextView;
 import com.zouag.contacts.R;
 import com.zouag.contacts.models.ContactData;
 
-import java.util.ArrayList;
 import java.util.List;
 
 /**
