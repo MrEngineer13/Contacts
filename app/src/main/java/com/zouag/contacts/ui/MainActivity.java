@@ -114,9 +114,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             FileInputStream fis = new FileInputStream(file);
             InputStreamReader reader = new InputStreamReader(fis);
 
+            // Get the list of VCards stored inside the .vcf file
             List<VCard> vCards = Ezvcard.parse(reader).all();
-            Stream.of(vCards)
-                    .forEach(card -> Log.i("CARD", card.toString()));
+
+            // Convert those cards to Contact objects
+            mContacts = VCFContactConverter.parseVCards(vCards);
+            toggleRecyclerviewState();
+            setupRecyclerView();
+
+            Toast.makeText(this, "Contacts successfully loaded.", Toast.LENGTH_LONG).show();
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -189,26 +195,35 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         // Get the list of contacts
         mContacts = getContacts();
-
-        /* Set the visibility of the empty view & the contactsListView
-        according to the contacts' state */
-        emptyView.setVisibility(mContacts.size() == 0 ? View.VISIBLE : View.INVISIBLE);
-        contactsRecyclerView.setVisibility(mContacts.size() == 0 ? View.INVISIBLE : View.VISIBLE);
+        toggleRecyclerviewState();
 
         // Setup the adapter & the RecyclerView
         setupRecyclerView();
     }
 
+    private void toggleRecyclerviewState() {
+        /* Set the visibility of the empty view & the contactsListView
+        according to the contacts' state */
+        emptyView.setVisibility(mContacts.size() == 0 ? View.VISIBLE : View.INVISIBLE);
+        contactsRecyclerView.setVisibility(mContacts.size() == 0 ? View.INVISIBLE : View.VISIBLE);
+    }
+
     private void setupRecyclerView() {
-        mAdapter = new ContactsRecyclerAdapter(this, mContacts);
-        mAdapter.setContactClickListener(contact -> {
-            Intent intent = new Intent(this, ViewContactActivity.class);
-            intent.putExtra("contact", contact);
-            startActivityForResult(intent, REQUEST_VIEW_CONTACT);
-        });
-        contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        contactsRecyclerView.setHasFixedSize(true);
-        contactsRecyclerView.setAdapter(mAdapter);
+        if (mAdapter == null) {
+            mAdapter = new ContactsRecyclerAdapter(this, mContacts);
+            mAdapter.setContactClickListener(contact -> {
+                Intent intent = new Intent(this, ViewContactActivity.class);
+                intent.putExtra("contact", contact);
+                startActivityForResult(intent, REQUEST_VIEW_CONTACT);
+            });
+            contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            contactsRecyclerView.setHasFixedSize(true);
+            contactsRecyclerView.setAdapter(mAdapter);
+        } else {
+            mAdapter.refill(mContacts);
+            mAdapter.notifyDataSetChanged();
+            contactsRecyclerView.invalidate();
+        }
     }
 
     @Override

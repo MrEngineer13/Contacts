@@ -39,6 +39,7 @@ public class VCFContactConverter {
                     vCard.addEmail(new Email(contact.getEmail()));
                     Address address = new Address();
                     address.setLabel(contact.getAddress());
+                    vCard.addAddress(address);
                     vCard.addPhoto(new Photo(contact.getImgPath(), ImageType.PNG));
 
                     return vCard;
@@ -58,6 +59,9 @@ public class VCFContactConverter {
                     Contact.Builder builder = new Contact.Builder()
                             .name(card.getFormattedName().getValue())
                             .phoneNumber(card.getTelephoneNumbers().get(0).getText());
+
+                    if (card.getPhotos() != null && card.getPhotos().size() != 0)
+                        builder.imgPath(card.getPhotos().get(0).getUrl());
 
                     if (card.getEmails() != null && card.getEmails().size() != 0)
                         builder.email(card.getEmails().get(0).getValue());

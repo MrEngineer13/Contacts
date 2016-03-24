@@ -103,6 +103,11 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         }
     }
 
+    public void refill(List<Contact> contacts) {
+        mContacts.clear();
+        mContacts.addAll(contacts);
+    }
+
     public class ViewHolder extends RecyclerView.ViewHolder {
 
         private final TextView nameText;
