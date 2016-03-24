@@ -174,7 +174,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     private List<Contact> filterExistingContacts(List<Contact> contacts) {
         return Stream.of(contacts)
-                .filter(contact -> !mContacts.contains(contact))
+                .filter(contact -> !Stream.of(mContacts)
+                        .map(Contact::getName)
+                        .anyMatch(name -> name.equals(contact.getName())))
                 .collect(Collectors.toList());
     }
 
