@@ -154,10 +154,12 @@ public class Contact implements Parcelable {
     @Override
     public String toString() {
         return "Contact{" +
-                "name='" + name + '\'' +
+                "id=" + id +
+                ", name='" + name + '\'' +
                 ", email='" + email + '\'' +
                 ", phoneNumber='" + phoneNumber + '\'' +
                 ", address='" + address + '\'' +
+                ", imgPath='" + imgPath + '\'' +
                 '}';
     }
 }

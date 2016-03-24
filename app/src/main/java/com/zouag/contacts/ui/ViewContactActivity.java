@@ -10,6 +10,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
@@ -30,6 +31,7 @@ import butterknife.ButterKnife;
 
 public class ViewContactActivity extends AppCompatActivity {
 
+    private static final String TAG = ViewContactActivity.class.getSimpleName();
     private static final int REQUEST_UPDATE_CONTACT = 200;
 
     @Bind(R.id.detailsRecyclerview)
@@ -197,7 +199,9 @@ public class ViewContactActivity extends AppCompatActivity {
                 .setPositiveButton(getString(R.string.positive), (dialog, which) -> {
                     DatabaseAdapter databaseAdapter =
                             DatabaseAdapter.getInstance(ViewContactActivity.this);
+                    Log.i(TAG, databaseAdapter.getAllContacts().size() + " BEFORE DELETE");
                     databaseAdapter.deleteContact(currentContact.getId());
+                    Log.i(TAG, databaseAdapter.getAllContacts().size() + " AFTER DELETE");
 
                     setResult(ResultCodes.CONTACT_DELETED);
                     finish();

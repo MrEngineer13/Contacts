@@ -37,6 +37,8 @@ import butterknife.ButterKnife;
 
 public class AlterContactActivity extends AppCompatActivity {
 
+    private static final String TAG = AlterContactActivity.class.getSimpleName();
+
     // Request codes
     private static final int REQUEST_OPEN_GALLERY = 10;
     private static final int REQUEST_OPEN_CAMERA = 11;

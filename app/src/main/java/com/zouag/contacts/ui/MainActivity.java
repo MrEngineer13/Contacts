@@ -44,6 +44,7 @@ import ezvcard.VCardVersion;
 
 public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
 
+    private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_ADD_NEW = 100;
     private static final int REQUEST_VIEW_CONTACT = 101;
 
@@ -111,33 +112,37 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     private void importContacts() {
 
-        // Get the .vcf file
-        File file = new File(VCFContactConverter.getVCFSavePath(this));
-        try {
-            FileInputStream fis = new FileInputStream(file);
-            InputStreamReader reader = new InputStreamReader(fis);
+        // Show alert dialog
+        CharSequence options[] = new CharSequence[]
+                {"Append to existing contacts", "Overwrite existing contacts"};
 
-            // Get the list of VCards stored inside the .vcf file
-            List<VCard> vCards = Ezvcard.parse(reader).all();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+        builder.setTitle("Import options")
+                .setItems(options, (dialog, which) -> {
 
-            // Convert those cards to Contact objects
-            mContacts = VCFContactConverter.parseVCards(vCards);
+                    // Get the .vcf file
+                    File file = new File(VCFContactConverter.getVCFSavePath(this));
+                    try {
+                        FileInputStream fis = new FileInputStream(file);
+                        InputStreamReader reader = new InputStreamReader(fis);
 
-            // Show alert dialog
-            CharSequence options[] = new CharSequence[]
-                    {"Append to existing contacts", "Overwrite existing contacts"};
+                        // Get the list of VCards stored inside the .vcf file
+                        List<VCard> vCards = Ezvcard.parse(reader).all();
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
-            builder.setTitle("Import options")
-                    .setItems(options, (dialog, which) -> {
+                        // Convert those cards to Contact objects
+                        List<Contact> newContacts = VCFContactConverter.parseVCards(vCards);
+
+                        Log.i(TAG, mContacts.size() + " AFTER IMPORT MEMORY - " + mContacts);
+                        Log.i(TAG, getContacts().size() + " AFTER IMPORT DATABASE - " + getContacts());
+
                         switch (which) {
                             case 0:
                                 // Append
-                                appendContacts(mContacts);
+                                appendContacts(newContacts);
                                 break;
                             case 1:
                                 // Overwrite
-                                overwriteContacts(mContacts);
+                                overwriteContacts(newContacts);
                                 break;
                         }
 
@@ -147,15 +152,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                         Snackbar.make(getWindow().getDecorView(),
                                 "Contacts successfully loaded.", Snackbar.LENGTH_LONG).show();
-                    });
-            AlertDialog alertDialog = builder.create();
-            alertDialog.setCanceledOnTouchOutside(true);
-            alertDialog.show();
 
-        } catch (IOException e) {
-            Snackbar.make(getWindow().getDecorView(),
-                    "The save file cannot be found.", Snackbar.LENGTH_LONG).show();
-        }
+                    } catch (IOException e) {
+                        Snackbar.make(getWindow().getDecorView(),
+                                "The save file cannot be found.", Snackbar.LENGTH_LONG).show();
+                    }
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(true);
+        alertDialog.show();
     }
 
     /**
@@ -166,8 +171,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void appendContacts(List<Contact> contacts) {
         List<Contact> filteredContacts = filterExistingContacts(contacts);
 
+        Log.i(TAG, filteredContacts.size() + " FILTERED - " + filteredContacts);
+        Log.i(TAG, mContacts.size() + " BEFORE APPEND MEMORY - " + mContacts);
+        Log.i(TAG, getContacts().size() + " BEFORE APPEND DATABASE - " + getContacts());
         // Save new contacts to database
         databaseAdapter.insertContacts(filteredContacts);
+        mContacts = getContacts();
+        Log.i(TAG, mContacts.size() + " AFTER APPEND MEMORY - " + mContacts);
+        Log.i(TAG, getContacts().size() + " AFTER APPEND DATABASE - " + getContacts());
     }
 
     private List<Contact> filterExistingContacts(List<Contact> contacts) {
@@ -182,11 +193,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * @param contacts to be saved
      */
     private void overwriteContacts(List<Contact> contacts) {
+        Log.i(TAG, mContacts.size() + " BEFORE OVERWRITE MEMORY - " + mContacts);
+        Log.i(TAG, getContacts().size() + " BEFORE OVERWRITE DATABASE - " + getContacts());
         // Drop all existing contacts
         databaseAdapter.deleteAllContacts();
+        Log.i(TAG, mContacts.size() + " MIDDLE OVERWRITE MEMORY - " + mContacts);
+        Log.i(TAG, getContacts().size() + " MIDDLE OVERWRITE DATABASE - " + getContacts());
 
         // Save new contacts to database
-        databaseAdapter.insertContacts(mContacts);
+        databaseAdapter.insertContacts(contacts);
+        mContacts = getContacts();
+        Log.i(TAG, mContacts.size() + " AFTER OVERWRITE MEMORY - " + mContacts);
+        Log.i(TAG, getContacts().size() + " AFTER OVERWRITE DATABASE - " + getContacts());
     }
 
     /**
@@ -197,6 +215,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Snackbar.make(getWindow().getDecorView(),
                     "There are no contacts to export.", Snackbar.LENGTH_LONG).show();
         else {
+            Log.i(TAG, mContacts.size() + " BEFORE EXPORT MEMORY - " + mContacts);
+            Log.i(TAG, getContacts().size() + " BEFORE EXPORT DATABASE - " + getContacts());
             List<VCard> cards = VCFContactConverter.parseContacts(mContacts);
             writeContactsToFile(cards);
         }
@@ -322,13 +342,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     case ResultCodes.CONTACT_DELETED:
                         // A contact has been deleted
                         message = getString(R.string.contact_removed);
+                        Snackbar.make(
+                                getWindow().getDecorView(),
+                                message,
+                                Snackbar.LENGTH_LONG).show();
+                        mContacts = getContacts();
                         break;
                 }
 
-                if (!"".equals(message))
-                    Snackbar.make(getWindow().getDecorView(),
-                            message, Snackbar.LENGTH_LONG).show();
-                Log.i("WATCH", getContacts().size() + "");
+                Log.i(TAG, mContacts.size() + " ACTUAL MEMORY - " + mContacts);
+                Log.i(TAG, getContacts().size() + " ACTUAL DATABASE - " + getContacts());
                 break;
         }
     }
