@@ -24,7 +24,7 @@ public class ContactDetailsAdapter extends RecyclerView.Adapter<ContactDetailsAd
 
     public ContactDetailsAdapter(Context context, List<ContactData> contactData) {
         mContext = context;
-        this.contactData = new ArrayList<>(contactData);
+        this.contactData = contactData;
     }
 
     @Override

@@ -3,16 +3,18 @@ package com.zouag.contacts.ui;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
+import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.widget.ImageView;
-import android.widget.TextView;
+import android.widget.Toast;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactDetailsAdapter;
@@ -38,6 +40,9 @@ public class ViewContactActivity extends AppCompatActivity {
     @Bind(R.id.profileImage)
     ImageView profileImage;
 
+    @Bind(R.id.collapsing_toolbar)
+    CollapsingToolbarLayout collapsingToolbarLayout;
+
     /**
      * The currently viewed contact.
      */
@@ -46,6 +51,11 @@ public class ViewContactActivity extends AppCompatActivity {
      * A list of this contact's data. (Phone + Email + Address)
      */
     private List<ContactData> contactDataList;
+
+    /**
+     * The adapter of the currently displayed contact details.
+     */
+    ContactDetailsAdapter mAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,8 +68,12 @@ public class ViewContactActivity extends AppCompatActivity {
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
 
+        // Show the back arrow button
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
         setupContactData();
-        setupActionbar();
+        setActionbarTitle();
         setupDetailsRecyclerView();
     }
 
@@ -113,7 +127,7 @@ public class ViewContactActivity extends AppCompatActivity {
         currentContact = databaseAdapter.getContact(currentContact.getId());
 
         setupContactData();
-        setupActionbar();
+        setActionbarTitle();
         setupDetailsRecyclerView();
     }
 
@@ -129,7 +143,10 @@ public class ViewContactActivity extends AppCompatActivity {
         else
             profileImage.setImageURI(Uri.fromFile(new File(imgPath)));
 
-        contactDataList = new ArrayList<>();
+        if (contactDataList == null)
+            contactDataList = new ArrayList<>();
+        else
+            contactDataList.clear();
 
         if (!"".equals(currentContact.getPhoneNumber())) {
             contactDataList.add(
@@ -156,20 +173,19 @@ public class ViewContactActivity extends AppCompatActivity {
         }
     }
 
-    private void setupActionbar() {
-        // Show the back arrow button
-        getSupportActionBar().setDisplayShowHomeEnabled(true);
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
+    private void setActionbarTitle() {
         // Set the action bar's title
-        getSupportActionBar().setTitle(currentContact.getName());
+        collapsingToolbarLayout.setTitle(currentContact.getName());
     }
 
     private void setupDetailsRecyclerView() {
-        ContactDetailsAdapter adapter = new ContactDetailsAdapter(this, contactDataList);
-        detailsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        detailsRecyclerView.setHasFixedSize(true);
-        detailsRecyclerView.setAdapter(adapter);
+        if (mAdapter == null) {
+            mAdapter = new ContactDetailsAdapter(this, contactDataList);
+            detailsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+            detailsRecyclerView.setHasFixedSize(true);
+            detailsRecyclerView.setAdapter(mAdapter);
+        } else
+            mAdapter.notifyDataSetChanged();
     }
 
     /**
