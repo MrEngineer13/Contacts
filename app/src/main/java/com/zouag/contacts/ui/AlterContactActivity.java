@@ -21,6 +21,7 @@ import android.widget.Toast;
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.utils.ContactPreferences;
 import com.zouag.contacts.utils.ResultCodes;
 import com.zouag.contacts.utils.Validation;
 
@@ -136,6 +137,11 @@ public class AlterContactActivity extends AppCompatActivity {
                 }
                 break;
         }
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
     }
 
     /**

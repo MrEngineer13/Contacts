@@ -66,4 +66,8 @@
     <string name="action_import">Import</string>
     <string name="action_export">Export</string>
     <string name="settings">Settings</string>
+    <string name="data">data</string>
+    <string name="save_draft_contact">save_draft_contact</string>
+    <string name="save_draft_summary">Save the discarded contact to draft</string>
+    <string name="save_contact">Save contact</string>
 </resources>

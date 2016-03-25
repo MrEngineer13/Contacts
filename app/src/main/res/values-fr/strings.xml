@@ -60,4 +60,7 @@
     <string name="action_import">Importer</string>
     <string name="action_export">Exporter</string>
     <string name="settings">Paramètres</string>
+    <string name="data">Données</string>
+    <string name="save_draft_summary">Enregistrer le dernier contact abandonné durant son ajout.</string>
+    <string name="save_contact">Enregistrer contact</string>
 </resources>

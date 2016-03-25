@@ -5,6 +5,16 @@
 
     <PreferenceCategory
         android:key="key_dialog_settings"
+        android:title="@string/data">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/save_draft_contact"
+            android:summary="@string/save_draft_summary"
+            android:title="@string/save_contact" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="key_dialog_settings"
         android:title="@string/popups">
         <CheckBoxPreference
             android:defaultValue="true"
