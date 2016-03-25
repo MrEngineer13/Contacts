@@ -98,12 +98,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             case R.id.action_export_contacts:
                 exportContacts();
                 return true;
+            case R.id.action_settings:
+                showSettings();
+                return true;
             case R.id.action_quit:
                 finish();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    private void showSettings() {
+        startActivity(new Intent(this, SettingsActivity.class));
     }
 
     /**
