@@ -2,9 +2,13 @@ package com.zouag.contacts.ui;
 
 import android.app.AlertDialog;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.support.design.widget.Snackbar;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
+import android.support.v4.util.Pair;
 import android.support.v4.view.MenuItemCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -296,10 +300,18 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void setupRecyclerView() {
         if (mAdapter == null) {
             mAdapter = new ContactsRecyclerAdapter(this, mContacts);
-            mAdapter.setContactClickListener(contact -> {
+            mAdapter.setContactClickListener((view, contact) -> {
                 Intent intent = new Intent(this, ViewContactActivity.class);
                 intent.putExtra("contact", contact);
-                startActivityForResult(intent, REQUEST_VIEW_CONTACT);
+
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ActivityOptionsCompat options =
+                            ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                                    new Pair<>(view, getString(R.string.transition_contact_img)));
+                    ActivityCompat.startActivityForResult(
+                            this, intent, REQUEST_VIEW_CONTACT, options.toBundle());
+                } else
+                    startActivityForResult(intent, REQUEST_VIEW_CONTACT);
             });
             contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
             contactsRecyclerView.setHasFixedSize(true);

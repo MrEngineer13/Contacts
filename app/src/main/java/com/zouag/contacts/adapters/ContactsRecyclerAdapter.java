@@ -119,7 +119,8 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
             contactImage = (CircleImageView) v.findViewById(R.id.mainContactImage);
 
             // Notify the activity to display the contact
-            v.setOnClickListener(view -> listener.showContact(mContacts.get(getLayoutPosition())));
+            v.setOnClickListener(view -> listener.showContact(
+                    contactImage, mContacts.get(getLayoutPosition())));
         }
 
         public void bind(Contact contact) {
@@ -141,7 +142,7 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
      */
     @FunctionalInterface
     public interface ContactClickListener {
-        void showContact(Contact contact);
+        void showContact(View view, Contact contact);
     }
 
     public void setContactClickListener(ContactClickListener listener) {
