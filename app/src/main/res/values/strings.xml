@@ -36,8 +36,31 @@
     <string name="are_you_sure_delete_contact">Are you sure that you want to delete this contact ?\nThis operation cannot be undone.</string>
     <string name="positive">I\'m positive</string>
     <string name="title_activity_settings">Settings</string>
+
+    <!-- Misc strings-->
+    <string name="transition_contact_img">transition:IMAGE</string>
     <string name="show_confirm_dialog">show_confirm_dialog</string>
     <string name="contacts_save_file_name">contact_save_filename</string>
 
-    <string name="transition_contact_img">transition:IMAGE</string>
+    <string name="ten_digits">10 digits</string>
+    <string name="empty_contacts_list">Your contacts\' list is already empty.</string>
+    <string name="clear_contacts">Clear contacts</string>
+    <string name="are_you_sure_clear_contacts">Are you sure that you want to clear your contacts\' list ?</string>
+    <string name="proceed">PROCEED</string>
+    <string name="all_contacts_cleared">All contacts were cleared.</string>
+    <string name="undo">UNDO</string>
+    <string name="action_append">Append</string>
+    <string name="action_overwrite">Overwrite</string>
+    <string name="import_options">Import options</string>
+    <string name="contacts_loaded_success">Contacts successfully loaded.</string>
+    <string name="save_file_not_found">The save file cannot be found.</string>
+    <string name="open_settings">Open Settings</string>
+    <string name="no_contacts_to_export">There are no contacts to export.</string>
+    <string name="contacts_export_success">Contacts successfully exported.</string>
+    <string name="popups">Popups</string>
+    <string name="show_deleting_dialog">Show dialog when deleting contact</string>
+    <string name="confirm_delete">Confirm delete</string>
+    <string name="import_export">Import/Export</string>
+    <string name="specify_save_file_name">Specify the name of the import/export file.</string>
+    <string name="saves_file">Saves file</string>
 </resources>

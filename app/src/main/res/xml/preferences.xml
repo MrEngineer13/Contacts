@@ -5,22 +5,22 @@
 
     <PreferenceCategory
         android:key="key_dialog_settings"
-        android:title="Popups">
+        android:title="@string/popups">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/show_confirm_dialog"
-            android:summary="Show dialog when deleting contact"
-            android:title="Confirm delete" />
+            android:summary="@string/show_deleting_dialog"
+            android:title="@string/confirm_delete" />
     </PreferenceCategory>
 
     <PreferenceCategory
         android:key="key_import_export_settings"
-        android:title="Import/Export">
+        android:title="@string/import_export">
         <EditTextPreference
             android:defaultValue=""
             android:key="@string/contacts_save_file_name"
-            android:summary="Specify the name of the import/export file."
-            android:title="Saves file" />
+            android:summary="@string/specify_save_file_name"
+            android:title="@string/saves_file" />
     </PreferenceCategory>
 
 </PreferenceScreen>

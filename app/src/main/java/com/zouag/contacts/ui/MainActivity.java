@@ -102,9 +102,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
-            case android.R.id.home:
-                Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
-                return true;
             case R.id.action_add:
                 startAddContactActivity();
                 return true;
@@ -132,16 +129,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         if (mContacts.size() == 0) {
             Snackbar.make(getWindow().getDecorView(),
-                    "Your contacts' list is already empty.",
+                    R.string.empty_contacts_list,
                     Snackbar.LENGTH_LONG).show();
             return;
         }
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Clear contacts");
-        builder.setMessage("Are you sure that you want to clear your contacts' list ?");
-        builder.setNegativeButton("CANCEL", null)
-                .setPositiveButton("PROCEED", (dialog, which) -> {
+        builder.setTitle(R.string.clear_contacts);
+        builder.setMessage(R.string.are_you_sure_clear_contacts);
+        builder.setNegativeButton(R.string.cancel, null)
+                .setPositiveButton(R.string.proceed, (dialog, which) -> {
                     // Save the deleted contacts in case the user decided to undo the operation
                     List<Contact> allDeletedContacts = new ArrayList<>(mContacts);
 
@@ -149,9 +146,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     refreshContacts();
 
                     Snackbar.make(getWindow().getDecorView(),
-                            "All contacts were cleared.",
+                            R.string.all_contacts_cleared,
                             Snackbar.LENGTH_LONG)
-                            .setAction("UNDO", view -> {
+                            .setAction(R.string.undo, view -> {
                                 undoDeleteAll(allDeletedContacts);
                             })
                             .show();
@@ -173,10 +170,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         // Show alert dialog
         CharSequence options[] = new CharSequence[]
-                {"Append", "Overwrite"};
+                {getString(R.string.action_append), getString(R.string.action_overwrite)};
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("Import options")
+        builder.setTitle(R.string.import_options)
                 .setItems(options, (dialog, which) -> {
 
                     // Get the .vcf file
@@ -206,13 +203,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         refreshContacts();
 
                         Snackbar.make(getWindow().getDecorView(),
-                                "Contacts successfully loaded.", Snackbar.LENGTH_LONG).show();
+                                R.string.contacts_loaded_success, Snackbar.LENGTH_LONG).show();
 
                     } catch (IOException e) {
                         Snackbar.make(getWindow().getDecorView(),
-                                "The save file cannot be found.",
+                                R.string.save_file_not_found,
                                 Snackbar.LENGTH_LONG)
-                                .setAction("Open Settings", view -> showSettings())
+                                .setAction(R.string.open_settings, view -> showSettings())
                                 .show();
                     }
                 });
@@ -260,7 +257,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void exportContacts() {
         if (mContacts.size() == 0)
             Snackbar.make(getWindow().getDecorView(),
-                    "There are no contacts to export.", Snackbar.LENGTH_LONG).show();
+                    R.string.no_contacts_to_export, Snackbar.LENGTH_LONG).show();
         else {
             List<VCard> cards = VCFContactConverter.parseContacts(mContacts);
             writeContactsToFile(cards);
@@ -309,7 +306,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
         Snackbar.make(getWindow().getDecorView(),
-                "Contacts successfully exported.", Snackbar.LENGTH_LONG).show();
+                R.string.contacts_export_success, Snackbar.LENGTH_LONG).show();
     }
 
     private void startAddContactActivity() {
@@ -403,7 +400,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                                 getWindow().getDecorView(),
                                 message,
                                 Snackbar.LENGTH_LONG)
-                                .setAction("UNDO", v -> {
+                                .setAction(R.string.undo, v -> {
                                     // Re-add the deleted contact
                                     Contact deletedContact =
                                             data.getParcelableExtra("deletedContact");

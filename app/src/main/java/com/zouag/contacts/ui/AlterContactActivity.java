@@ -406,7 +406,7 @@ public class AlterContactActivity extends AppCompatActivity {
             // Invalid phone number.
             dialogTitle = getString(R.string.invalid_phone);
             dialogMessage = getString(R.string.enter_valid_phone);
-            contactNumber.setError("10 digits");
+            contactNumber.setError(getString(R.string.ten_digits));
         }
 
         // Something went wrong: show the error dialog.

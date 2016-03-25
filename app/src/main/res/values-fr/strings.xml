@@ -35,4 +35,27 @@
     <string name="contact_updated">Contact modifié.</string>
     <string name="are_you_sure_delete_contact">Etes-vous sûr de bien vouloir supprimer ce contact ?\nCette opération est irréversible.</string>
     <string name="positive">Confirmer</string>
+    <string name="title_activity_settings">Paramètres</string>
+    <string name="ten_digits">10 nombres</string>
+    <string name="empty_contacts_list">Votre liste de contacts est déjà vide.</string>
+    <string name="clear_contacts">Supprimer tout</string>
+    <string name="are_you_sure_clear_contacts">Etes-vous sûr de bien vouloir vider votre répertoire ?</string>
+    <string name="proceed">Procéder</string>
+    <string name="all_contacts_cleared">Tous les contacts ont été supprimés.</string>
+    <string name="undo">Défaire</string>
+    <string name="action_append">Ajouter</string>
+    <string name="action_overwrite">Ecraser</string>
+    <string name="import_options">Options d\'import</string>
+    <string name="contacts_loaded_success">Contacts chargés.</string>
+    <string name="save_file_not_found">Le fichier de sauvegarde est introuvable.</string>
+    <string name="open_settings">Afficher paramètres</string>
+    <string name="no_contacts_to_export">Pas de contacts à exporter.</string>
+    <string name="contacts_export_success">Contacts sauvegardés avec succès.</string>
+
+    <string name="popups">Popups</string>
+    <string name="show_deleting_dialog">Afficher une dialogue de confirmation lors de la suppression d\'un contact</string>
+    <string name="confirm_delete">Confirmer suppression</string>
+    <string name="import_export">Import/Export</string>
+    <string name="specify_save_file_name">Spécifier le nom du fichier d\'import/export.</string>
+    <string name="saves_file">Fichier de sauvegarde</string>
 </resources>
