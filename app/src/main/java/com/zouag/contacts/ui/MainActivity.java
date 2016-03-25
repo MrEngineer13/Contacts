@@ -384,12 +384,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     case ResultCodes.CONTACT_CREATED:
                         message = getString(R.string.contact_added);
                         break;
+                    case ResultCodes.CONTACT_SAVED_TO_DRAFT:
+                        message = getString(R.string.contact_saved_to_draft);
+                        break;
                     case RESULT_CANCELED:
-                        // Get the setting
-                        boolean saveToDraftStatus =
-                                ContactPreferences.isSaveContactToDraftON(this);
-                        message = saveToDraftStatus ? getString(R.string.contact_saved_to_draft) :
-                                getString(R.string.adding_contact_discarded);
+                        message = getString(R.string.adding_contact_discarded);
                         break;
                 }
 

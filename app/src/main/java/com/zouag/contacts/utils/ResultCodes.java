@@ -19,4 +19,8 @@ public class ResultCodes {
      * A signal that a contact has been dropped.
      */
     public static final int CONTACT_DELETED = 3;
+    /**
+     * A signal that the currently-being-added contact has been saved to draft.
+     */
+    public static final int CONTACT_SAVED_TO_DRAFT = 4;
 }

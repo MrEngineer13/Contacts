@@ -189,6 +189,10 @@ public class AlterContactActivity extends AppCompatActivity {
             String email = contactEmail.getText().toString();
             String address = contactAddress.getText().toString();
 
+            if (name.length() != 0 || imgPath.length() != 0 || phone.length() != 0
+                    || email.length() != 0 || address.length() != 0)
+                setResult(ResultCodes.CONTACT_SAVED_TO_DRAFT);
+
             ContactPreferences.saveContact(this,
                     new Contact.Builder()
                             .name(name)
