@@ -88,7 +88,7 @@ public class AlterContactActivity extends AppCompatActivity {
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
-                finish();
+                onBackPressed();
                 break;
         }
 
@@ -141,6 +141,25 @@ public class AlterContactActivity extends AppCompatActivity {
 
     @Override
     public void onBackPressed() {
+        if (ContactPreferences.isSaveContactToDraftON(this)) {
+            // Save contact to draft
+
+            String name = contactName.getText().toString();
+            String imgPath = current_img_path;
+            String phone = contactNumber.getText().toString();
+            String email = contactEmail.getText().toString();
+            String address = contactAddress.getText().toString();
+
+            ContactPreferences.saveContact(this,
+                    new Contact.Builder()
+                            .name(name)
+                            .imgPath(imgPath)
+                            .phoneNumber(phone)
+                            .email(email)
+                            .address(address)
+                            .createContact());
+        }
+
         super.onBackPressed();
     }
 
