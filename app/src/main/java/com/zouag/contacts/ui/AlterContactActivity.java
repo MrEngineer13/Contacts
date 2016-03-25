@@ -56,6 +56,12 @@ public class AlterContactActivity extends AppCompatActivity {
      * The path of the currently selected image.
      */
     private String current_img_path = "";
+    private String preference_img_path = "";
+
+    /**
+     * The path of the image stored from the last orientation change.
+     */
+    private String stored_img_path = "";
     /**
      * The ID of the currently-being-modified contact.
      */
@@ -79,16 +85,15 @@ public class AlterContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_contact);
         ButterKnife.bind(this);
 
-        if (savedInstanceState != null)
-            current_img_path = savedInstanceState.getString("imgPath");
-        else {
+        if (savedInstanceState != null) {
+            stored_img_path = savedInstanceState.getString("imgPath");
+            Log.i("LOADED", "ImgPath: " + stored_img_path);
+        } else {
             if (ContactPreferences.isSaveContactToDraftON(this)) {
                 Contact contact = ContactPreferences.loadContact(this);
 
                 setupFieldValues(contact);
-                current_img_path = contact.getImgPath();
-
-                setContactImage();
+                preference_img_path = contact.getImgPath();
             }
         }
 
@@ -251,22 +256,46 @@ public class AlterContactActivity extends AppCompatActivity {
             // Save the ID of the currently-being-modified contact
             currentContactID = contact.getId();
 
-            if (!"".equals(current_img_path)) {
-                // An image has been saved from the previous device's orientation change
+            if ("".equals(stored_img_path)) {
+                // There is no image stored from the last orientation change
 
-                contactImage.setImageURI(Uri.fromFile(new File(current_img_path)));
+                // Get the path of the image associated with the current contact
+                String contact_img_path = contact.getImgPath();
+                if ("".equals(contact_img_path)) {
+                    // The contact has no image associated with it
+                    contactImage.setImageResource(R.drawable.ic_action_user_grey);
+                } else {
+                    // The contact has an image associated with it
+                    contactImage.setImageURI(Uri.fromFile(new File(contact_img_path)));
+                    current_img_path = contact_img_path;
+                }
             } else {
-                // Setup the inputs
-                String imgPath = contact.getImgPath();
-                if ("".equals(imgPath)) {
-                    setContactImage();
-                } else
-                    contactImage.setImageURI(Uri.fromFile(new File(imgPath)));
-
-                current_img_path = imgPath;
+                // There is an image stored from the last orientation change
+                contactImage.setImageURI(Uri.fromFile(new File(stored_img_path)));
+                current_img_path = stored_img_path;
             }
 
             setupFieldValues(contact);
+        }
+        else {
+            // We're creating a new contact
+
+            if ("".equals(stored_img_path)) {
+                // There is no image stored from the last orientation change
+
+                if ("".equals(preference_img_path)) {
+                    // There is no image stored in shared preferences
+                    contactImage.setImageResource(R.drawable.ic_action_user_grey);
+                } else {
+                    // There is an image stored in shared preferences
+                    contactImage.setImageURI(Uri.fromFile(new File(preference_img_path)));
+                    current_img_path = preference_img_path;
+                }
+            } else {
+                // There is an image stored from the last orientation change
+                contactImage.setImageURI(Uri.fromFile(new File(stored_img_path)));
+                current_img_path = stored_img_path;
+            }
         }
     }
 
