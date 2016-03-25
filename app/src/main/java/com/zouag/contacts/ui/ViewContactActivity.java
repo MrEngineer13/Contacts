@@ -243,7 +243,9 @@ public class ViewContactActivity extends AppCompatActivity {
                 DatabaseAdapter.getInstance(ViewContactActivity.this);
         databaseAdapter.deleteContact(currentContact.getId());
 
-        setResult(ResultCodes.CONTACT_DELETED);
+        Intent intent = new Intent();
+        intent.putExtra("deletedContact", currentContact);
+        setResult(ResultCodes.CONTACT_DELETED, intent);
         finish();
     }
 

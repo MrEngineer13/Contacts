@@ -292,6 +292,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     protected void onResume() {
         super.onResume();
 
+        refreshContacts();
+    }
+
+    private void refreshContacts() {
         // Get the list of contacts
         mContacts = getContacts();
         toggleRecyclerviewState();
@@ -362,12 +366,29 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         Snackbar.make(
                                 getWindow().getDecorView(),
                                 message,
-                                Snackbar.LENGTH_LONG).show();
+                                Snackbar.LENGTH_LONG)
+                                .setAction("UNDO", v -> {
+                                    // Re-add the deleted contact
+                                    Contact deletedContact =
+                                            data.getParcelableExtra("deletedContact");
+                                    undoDelete(deletedContact);
+                                })
+                                .show();
                         mContacts = getContacts();
                         break;
                 }
                 break;
         }
+    }
+
+    /**
+     * Undoes the deletion of the passed-in contact.
+     *
+     * @param contact to be re-added.
+     */
+    private void undoDelete(Contact contact) {
+        databaseAdapter.insertContactByID(contact);
+        refreshContacts();
     }
 
     /**

@@ -86,6 +86,24 @@ public class DatabaseAdapter {
     }
 
     /**
+     * Uses the ID of the passed-in contact during its addition.
+     *
+     * @param contact to be added
+     * @return
+     */
+    public long insertContactByID(Contact contact) {
+        ContentValues values = new ContentValues();
+        values.put(KEY_ROWID, contact.getId());
+        values.put(KEY_NAME, contact.getName());
+        values.put(KEY_EMAIL, contact.getEmail());
+        values.put(KEY_PHONE, contact.getPhoneNumber());
+        values.put(KEY_ADDRESS, contact.getAddress());
+        values.put(KEY_IMG_PATH, contact.getImgPath());
+
+        return insertContact(values);
+    }
+
+    /**
      * @param contact to be added
      * @return
      */
@@ -97,6 +115,10 @@ public class DatabaseAdapter {
         values.put(KEY_ADDRESS, contact.getAddress());
         values.put(KEY_IMG_PATH, contact.getImgPath());
 
+        return insertContact(values);
+    }
+
+    private long insertContact(ContentValues values) {
         return db.insert(DATABASE_TABLE, null, values);
     }
 
