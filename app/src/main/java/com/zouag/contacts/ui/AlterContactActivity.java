@@ -2,12 +2,14 @@ package com.zouag.contacts.ui;
 
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -79,9 +81,46 @@ public class AlterContactActivity extends AppCompatActivity {
 
         if (savedInstanceState != null)
             current_img_path = savedInstanceState.getString("imgPath");
+        else {
+            if (ContactPreferences.isSaveContactToDraftON(this)) {
+                Contact contact = ContactPreferences.loadContact(this);
+
+                setupFieldValues(contact);
+                current_img_path = contact.getImgPath();
+
+                setContactImage();
+            }
+        }
 
         databaseAdapter = DatabaseAdapter.getInstance(this);
         initializeUI();
+
+        setListenerOnSharedPreferences();
+    }
+
+    private void setListenerOnSharedPreferences() {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(
+                (sharedPref, key) -> {
+                    if (key.equals(getString(R.string.save_draft_contact)))
+                        ContactPreferences.clearDraft(this);
+                }
+        );
+    }
+
+    private void setContactImage() {
+        if (!"".equals(current_img_path)) {
+            contactImage.setImageURI(Uri.fromFile(new File(current_img_path)));
+        } else
+            contactImage.setImageResource(R.drawable.ic_action_user_grey);
+    }
+
+    private void setupFieldValues(Contact contact) {
+        contactName.setText(contact.getName());
+        contactNumber.setText(contact.getPhoneNumber());
+        contactEmail.setText(contact.getEmail());
+        contactAddress.setText(contact.getAddress());
     }
 
     @Override
@@ -216,21 +255,14 @@ public class AlterContactActivity extends AppCompatActivity {
                 // Setup the inputs
                 String imgPath = contact.getImgPath();
                 if ("".equals(imgPath)) {
-                    if (!"".equals(current_img_path)) {
-                        contactImage.setImageURI(Uri.fromFile(new File(current_img_path)));
-                    } else
-                        contactImage.setImageResource(R.drawable.ic_action_user_grey);
-
+                    setContactImage();
                 } else
                     contactImage.setImageURI(Uri.fromFile(new File(imgPath)));
 
                 current_img_path = imgPath;
             }
 
-            contactName.setText(contact.getName());
-            contactNumber.setText(contact.getPhoneNumber());
-            contactEmail.setText(contact.getEmail());
-            contactAddress.setText(contact.getAddress());
+            setupFieldValues(contact);
         }
     }
 

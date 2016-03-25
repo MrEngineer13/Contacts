@@ -27,6 +27,7 @@ import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.utils.ContactPreferences;
 import com.zouag.contacts.utils.ResultCodes;
 import com.zouag.contacts.utils.SpacesItemDecoration;
 import com.zouag.contacts.utils.VCFContactConverter;
@@ -384,7 +385,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         message = getString(R.string.contact_added);
                         break;
                     case RESULT_CANCELED:
-                        message = getString(R.string.adding_contact_discarded);
+                        // Get the setting
+                        boolean saveToDraftStatus =
+                                ContactPreferences.isSaveContactToDraftON(this);
+                        message = saveToDraftStatus ? getString(R.string.contact_saved_to_draft) :
+                                getString(R.string.adding_contact_discarded);
                         break;
                 }
 
