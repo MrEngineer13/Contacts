@@ -6,38 +6,11 @@
     android:background="@color/colorPrimaryDark"
     tools:context=".ui.MainActivity">
 
+    <include android:id="@+id/emptyLayout" layout="@layout/empty_view_include" />
+
     <android.support.v7.widget.RecyclerView
         android:id="@+id/contactsList"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:divider="@null" />
-
-    <RelativeLayout
-        android:id="@+id/emptyLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:onClick="onEmptyViewClicked">
-
-        <TextView
-            android:id="@+id/noContactsEmptyView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_below="@+id/addImageView"
-            android:layout_centerInParent="true"
-            android:layout_marginTop="10dp"
-            android:gravity="center"
-            android:text="@string/no_contacts_add_new"
-            android:textColor="#ffffffff"
-            android:textStyle="bold" />
-
-        <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-            android:id="@+id/addImageView"
-            android:layout_width="60dp"
-            android:layout_height="60dp"
-            android:layout_centerInParent="true"
-            android:src="@drawable/ic_action_add"
-            app:civ_border_color="#FFFFFFFF"
-            app:civ_border_width="1dp" />
-    </RelativeLayout>
+        android:layout_height="match_parent"/>
 
 </RelativeLayout>
