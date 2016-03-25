@@ -63,4 +63,7 @@
     <string name="import_export">Import/Export</string>
     <string name="specify_save_file_name">Specify the name of the import/export file.</string>
     <string name="saves_file">Saves file</string>
+    <string name="action_import">Import</string>
+    <string name="action_export">Export</string>
+    <string name="settings">Settings</string>
 </resources>

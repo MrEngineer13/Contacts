@@ -51,11 +51,13 @@
     <string name="open_settings">Afficher paramètres</string>
     <string name="no_contacts_to_export">Pas de contacts à exporter.</string>
     <string name="contacts_export_success">Contacts sauvegardés avec succès.</string>
-
     <string name="popups">Popups</string>
     <string name="show_deleting_dialog">Afficher une dialogue de confirmation lors de la suppression d\'un contact</string>
     <string name="confirm_delete">Confirmer suppression</string>
     <string name="import_export">Import/Export</string>
     <string name="specify_save_file_name">Spécifier le nom du fichier d\'import/export.</string>
     <string name="saves_file">Fichier de sauvegarde</string>
+    <string name="action_import">Importer</string>
+    <string name="action_export">Exporter</string>
+    <string name="settings">Paramètres</string>
 </resources>

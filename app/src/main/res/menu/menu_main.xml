@@ -4,22 +4,22 @@
     <item
         android:id="@+id/action_import_contacts"
         android:orderInCategory="100"
-        android:title="Import"
+        android:title="@string/action_import"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_export_contacts"
         android:orderInCategory="101"
-        android:title="Export"
+        android:title="@string/action_export"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_clear_contacts"
         android:orderInCategory="102"
-        android:title="Clear contacts"
+        android:title="@string/clear_contacts"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_settings"
         android:orderInCategory="103"
-        android:title="Settings"
+        android:title="@string/settings"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_add"
