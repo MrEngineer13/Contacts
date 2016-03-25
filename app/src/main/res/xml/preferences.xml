@@ -13,4 +13,14 @@
             android:title="Confirm delete" />
     </PreferenceCategory>
 
+    <PreferenceCategory
+        android:key="key_import_export_settings"
+        android:title="Import/Export">
+        <EditTextPreference
+            android:defaultValue=""
+            android:key="@string/contacts_save_file_name"
+            android:summary="Specify the name of the import/export file."
+            android:title="Saves file" />
+    </PreferenceCategory>
+
 </PreferenceScreen>

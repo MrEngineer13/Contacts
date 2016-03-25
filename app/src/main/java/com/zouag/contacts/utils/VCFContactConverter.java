@@ -1,7 +1,9 @@
 package com.zouag.contacts.utils;
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.os.Environment;
+import android.preference.PreferenceManager;
 
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -86,6 +88,10 @@ public class VCFContactConverter {
                 Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
                 appName);
 
-        return mediaStorageDir.getPath() + File.separator + "contacts_save.vcf";
+        SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
+        String save_file_name = sharedPref.getString(
+                context.getString(R.string.contacts_save_file_name), "contacts_save");
+
+        return mediaStorageDir.getPath() + File.separator + save_file_name + ".vcf";
     }
 }

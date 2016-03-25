@@ -212,6 +212,7 @@ public class ViewContactActivity extends AppCompatActivity {
      * Deletes a contact from the local database.
      */
     private void deleteContact() {
+        // Get the setting
         boolean confirm_delete = sharedPref.getBoolean(
                 getString(R.string.show_confirm_dialog), true);
 
