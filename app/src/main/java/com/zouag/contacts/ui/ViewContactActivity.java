@@ -1,9 +1,11 @@
 package com.zouag.contacts.ui;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.PersistableBundle;
+import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
 import android.support.v7.app.AlertDialog;
@@ -34,6 +36,8 @@ public class ViewContactActivity extends AppCompatActivity {
 
     private static final String TAG = ViewContactActivity.class.getSimpleName();
     private static final int REQUEST_UPDATE_CONTACT = 200;
+
+    private SharedPreferences sharedPref;
 
     @Bind(R.id.detailsRecyclerview)
     RecyclerView detailsRecyclerView;
@@ -83,6 +87,8 @@ public class ViewContactActivity extends AppCompatActivity {
         setupContactData();
         setActionbarTitle();
         setupDetailsRecyclerView();
+
+        sharedPref = PreferenceManager.getDefaultSharedPreferences(this);
     }
 
     @Override
@@ -206,24 +212,35 @@ public class ViewContactActivity extends AppCompatActivity {
      * Deletes a contact from the local database.
      */
     private void deleteContact() {
-        AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
-        builder.setTitle(getString(R.string.delete_contact));
-        builder.setMessage(getString(R.string.are_you_sure_delete_contact));
-        builder.setNegativeButton(getString(R.string.cancel), null)
-                .setPositiveButton(getString(R.string.positive), (dialog, which) -> {
-                    DatabaseAdapter databaseAdapter =
-                            DatabaseAdapter.getInstance(ViewContactActivity.this);
-                    Log.i(TAG, databaseAdapter.getAllContacts().size() + " BEFORE DELETE");
-                    databaseAdapter.deleteContact(currentContact.getId());
-                    Log.i(TAG, databaseAdapter.getAllContacts().size() + " AFTER DELETE");
+        boolean confirm_delete = sharedPref.getBoolean(
+                getString(R.string.show_confirm_dialog), true);
 
-                    setResult(ResultCodes.CONTACT_DELETED);
-                    finish();
-                });
+        if (!confirm_delete) {
+            // Delete contact without prompting a confirmation dialog
+            performDeletion();
+        }
+        else {
+            AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
+            builder.setTitle(getString(R.string.delete_contact));
+            builder.setMessage(getString(R.string.are_you_sure_delete_contact));
+            builder.setNegativeButton(getString(R.string.cancel), null)
+                    .setPositiveButton(getString(R.string.positive), (dialog, which) -> {
+                        performDeletion();
+                    });
 
-        AlertDialog alertDialog = builder.create();
-        alertDialog.setCanceledOnTouchOutside(false);
-        alertDialog.show();
+            AlertDialog alertDialog = builder.create();
+            alertDialog.setCanceledOnTouchOutside(false);
+            alertDialog.show();
+        }
+    }
+
+    private void performDeletion() {
+        DatabaseAdapter databaseAdapter =
+                DatabaseAdapter.getInstance(ViewContactActivity.this);
+        databaseAdapter.deleteContact(currentContact.getId());
+
+        setResult(ResultCodes.CONTACT_DELETED);
+        finish();
     }
 
     /**

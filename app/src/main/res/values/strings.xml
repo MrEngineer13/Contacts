@@ -36,4 +36,5 @@
     <string name="are_you_sure_delete_contact">Are you sure that you want to delete this contact ?\nThis operation cannot be undone.</string>
     <string name="positive">I\'m positive</string>
     <string name="title_activity_settings">Settings</string>
+    <string name="show_confirm_dialog">show_confirm_dialog</string>
 </resources>

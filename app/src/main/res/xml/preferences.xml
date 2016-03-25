@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <PreferenceCategory
+        android:key="key_dialog_settings"
+        android:title="Dialogs">
+        <CheckBoxPreference
+            android:defaultValue="true"
+            android:key="@string/show_confirm_dialog"
+            android:summary="Show dialog when deleting contact"
+            android:title="Confirm delete" />
+    </PreferenceCategory>
+
+</PreferenceScreen>
