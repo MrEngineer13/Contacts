@@ -129,18 +129,37 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * Removes all contacts from the database.
      */
     private void clearContacts() {
-        List<Contact> allDeletedContacts = new ArrayList<>(mContacts);
 
-        databaseAdapter.deleteAllContacts();
-        refreshContacts();
+        if (mContacts.size() == 0) {
+            Snackbar.make(getWindow().getDecorView(),
+                    "Your contacts' list is already empty.",
+                    Snackbar.LENGTH_LONG).show();
+            return;
+        }
 
-        Snackbar.make(getWindow().getDecorView(),
-                "All contacts were cleared.",
-                Snackbar.LENGTH_LONG)
-                .setAction("UNDO", view -> {
-                    undoDeleteAll(allDeletedContacts);
-                })
-                .show();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Clear contacts");
+        builder.setMessage("Are you sure that you want to clear your contacts' list ?");
+        builder.setNegativeButton("CANCEL", null)
+                .setPositiveButton("PROCEED", (dialog, which) -> {
+                    // Save the deleted contacts in case the user decided to undo the operation
+                    List<Contact> allDeletedContacts = new ArrayList<>(mContacts);
+
+                    databaseAdapter.deleteAllContacts();
+                    refreshContacts();
+
+                    Snackbar.make(getWindow().getDecorView(),
+                            "All contacts were cleared.",
+                            Snackbar.LENGTH_LONG)
+                            .setAction("UNDO", view -> {
+                                undoDeleteAll(allDeletedContacts);
+                            })
+                            .show();
+                });
+
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(true);
+        alertDialog.show();
     }
 
     private void showSettings() {
@@ -184,15 +203,17 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         }
 
                         // Show contacts
-                        toggleRecyclerviewState();
-                        setupRecyclerView();
+                        refreshContacts();
 
                         Snackbar.make(getWindow().getDecorView(),
                                 "Contacts successfully loaded.", Snackbar.LENGTH_LONG).show();
 
                     } catch (IOException e) {
                         Snackbar.make(getWindow().getDecorView(),
-                                "The save file cannot be found.", Snackbar.LENGTH_LONG).show();
+                                "The save file cannot be found.",
+                                Snackbar.LENGTH_LONG)
+                                .setAction("Open Settings", view -> showSettings())
+                                .show();
                     }
                 });
         AlertDialog alertDialog = builder.create();
@@ -210,7 +231,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         // Save new contacts to database
         databaseAdapter.insertContacts(filteredContacts);
-        mContacts = getContacts();
     }
 
     private List<Contact> filterExistingContacts(List<Contact> contacts) {
@@ -232,7 +252,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         // Save new contacts to database
         databaseAdapter.insertContacts(contacts);
-        mContacts = getContacts();
     }
 
     /**
