@@ -18,7 +18,9 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.RelativeLayout;
+import android.widget.Toast;
 
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -76,6 +78,14 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         setContentView(R.layout.activity_main);
         ButterKnife.bind(this);
 
+        // Show the toolbar's icon
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+        getSupportActionBar().setLogo(R.mipmap.ic_launcher);
+        getSupportActionBar().setDisplayUseLogoEnabled(true);
+
+        // Hide the toolbar's title
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+
         databaseAdapter = DatabaseAdapter.getInstance(this);
         contactsRecyclerView.addItemDecoration(new SpacesItemDecoration(20));
     }
@@ -93,6 +103,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
+            case android.R.id.home:
+                Toast.makeText(this, "Home", Toast.LENGTH_LONG).show();
+                return true;
             case R.id.action_add:
                 startAddContactActivity();
                 return true;
