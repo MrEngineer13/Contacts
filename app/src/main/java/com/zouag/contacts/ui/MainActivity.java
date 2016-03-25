@@ -18,7 +18,6 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.Window;
 import android.widget.RelativeLayout;
 import android.widget.Toast;
 
@@ -115,15 +114,33 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             case R.id.action_export_contacts:
                 exportContacts();
                 return true;
+            case R.id.action_clear_contacts:
+                clearContacts();
+                return true;
             case R.id.action_settings:
                 showSettings();
-                return true;
-            case R.id.action_quit:
-                finish();
                 return true;
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    /**
+     * Removes all contacts from the database.
+     */
+    private void clearContacts() {
+        List<Contact> allDeletedContacts = new ArrayList<>(mContacts);
+
+        databaseAdapter.deleteAllContacts();
+        refreshContacts();
+
+        Snackbar.make(getWindow().getDecorView(),
+                "All contacts were cleared.",
+                Snackbar.LENGTH_LONG)
+                .setAction("UNDO", view -> {
+                    undoDeleteAll(allDeletedContacts);
+                })
+                .show();
     }
 
     private void showSettings() {
@@ -388,6 +405,16 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     private void undoDelete(Contact contact) {
         databaseAdapter.insertContactByID(contact);
+        refreshContacts();
+    }
+
+    /**
+     * Undoes the deletion of all contacts.
+     *
+     * @param contacts to be re-added
+     */
+    private void undoDeleteAll(List<Contact> contacts) {
+        databaseAdapter.insertContacts(contacts);
         refreshContacts();
     }
 

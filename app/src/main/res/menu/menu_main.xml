@@ -12,14 +12,14 @@
         android:title="Export"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_settings"
+        android:id="@+id/action_clear_contacts"
         android:orderInCategory="102"
-        android:title="Settings"
+        android:title="Clear contacts"
         app:showAsAction="never" />
     <item
-        android:id="@+id/action_quit"
+        android:id="@+id/action_settings"
         android:orderInCategory="103"
-        android:title="@string/close_app"
+        android:title="Settings"
         app:showAsAction="never" />
     <item
         android:id="@+id/action_add"

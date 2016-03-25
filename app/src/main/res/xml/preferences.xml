@@ -5,7 +5,7 @@
 
     <PreferenceCategory
         android:key="key_dialog_settings"
-        android:title="Dialogs">
+        android:title="Popups">
         <CheckBoxPreference
             android:defaultValue="true"
             android:key="@string/show_confirm_dialog"
