@@ -5,9 +5,11 @@ import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.annimon.stream.Stream;
+import com.zouag.contacts.R;
 import com.zouag.contacts.models.Contact;
 
 import java.util.ArrayList;
@@ -44,6 +46,7 @@ public class DatabaseAdapter {
                     KEY_IMG_PATH + " TEXT NOT NULL)";
     private DatabaseHelper dbHelper;
     private SQLiteDatabase db;
+    private Context mContext;
 
     /**
      * A static factory method.
@@ -63,6 +66,7 @@ public class DatabaseAdapter {
     }
 
     private DatabaseAdapter(Context context) {
+        mContext = context;
         dbHelper = new DatabaseHelper(context);
     }
 
@@ -178,10 +182,11 @@ public class DatabaseAdapter {
      * @param ordering of the contacts
      * @return a list of all contacts.
      */
-    public List<Contact> getAllContacts(String ordering) {
+    public List<Contact> getAllContacts(@NonNull String ordering) {
         List<Contact> contacts = new ArrayList<>();
-        if (ordering != null)
-            ordering = KEY_NAME + " " + ordering;
+
+        ordering = ordering.equals(mContext.getString(R.string.default_order)) ?
+                null : KEY_NAME + " " + ordering;
 
         try (Cursor cursor = db.query(DATABASE_TABLE,
                 new String[]{KEY_ROWID, KEY_NAME, KEY_EMAIL, KEY_PHONE, KEY_ADDRESS, KEY_IMG_PATH},

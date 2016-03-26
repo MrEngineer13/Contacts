@@ -38,8 +38,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
 import java.util.List;
 
 import butterknife.Bind;
@@ -187,13 +185,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
                 // Show contacts
                 refreshContacts();
+                showImportSuccessSnack(newContacts.size());
 
-                Snackbar.make(getWindow().getDecorView(),
-                        String.format(
-                                getString(R.string.contacts_loaded_success), mContacts.size()),
-                        Snackbar.LENGTH_LONG).show();
             } catch (IOException e) {
-                e.printStackTrace();
+                showFileNotFoundSnack();
             }
         } else {
             // There are contacts, so show the popup to append/overwrite
@@ -231,27 +226,38 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             mAdapter.animateTo(mContacts);
                             contactsRecyclerView.scrollToPosition(0);
 
-                            Snackbar.make(getWindow().getDecorView(),
-                                    String.format(
-                                            nbr_contacts == 1 ? getString(R.string.contact_loaded_success) :
-                                                    nbr_contacts == 0 ? getString(R.string.zero_contacts_loaded) :
-                                                            getString(R.string.contacts_loaded_success),
-                                            nbr_contacts),
-                                    Snackbar.LENGTH_LONG)
-                                    .show();
+                            showImportSuccessSnack(nbr_contacts);
 
                         } catch (IOException e) {
-                            Snackbar.make(getWindow().getDecorView(),
-                                    R.string.save_file_not_found,
-                                    Snackbar.LENGTH_LONG)
-                                    .setAction(R.string.open_settings, view -> showSettings())
-                                    .show();
+                            showFileNotFoundSnack();
                         }
                     });
             AlertDialog alertDialog = builder.create();
             alertDialog.setCanceledOnTouchOutside(true);
             alertDialog.show();
         }
+    }
+
+    /**
+     * @param nbr_contacts that were added.
+     */
+    private void showImportSuccessSnack(int nbr_contacts) {
+        Snackbar.make(getWindow().getDecorView(),
+                String.format(
+                        nbr_contacts == 1 ? getString(R.string.contact_loaded_success) :
+                                nbr_contacts == 0 ? getString(R.string.zero_contacts_loaded) :
+                                        getString(R.string.contacts_loaded_success),
+                        nbr_contacts),
+                Snackbar.LENGTH_LONG)
+                .show();
+    }
+
+    private void showFileNotFoundSnack() {
+        Snackbar.make(getWindow().getDecorView(),
+                R.string.save_file_not_found,
+                Snackbar.LENGTH_LONG)
+                .setAction(R.string.open_settings, view -> showSettings())
+                .show();
     }
 
     public List<Contact> getContactsFromFile() throws IOException {

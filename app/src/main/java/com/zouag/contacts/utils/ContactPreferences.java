@@ -90,6 +90,7 @@ public class ContactPreferences {
      */
     public static String getOrdering(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString("key_sort_contacts", null);
+                .getString("key_sort_contacts",
+                        context.getString(R.string.default_order));
     }
 }

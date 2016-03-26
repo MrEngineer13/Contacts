@@ -78,13 +78,16 @@
     <string name="choose_email_client">Choose an email client</string>
     <string name="display">Display</string>
     <string name="specify_contacts_ordering">Specify the ordering of the contacts</string>
-    <string name="sort">Sort</string>
+    <string name="sort_contacts">Sort contacts</string>
+    <string name="default_order">DEFAULT_ORDER</string>
 
     <string-array name="sortentries">
-        <item>Ascending</item>
-        <item>Descending</item>
+        <item>Default order</item>
+        <item>Ascending order</item>
+        <item>Descending order</item>
     </string-array>
     <string-array name="sortvalues">
+        <item>@string/default_order</item>
         <item>ASC</item>
         <item>DESC</item>
     </string-array>

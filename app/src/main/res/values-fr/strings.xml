@@ -71,13 +71,15 @@
     <string name="choose_email_client">Choisissez un service</string>
     <string name="display">Affichage</string>
     <string name="specify_contacts_ordering">Spécifier l\'ordre d\'affichage des contacts</string>
-    <string name="sort">Trier</string>
+    <string name="sort_contacts">Trier contacts</string>
 
     <string-array name="sortentries">
-        <item>Croissant</item>
-        <item>Décroissant</item>
+        <item>par order d\'insertion</item>
+        <item>par ordre croissant</item>
+        <item>par ordre décroissant</item>
     </string-array>
     <string-array name="sortvalues">
+        <item>@string/default_order</item>
         <item>ASC</item>
         <item>DESC</item>
     </string-array>

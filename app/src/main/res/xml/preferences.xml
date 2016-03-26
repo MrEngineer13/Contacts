@@ -7,11 +7,12 @@
         android:key="key_dialog_settings"
         android:title="@string/display">
         <ListPreference
+            android:defaultValue="@string/default_order"
             android:entries="@array/sortentries"
             android:entryValues="@array/sortvalues"
             android:key="key_sort_contacts"
             android:summary="@string/specify_contacts_ordering"
-            android:title="@string/sort" />
+            android:title="@string/sort_contacts" />
     </PreferenceCategory>
 
     <PreferenceCategory
