@@ -3,7 +3,10 @@ package com.zouag.contacts.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.support.v4.app.ShareCompat;
+import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -33,11 +36,16 @@ public class ContactDetailsAdapter extends RecyclerView.Adapter<ContactDetailsAd
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.contact_detail_row, viewGroup, false);
 
-        v.setOnClickListener(view -> {
-            ContactData data = contactData.get(position);
+        return new ViewHolder(v);
+    }
+
+    @Override
+    public void onBindViewHolder(ViewHolder viewHolder, int position) {
+        ContactData data = contactData.get(position);
+        viewHolder.bind(data);
+        viewHolder.itemView.setOnClickListener(view -> {
             String mobile = mContext.getString(R.string.mobile);
             String email = mContext.getString(R.string.email);
-            String address = mContext.getString(R.string.address);
 
             Intent intent = null;
 
@@ -48,20 +56,21 @@ public class ContactDetailsAdapter extends RecyclerView.Adapter<ContactDetailsAd
 
             } else if (data.getDescription().equals(email)) {
                 // Send email
+                ShareCompat.IntentBuilder
+                        .from(((AppCompatActivity) mContext))
+                        .setType("message/rfc822")
+                        .addEmailTo(data.getData())
+                        .setChooserTitle(R.string.choose_email_client)
+                        .startChooser();
             } else {
                 // Show address in map
+                String map = "http://maps.google.co.in/maps?q=" + data.getData();
+                intent = new Intent(Intent.ACTION_VIEW, Uri.parse(map));
             }
 
-            mContext.startActivity(intent);
+            if (intent != null)
+                mContext.startActivity(intent);
         });
-
-        return new ViewHolder(v);
-    }
-
-    @Override
-    public void onBindViewHolder(ViewHolder viewHolder, int position) {
-        ContactData data = contactData.get(position);
-        viewHolder.bind(data);
     }
 
     @Override

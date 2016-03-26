@@ -66,4 +66,5 @@
     <string name="contact_saved_to_draft">Contact enregistré au brouillon.</string>
     <string name="contact_already_exists">Un contact existe déjà, qui possède le même nom.</string>
     <string name="create_anyway">Créer quand même</string>
+    <string name="choose_email_client">Choisissez un service</string>
 </resources>

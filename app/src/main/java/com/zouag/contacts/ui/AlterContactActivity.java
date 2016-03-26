@@ -414,20 +414,24 @@ public class AlterContactActivity extends AppCompatActivity {
                         showDialog(getString(R.string.add_contact),
                                 getString(R.string.contact_already_exists),
                                 getString(R.string.create_anyway),
-                                (dialog, which) -> {
-                                    // Insert contact
-                                    databaseAdapter.insertContact(newContact);
-
-                                    // Delete draft
-                                    ContactPreferences.clearDraft(this);
-
-                                    // Contact successfully created
-                                    setResult(ResultCodes.CONTACT_CREATED);
-                                    finish();
-                                });
+                                (dialog, which) -> confirmAddContact(newContact));
                 }
+                else
+                    confirmAddContact(newContact);
             }
         }
+    }
+
+    private void confirmAddContact(Contact contact) {
+        // Insert contact
+        databaseAdapter.insertContact(contact);
+
+        // Delete draft
+        ContactPreferences.clearDraft(this);
+
+        // Contact successfully created
+        setResult(ResultCodes.CONTACT_CREATED);
+        finish();
     }
 
     /**
