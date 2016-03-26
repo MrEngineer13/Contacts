@@ -5,6 +5,17 @@
 
     <PreferenceCategory
         android:key="key_dialog_settings"
+        android:title="Display">
+        <ListPreference
+            android:entries="@array/sortentries"
+            android:entryValues="@array/sortvalues"
+            android:key="key_sort_contacts"
+            android:summary="Specify the ordering of the contacts"
+            android:title="Sort" />
+    </PreferenceCategory>
+
+    <PreferenceCategory
+        android:key="key_dialog_settings"
         android:title="@string/data">
         <CheckBoxPreference
             android:defaultValue="true"

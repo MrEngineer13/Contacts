@@ -26,6 +26,7 @@ import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.utils.ContactPreferences;
 import com.zouag.contacts.utils.ResultCodes;
 import com.zouag.contacts.utils.SpacesItemDecoration;
 import com.zouag.contacts.utils.VCFContactConverter;
@@ -37,6 +38,8 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 
 import butterknife.Bind;
@@ -86,8 +89,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         databaseAdapter = DatabaseAdapter.getInstance(this);
         contactsRecyclerView.addItemDecoration(new SpacesItemDecoration(20));
-
-        refreshContacts();
     }
 
     @Override
@@ -373,6 +374,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     private void refreshContacts() {
         // Get the list of contacts
         mContacts = getContacts();
+
+        Comparator<Contact> comparator = ContactPreferences.getComparator(this);
+        if (comparator != null) {
+            Collections.sort(mContacts, comparator);
+            Log.i("SORT", "SORTING !");
+        }
+
         toggleRecyclerviewState();
 
         // Setup the adapter & the RecyclerView
@@ -456,7 +464,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                                     undoDelete(deletedContact);
                                 })
                                 .show();
-                        mContacts = getContacts();
                         break;
                 }
                 break;
@@ -512,15 +519,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * @return the filtered list of contacts
      */
     private List<Contact> filter(List<Contact> contacts, String query) {
-        query = query.toLowerCase();
-
-        final List<Contact> filteredContacts = new ArrayList<>();
-        for (Contact contact : contacts) {
-            final String text = contact.getName().toLowerCase();
-            if (text.contains(query)) {
-                filteredContacts.add(contact);
-            }
-        }
-        return filteredContacts;
+        return Stream.of(contacts)
+                .filter(contact -> contact.getName()
+                        .toLowerCase()
+                        .contains(query.toLowerCase()))
+                .collect(Collectors.toList());
     }
 }

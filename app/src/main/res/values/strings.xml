@@ -68,7 +68,7 @@
     <string name="action_import">Import</string>
     <string name="action_export">Export</string>
     <string name="settings">Settings</string>
-    <string name="data">data</string>
+    <string name="data">Data</string>
     <string name="save_draft_contact">save_draft_contact</string>
     <string name="save_draft_summary">Save the discarded contact to draft</string>
     <string name="save_contact">Save contact</string>
@@ -76,4 +76,13 @@
     <string name="contact_already_exists">An existing contact is already associated with this name.</string>
     <string name="create_anyway">Create anyway</string>
     <string name="choose_email_client">Choose an email client</string>
+
+    <string-array name="sortentries">
+        <item>Ascending</item>
+        <item>Descending</item>
+    </string-array>
+    <string-array name="sortvalues">
+        <item>ASC</item>
+        <item>DESC</item>
+    </string-array>
 </resources>
