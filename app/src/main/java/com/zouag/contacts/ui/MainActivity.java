@@ -32,6 +32,7 @@ import com.zouag.contacts.utils.VCFContactConverter;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -167,54 +168,81 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     private void importContacts() {
 
-        // Show alert dialog
-        CharSequence options[] = new CharSequence[]
-                {getString(R.string.action_append), getString(R.string.action_overwrite)};
+        if (mContacts.size() == 0) {
+            // There are no stored contacts, so there is no need for the popup dialog
 
-        AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle(R.string.import_options)
-                .setItems(options, (dialog, which) -> {
+            // Get the list of contacts stored within the .vcf file
+            try {
+                List<Contact> newContacts = getContactsFromFile();
+                overwriteContacts(newContacts);
 
-                    // Get the .vcf file
-                    File file = new File(VCFContactConverter.getVCFSavePath(this));
-                    try {
-                        FileInputStream fis = new FileInputStream(file);
-                        InputStreamReader reader = new InputStreamReader(fis);
+                // Show contacts
+                refreshContacts();
 
-                        // Get the list of VCards stored inside the .vcf file
-                        List<VCard> vCards = Ezvcard.parse(reader).all();
+                Snackbar.make(getWindow().getDecorView(),
+                        R.string.contacts_loaded_success, Snackbar.LENGTH_LONG).show();
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        else {
+            // There are contacts, so show the popup to append/overwrite
 
-                        // Convert those cards to Contact objects
-                        List<Contact> newContacts = VCFContactConverter.parseVCards(vCards);
+            // Show alert dialog
+            CharSequence options[] = new CharSequence[]
+                    {getString(R.string.action_append), getString(R.string.action_overwrite)};
 
-                        switch (which) {
-                            case 0:
-                                // Append
-                                appendContacts(newContacts);
-                                break;
-                            case 1:
-                                // Overwrite
-                                overwriteContacts(newContacts);
-                                break;
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle(R.string.import_options)
+                    .setItems(options, (dialog, which) -> {
+
+                        try {
+                            // Get the list of contacts stored within the .vcf file
+                            List<Contact> newContacts = getContactsFromFile();
+
+                            switch (which) {
+                                case 0:
+                                    // Append
+                                    appendContacts(newContacts);
+                                    break;
+                                case 1:
+                                    // Overwrite
+                                    overwriteContacts(newContacts);
+                                    break;
+                            }
+
+                            // Show contacts
+                            refreshContacts();
+
+                            Snackbar.make(getWindow().getDecorView(),
+                                    R.string.contacts_loaded_success, Snackbar.LENGTH_LONG).show();
+
+                        } catch (IOException e) {
+                            Snackbar.make(getWindow().getDecorView(),
+                                    R.string.save_file_not_found,
+                                    Snackbar.LENGTH_LONG)
+                                    .setAction(R.string.open_settings, view -> showSettings())
+                                    .show();
                         }
+                    });
+            AlertDialog alertDialog = builder.create();
+            alertDialog.setCanceledOnTouchOutside(true);
+            alertDialog.show();
+        }
+    }
 
-                        // Show contacts
-                        refreshContacts();
+    public List<Contact> getContactsFromFile() throws IOException {
+        // Get the .vcf file
+        File file = new File(VCFContactConverter.getVCFSavePath(this));
 
-                        Snackbar.make(getWindow().getDecorView(),
-                                R.string.contacts_loaded_success, Snackbar.LENGTH_LONG).show();
+        FileInputStream fis = new FileInputStream(file);
+        InputStreamReader reader = new InputStreamReader(fis);
 
-                    } catch (IOException e) {
-                        Snackbar.make(getWindow().getDecorView(),
-                                R.string.save_file_not_found,
-                                Snackbar.LENGTH_LONG)
-                                .setAction(R.string.open_settings, view -> showSettings())
-                                .show();
-                    }
-                });
-        AlertDialog alertDialog = builder.create();
-        alertDialog.setCanceledOnTouchOutside(true);
-        alertDialog.show();
+        // Get the list of VCards stored inside the .vcf file
+        List<VCard> vCards = Ezvcard.parse(reader).all();
+
+        // Convert those cards to Contact objects & return them
+        return VCFContactConverter.parseVCards(vCards);
     }
 
     /**
