@@ -154,7 +154,7 @@ public class DatabaseAdapter {
                 true,
                 DATABASE_TABLE,
                 new String[]{KEY_ROWID, KEY_NAME, KEY_EMAIL, KEY_PHONE, KEY_ADDRESS, KEY_IMG_PATH},
-                KEY_NAME + "=" + name, null, null, null, null, null)) {
+                KEY_NAME + "='" + name + "'", null, null, null, null, null)) {
             return extractContactFromCursor(cursor);
         }
     }

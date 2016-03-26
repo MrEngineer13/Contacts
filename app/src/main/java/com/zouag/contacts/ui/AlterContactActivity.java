@@ -405,18 +405,28 @@ public class AlterContactActivity extends AppCompatActivity {
 
                 // Contact successfully updated
                 setResult(ResultCodes.CONTACT_UPDATED);
+                finish();
             } else {
-                // Insert contact
-                databaseAdapter.insertContact(newContact);
+                // Check if there is already a contact with the same name as the new one
+                Contact existing = databaseAdapter.getContact(newContact.getName());
+                if (existing != null) {
+                    if (existing.getName().equals(newContact.getName()))
+                        showDialog("Add contact",
+                                "An existing contact is already associated with this name.",
+                                "Create anyway",
+                                (dialog, which) -> {
+                                    // Insert contact
+                                    databaseAdapter.insertContact(newContact);
 
-                // Delete draft
-                ContactPreferences.clearDraft(this);
+                                    // Delete draft
+                                    ContactPreferences.clearDraft(this);
 
-                // Contact successfully created
-                setResult(ResultCodes.CONTACT_CREATED);
+                                    // Contact successfully created
+                                    setResult(ResultCodes.CONTACT_CREATED);
+                                    finish();
+                                });
+                }
             }
-
-            finish();
         }
     }
 
@@ -530,7 +540,7 @@ public class AlterContactActivity extends AppCompatActivity {
         builder.setPositiveButton(actionText, listener);
 
         AlertDialog alertDialog = builder.create();
-        alertDialog.setCanceledOnTouchOutside(false);
+        alertDialog.setCanceledOnTouchOutside(true);
         alertDialog.show();
     }
 }
