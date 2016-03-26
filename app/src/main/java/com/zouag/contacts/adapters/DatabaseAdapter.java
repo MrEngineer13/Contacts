@@ -141,16 +141,34 @@ public class DatabaseAdapter {
                 DATABASE_TABLE, // table name
                 new String[]{KEY_ROWID, KEY_NAME, KEY_EMAIL, KEY_PHONE, KEY_ADDRESS, KEY_IMG_PATH},
                 KEY_ROWID + "=" + rowId, null, null, null, null, null)) {
-            if (cursor.moveToFirst()) {
-                return new Contact.Builder()
-                        .id(cursor.getInt(0))
-                        .name(cursor.getString(1))
-                        .email(cursor.getString(2))
-                        .phoneNumber(cursor.getString(3))
-                        .address(cursor.getString(4))
-                        .imgPath(cursor.getString(5))
-                        .createContact();
-            }
+            return extractContactFromCursor(cursor);
+        }
+    }
+
+    /**
+     * @param name of the contact to retrieve
+     * @return a Contact object if found, or null otherwise.
+     */
+    public Contact getContact(String name) {
+        try (Cursor cursor = db.query(
+                true,
+                DATABASE_TABLE,
+                new String[]{KEY_ROWID, KEY_NAME, KEY_EMAIL, KEY_PHONE, KEY_ADDRESS, KEY_IMG_PATH},
+                KEY_NAME + "=" + name, null, null, null, null, null)) {
+            return extractContactFromCursor(cursor);
+        }
+    }
+
+    public Contact extractContactFromCursor(Cursor cursor) {
+        if (cursor.moveToFirst()) {
+            return new Contact.Builder()
+                    .id(cursor.getInt(0))
+                    .name(cursor.getString(1))
+                    .email(cursor.getString(2))
+                    .phoneNumber(cursor.getString(3))
+                    .address(cursor.getString(4))
+                    .imgPath(cursor.getString(5))
+                    .createContact();
         }
 
         return null;
