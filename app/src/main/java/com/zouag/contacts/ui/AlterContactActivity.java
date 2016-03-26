@@ -3,7 +3,6 @@ package com.zouag.contacts.ui;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.content.res.Configuration;
 import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.net.Uri;
@@ -56,17 +55,22 @@ public class AlterContactActivity extends AppCompatActivity {
      * The path of the currently selected image.
      */
     private String current_img_path = "";
+
+    /**
+     * The path of the image stored in shared preferences.
+     */
     private String preference_img_path = "";
 
     /**
      * The path of the image stored from the last orientation change.
      */
-    private String stored_img_path = "";
+    private String orientation_img_path = "";
     /**
      * The ID of the currently-being-modified contact.
      */
     private int currentContactID;
     private DatabaseAdapter databaseAdapter;
+    private boolean isUpdating;
 
     @Bind(R.id.contactName)
     EditText contactName;
@@ -85,15 +89,22 @@ public class AlterContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_add_contact);
         ButterKnife.bind(this);
 
-        if (savedInstanceState != null) {
-            stored_img_path = savedInstanceState.getString("imgPath");
-            Log.i("LOADED", "ImgPath: " + stored_img_path);
-        } else {
-            if (ContactPreferences.isSaveContactToDraftON(this)) {
-                Contact contact = ContactPreferences.loadContact(this);
+        Intent intent = getIntent();
+        isUpdating = intent.getBooleanExtra("isUpdating", false);
 
-                setupFieldValues(contact);
-                preference_img_path = contact.getImgPath();
+        if (savedInstanceState != null) {
+            orientation_img_path = savedInstanceState.getString("imgPath");
+        } else {
+            if (!isUpdating) {
+                // If we're not updating an old contact, check if there is one
+                // stored in shared preferences
+
+                if (ContactPreferences.isSaveContactToDraftON(this)) {
+                    Contact contact = ContactPreferences.loadContact(this);
+
+                    setupFieldValues(contact);
+                    preference_img_path = contact.getImgPath();
+                }
             }
         }
 
@@ -112,13 +123,6 @@ public class AlterContactActivity extends AppCompatActivity {
                         ContactPreferences.clearDraft(this);
                 }
         );
-    }
-
-    private void setContactImage() {
-        if (!"".equals(current_img_path)) {
-            contactImage.setImageURI(Uri.fromFile(new File(current_img_path)));
-        } else
-            contactImage.setImageResource(R.drawable.ic_action_user_grey);
     }
 
     private void setupFieldValues(Contact contact) {
@@ -186,26 +190,29 @@ public class AlterContactActivity extends AppCompatActivity {
     @Override
     public void onBackPressed() {
         if (ContactPreferences.isSaveContactToDraftON(this)) {
-            // Save contact to draft
+            // Only save contact to draft if we're creating a new contact, not updating one
+            if (!isUpdating) {
+                // Save contact to draft
 
-            String name = contactName.getText().toString();
-            String imgPath = current_img_path;
-            String phone = contactNumber.getText().toString();
-            String email = contactEmail.getText().toString();
-            String address = contactAddress.getText().toString();
+                String name = contactName.getText().toString();
+                String imgPath = current_img_path;
+                String phone = contactNumber.getText().toString();
+                String email = contactEmail.getText().toString();
+                String address = contactAddress.getText().toString();
 
-            if (name.length() != 0 || imgPath.length() != 0 || phone.length() != 0
-                    || email.length() != 0 || address.length() != 0)
-                setResult(ResultCodes.CONTACT_SAVED_TO_DRAFT);
+                if (name.length() != 0 || imgPath.length() != 0 || phone.length() != 0
+                        || email.length() != 0 || address.length() != 0)
+                    setResult(ResultCodes.CONTACT_SAVED_TO_DRAFT);
 
-            ContactPreferences.saveContact(this,
-                    new Contact.Builder()
-                            .name(name)
-                            .imgPath(imgPath)
-                            .phoneNumber(phone)
-                            .email(email)
-                            .address(address)
-                            .createContact());
+                ContactPreferences.saveContact(this,
+                        new Contact.Builder()
+                                .name(name)
+                                .imgPath(imgPath)
+                                .phoneNumber(phone)
+                                .email(email)
+                                .address(address)
+                                .createContact());
+            }
         }
 
         super.onBackPressed();
@@ -245,10 +252,9 @@ public class AlterContactActivity extends AppCompatActivity {
     private void initializeUI() {
         setupActionbar();
 
-        Intent intent = getIntent();
-        if (intent.getBooleanExtra("isUpdating", false)) {
+        if (isUpdating) {
             // We're updating, retrieve the passed-in contact
-            Contact contact = intent.getParcelableExtra("contact");
+            Contact contact = getIntent().getParcelableExtra("contact");
 
             // Set the action bar's title
             getSupportActionBar().setTitle(R.string.update_contact);
@@ -256,7 +262,7 @@ public class AlterContactActivity extends AppCompatActivity {
             // Save the ID of the currently-being-modified contact
             currentContactID = contact.getId();
 
-            if ("".equals(stored_img_path)) {
+            if ("".equals(orientation_img_path)) {
                 // There is no image stored from the last orientation change
 
                 // Get the path of the image associated with the current contact
@@ -271,16 +277,15 @@ public class AlterContactActivity extends AppCompatActivity {
                 }
             } else {
                 // There is an image stored from the last orientation change
-                contactImage.setImageURI(Uri.fromFile(new File(stored_img_path)));
-                current_img_path = stored_img_path;
+                contactImage.setImageURI(Uri.fromFile(new File(orientation_img_path)));
+                current_img_path = orientation_img_path;
             }
 
             setupFieldValues(contact);
-        }
-        else {
+        } else {
             // We're creating a new contact
 
-            if ("".equals(stored_img_path)) {
+            if ("".equals(orientation_img_path)) {
                 // There is no image stored from the last orientation change
 
                 if ("".equals(preference_img_path)) {
@@ -293,8 +298,8 @@ public class AlterContactActivity extends AppCompatActivity {
                 }
             } else {
                 // There is an image stored from the last orientation change
-                contactImage.setImageURI(Uri.fromFile(new File(stored_img_path)));
-                current_img_path = stored_img_path;
+                contactImage.setImageURI(Uri.fromFile(new File(orientation_img_path)));
+                current_img_path = orientation_img_path;
             }
         }
     }
@@ -403,6 +408,9 @@ public class AlterContactActivity extends AppCompatActivity {
             } else {
                 // Insert contact
                 databaseAdapter.insertContact(newContact);
+
+                // Delete draft
+                ContactPreferences.clearDraft(this);
 
                 // Contact successfully created
                 setResult(ResultCodes.CONTACT_CREATED);

@@ -3,9 +3,7 @@ package com.zouag.contacts.ui;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.net.Uri;
-import android.os.Build;
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.preference.PreferenceManager;
 import android.support.design.widget.CollapsingToolbarLayout;
 import android.support.design.widget.Snackbar;
@@ -14,11 +12,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.transition.Explode;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
 import android.widget.ImageView;
 
 import com.zouag.contacts.R;
@@ -74,8 +69,7 @@ public class ViewContactActivity extends AppCompatActivity {
         if (savedInstanceState != null) {
             // Get saved contact from previous orientation change
             currentContact = savedInstanceState.getParcelable("savedContact");
-        }
-        else {
+        } else {
             // Get contact from launching intent
             currentContact = getIntent().getExtras().getParcelable("contact");
         }
@@ -222,8 +216,7 @@ public class ViewContactActivity extends AppCompatActivity {
         if (!confirm_delete) {
             // Delete contact without prompting a confirmation dialog
             performDeletion();
-        }
-        else {
+        } else {
             AlertDialog.Builder builder = new AlertDialog.Builder(this, R.style.AppCompatAlertDialogStyle);
             builder.setTitle(getString(R.string.delete_contact));
             builder.setMessage(getString(R.string.are_you_sure_delete_contact));

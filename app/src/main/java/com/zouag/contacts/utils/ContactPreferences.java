@@ -3,7 +3,6 @@ package com.zouag.contacts.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.models.Contact;

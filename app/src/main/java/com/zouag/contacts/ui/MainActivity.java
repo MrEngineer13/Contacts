@@ -19,7 +19,6 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -27,7 +26,6 @@ import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
-import com.zouag.contacts.utils.ContactPreferences;
 import com.zouag.contacts.utils.ResultCodes;
 import com.zouag.contacts.utils.SpacesItemDecoration;
 import com.zouag.contacts.utils.VCFContactConverter;
