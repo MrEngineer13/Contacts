@@ -411,9 +411,9 @@ public class AlterContactActivity extends AppCompatActivity {
                 Contact existing = databaseAdapter.getContact(newContact.getName());
                 if (existing != null) {
                     if (existing.getName().equals(newContact.getName()))
-                        showDialog("Add contact",
-                                "An existing contact is already associated with this name.",
-                                "Create anyway",
+                        showDialog(getString(R.string.add_contact),
+                                getString(R.string.contact_already_exists),
+                                getString(R.string.create_anyway),
                                 (dialog, which) -> {
                                     // Insert contact
                                     databaseAdapter.insertContact(newContact);

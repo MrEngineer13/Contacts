@@ -71,4 +71,6 @@
     <string name="save_draft_summary">Save the discarded contact to draft</string>
     <string name="save_contact">Save contact</string>
     <string name="contact_saved_to_draft">Contact saved to draft.</string>
+    <string name="contact_already_exists">An existing contact is already associated with this name.</string>
+    <string name="create_anyway">Create anyway</string>
 </resources>

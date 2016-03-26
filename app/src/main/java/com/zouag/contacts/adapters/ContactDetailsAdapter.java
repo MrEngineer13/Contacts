@@ -1,6 +1,8 @@
 package com.zouag.contacts.adapters;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -27,9 +29,31 @@ public class ContactDetailsAdapter extends RecyclerView.Adapter<ContactDetailsAd
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int position) {
         View v = LayoutInflater.from(viewGroup.getContext())
                 .inflate(R.layout.contact_detail_row, viewGroup, false);
+
+        v.setOnClickListener(view -> {
+            ContactData data = contactData.get(position);
+            String mobile = mContext.getString(R.string.mobile);
+            String email = mContext.getString(R.string.email);
+            String address = mContext.getString(R.string.address);
+
+            Intent intent = null;
+
+            if (data.getDescription().equals(mobile)) {
+                // Call contact
+                intent = new Intent(Intent.ACTION_CALL);
+                intent.setData(Uri.parse("tel:" + data.getData()));
+
+            } else if (data.getDescription().equals(email)) {
+                // Send email
+            } else {
+                // Show address in map
+            }
+
+            mContext.startActivity(intent);
+        });
 
         return new ViewHolder(v);
     }
