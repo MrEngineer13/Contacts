@@ -33,7 +33,7 @@
     <string name="adding_contact_discarded">L\'ajout du contact a été abandonné.</string>
     <string name="contact_removed">Contact supprimé de votre répertoire.</string>
     <string name="contact_updated">Contact modifié.</string>
-    <string name="are_you_sure_delete_contact">Etes-vous sûr de bien vouloir supprimer ce contact ?\nCette opération est irréversible.</string>
+    <string name="are_you_sure_delete_contact">Etes-vous sûr de bien vouloir supprimer ce contact ?</string>
     <string name="positive">Confirmer</string>
     <string name="title_activity_settings">Paramètres</string>
     <string name="ten_digits">10 nombres</string>

@@ -152,6 +152,35 @@ public class Contact implements Parcelable {
     };
 
     @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Contact contact = (Contact) o;
+
+        if (id != contact.id) return false;
+        if (name != null ? !name.equals(contact.name) : contact.name != null) return false;
+        if (email != null ? !email.equals(contact.email) : contact.email != null) return false;
+        if (phoneNumber != null ? !phoneNumber.equals(contact.phoneNumber) : contact.phoneNumber != null)
+            return false;
+        if (address != null ? !address.equals(contact.address) : contact.address != null)
+            return false;
+        return !(imgPath != null ? !imgPath.equals(contact.imgPath) : contact.imgPath != null);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = id;
+        result = 31 * result + (name != null ? name.hashCode() : 0);
+        result = 31 * result + (email != null ? email.hashCode() : 0);
+        result = 31 * result + (phoneNumber != null ? phoneNumber.hashCode() : 0);
+        result = 31 * result + (address != null ? address.hashCode() : 0);
+        result = 31 * result + (imgPath != null ? imgPath.hashCode() : 0);
+        return result;
+    }
+
+    @Override
     public String toString() {
         return "Contact{" +
                 "id=" + id +

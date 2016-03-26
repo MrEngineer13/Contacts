@@ -6,7 +6,6 @@ import android.net.Uri;
 import android.support.v4.app.ShareCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -94,9 +93,7 @@ public class ContactDetailsAdapter extends RecyclerView.Adapter<ContactDetailsAd
         public void bind(ContactData dat) {
             String desc = dat.getDescription();
             if (desc.equals(mContext.getString(R.string.mobile))) {
-
                 // Show the telephone number as a series of 2 numbers separated by a space.
-
                 String data = dat.getData();
                 for (int i = 2; i < data.length(); i += 3)
                     data = data.substring(0, i) + " " + data.substring(i);

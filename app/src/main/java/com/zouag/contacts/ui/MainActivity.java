@@ -32,7 +32,6 @@ import com.zouag.contacts.utils.VCFContactConverter;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -87,6 +86,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         databaseAdapter = DatabaseAdapter.getInstance(this);
         contactsRecyclerView.addItemDecoration(new SpacesItemDecoration(20));
+
+        refreshContacts();
     }
 
     @Override
@@ -120,6 +121,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        refreshContacts();
     }
 
     /**
@@ -217,7 +225,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             }
 
                             // Show contacts
-                            refreshContacts();
+                            mContacts = getContacts();
+                            toggleRecyclerviewState();
+                            mAdapter.animateTo(mContacts);
+                            contactsRecyclerView.scrollToPosition(0);
 
                             Snackbar.make(getWindow().getDecorView(),
                                     String.format(
@@ -359,13 +370,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         startAddContactActivity();
     }
 
-    @Override
-    protected void onResume() {
-        super.onResume();
-
-        refreshContacts();
-    }
-
     private void refreshContacts() {
         // Get the list of contacts
         mContacts = getContacts();
@@ -436,15 +440,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 switch (resultCode) {
                     case ResultCodes.CONTACT_DELETED:
                         // A contact has been deleted
+                        Contact deletedContact =
+                                data.getParcelableExtra("deletedContact");
                         message = getString(R.string.contact_removed);
+
+                        mContacts.remove(deletedContact);
+                        mAdapter.animateTo(mContacts);
+
                         Snackbar.make(
                                 getWindow().getDecorView(),
                                 message,
                                 Snackbar.LENGTH_LONG)
                                 .setAction(R.string.undo, v -> {
                                     // Re-add the deleted contact
-                                    Contact deletedContact =
-                                            data.getParcelableExtra("deletedContact");
                                     undoDelete(deletedContact);
                                 })
                                 .show();
@@ -462,7 +470,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     private void undoDelete(Contact contact) {
         databaseAdapter.insertContactByID(contact);
-        refreshContacts();
+        mContacts = getContacts();
+        mAdapter.animateTo(mContacts);
     }
 
     /**
@@ -472,7 +481,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     private void undoDeleteAll(List<Contact> contacts) {
         databaseAdapter.insertContacts(contacts);
-        refreshContacts();
+        mContacts = getContacts();
+        toggleRecyclerviewState();
+        mAdapter.animateTo(mContacts);
     }
 
     /**

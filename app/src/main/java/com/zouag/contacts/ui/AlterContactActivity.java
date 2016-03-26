@@ -415,8 +415,7 @@ public class AlterContactActivity extends AppCompatActivity {
                                 getString(R.string.contact_already_exists),
                                 getString(R.string.create_anyway),
                                 (dialog, which) -> confirmAddContact(newContact));
-                }
-                else
+                } else
                     confirmAddContact(newContact);
             }
         }
