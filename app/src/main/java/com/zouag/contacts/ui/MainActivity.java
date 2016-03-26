@@ -180,12 +180,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 refreshContacts();
 
                 Snackbar.make(getWindow().getDecorView(),
-                        R.string.contacts_loaded_success, Snackbar.LENGTH_LONG).show();
+                        String.format(
+                                getString(R.string.contacts_loaded_success), mContacts.size()),
+                        Snackbar.LENGTH_LONG).show();
             } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else {
+        } else {
             // There are contacts, so show the popup to append/overwrite
 
             // Show alert dialog
@@ -199,15 +200,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                         try {
                             // Get the list of contacts stored within the .vcf file
                             List<Contact> newContacts = getContactsFromFile();
+                            // The number of new contacts
+                            int nbr_contacts = 0;
 
                             switch (which) {
                                 case 0:
                                     // Append
                                     appendContacts(newContacts);
+                                    nbr_contacts = Math.abs(mContacts.size() - newContacts.size());
                                     break;
                                 case 1:
                                     // Overwrite
                                     overwriteContacts(newContacts);
+                                    nbr_contacts = newContacts.size();
                                     break;
                             }
 
@@ -215,7 +220,13 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             refreshContacts();
 
                             Snackbar.make(getWindow().getDecorView(),
-                                    R.string.contacts_loaded_success, Snackbar.LENGTH_LONG).show();
+                                    String.format(
+                                            nbr_contacts == 1 ? getString(R.string.contact_loaded_success) :
+                                                    nbr_contacts == 0 ? getString(R.string.zero_contacts_loaded) :
+                                                            getString(R.string.contacts_loaded_success),
+                                            nbr_contacts),
+                                    Snackbar.LENGTH_LONG)
+                                    .show();
 
                         } catch (IOException e) {
                             Snackbar.make(getWindow().getDecorView(),

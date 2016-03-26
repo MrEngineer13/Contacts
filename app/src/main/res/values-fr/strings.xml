@@ -46,7 +46,9 @@
     <string name="action_append">Ajouter</string>
     <string name="action_overwrite">Ecraser</string>
     <string name="import_options">Options d\'import</string>
-    <string name="contacts_loaded_success">Contacts chargés.</string>
+    <string name="zero_contacts_loaded">Aucun contact n\'a été ajouté.</string>
+    <string name="contact_loaded_success">%d contact a été ajouté.</string>
+    <string name="contacts_loaded_success">%d contacts ont été ajoutés.</string>
     <string name="save_file_not_found">Le fichier de sauvegarde est introuvable.</string>
     <string name="open_settings">Afficher paramètres</string>
     <string name="no_contacts_to_export">Pas de contacts à exporter.</string>

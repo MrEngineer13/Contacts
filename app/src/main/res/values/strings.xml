@@ -52,7 +52,9 @@
     <string name="action_append">Append</string>
     <string name="action_overwrite">Overwrite</string>
     <string name="import_options">Import options</string>
-    <string name="contacts_loaded_success">Contacts successfully loaded.</string>
+    <string name="zero_contacts_loaded">No contacts were added.</string>
+    <string name="contact_loaded_success">%d contact was added.</string>
+    <string name="contacts_loaded_success">%d contacts were added.</string>
     <string name="save_file_not_found">The save file cannot be found.</string>
     <string name="open_settings">Open Settings</string>
     <string name="no_contacts_to_export">There are no contacts to export.</string>
