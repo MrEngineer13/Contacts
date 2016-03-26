@@ -57,7 +57,7 @@
     <string name="show_deleting_dialog">Afficher une dialogue de confirmation lors de la suppression d\'un contact</string>
     <string name="confirm_delete">Confirmer suppression</string>
     <string name="import_export">Import/Export</string>
-    <string name="specify_save_file_name">Spécifier le nom du fichier d\'import/export.</string>
+    <string name="specify_save_file_name">Spécifier le nom du fichier d\'import/export</string>
     <string name="saves_file">Fichier de sauvegarde</string>
     <string name="action_import">Importer</string>
     <string name="action_export">Exporter</string>
@@ -69,6 +69,9 @@
     <string name="contact_already_exists">Un contact existe déjà, qui possède le même nom.</string>
     <string name="create_anyway">Créer quand même</string>
     <string name="choose_email_client">Choisissez un service</string>
+    <string name="display">Affichage</string>
+    <string name="specify_contacts_ordering">Spécifier l\'ordre d\'affichage des contacts</string>
+    <string name="sort">Trier</string>
 
     <string-array name="sortentries">
         <item>Croissant</item>

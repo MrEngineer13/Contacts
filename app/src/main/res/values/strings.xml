@@ -63,7 +63,7 @@
     <string name="show_deleting_dialog">Show dialog when deleting contact</string>
     <string name="confirm_delete">Confirm delete</string>
     <string name="import_export">Import/Export</string>
-    <string name="specify_save_file_name">Specify the name of the import/export file.</string>
+    <string name="specify_save_file_name">Specify the name of the import/export file</string>
     <string name="saves_file">Saves file</string>
     <string name="action_import">Import</string>
     <string name="action_export">Export</string>
@@ -76,6 +76,9 @@
     <string name="contact_already_exists">An existing contact is already associated with this name.</string>
     <string name="create_anyway">Create anyway</string>
     <string name="choose_email_client">Choose an email client</string>
+    <string name="display">Display</string>
+    <string name="specify_contacts_ordering">Specify the ordering of the contacts</string>
+    <string name="sort">Sort</string>
 
     <string-array name="sortentries">
         <item>Ascending</item>

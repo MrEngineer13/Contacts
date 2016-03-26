@@ -375,12 +375,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         // Get the list of contacts
         mContacts = getContacts();
 
-        Comparator<Contact> comparator = ContactPreferences.getComparator(this);
-        if (comparator != null) {
-            Collections.sort(mContacts, comparator);
-            Log.i("SORT", "SORTING !");
-        }
-
         toggleRecyclerviewState();
 
         // Setup the adapter & the RecyclerView
@@ -497,7 +491,8 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * @return the full list of contacts.
      */
     private List<Contact> getContacts() {
-        return databaseAdapter.getAllContacts();
+        String ordering = ContactPreferences.getOrdering(this);
+        return databaseAdapter.getAllContacts(ordering);
     }
 
     @Override

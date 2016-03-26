@@ -23,8 +23,6 @@ public class ContactPreferences {
     private static final String CONTACT_EMAIL = "contactEmail";
     private static final String CONTACT_ADDRESS = "contactAddress";
 
-    public static final String ORDERING = "natural";
-
     /**
      * @param context
      * @return true if the user has chosen to save discarded contacts to draft,
@@ -92,20 +90,6 @@ public class ContactPreferences {
      */
     public static String getOrdering(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString("key_sort_contacts", ORDERING);
-    }
-
-    /**
-     * @param context
-     * @return a Comparator object if sorting was enabled in preferences,
-     * or null otherwise.
-     */
-    public static Comparator<Contact> getComparator(Context context) {
-        String ordering = getOrdering(context);
-        return ordering.equals("ASC") ?
-                (c1, c2) -> c1.getName().compareTo(c2.getName()) :
-                ordering.equals("DESC") ?
-                        (c1, c2) -> c2.getName().compareTo(c1.getName()) :
-                        null;
+                .getString("key_sort_contacts", null);
     }
 }

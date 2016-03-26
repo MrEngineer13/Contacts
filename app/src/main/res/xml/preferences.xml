@@ -5,13 +5,13 @@
 
     <PreferenceCategory
         android:key="key_dialog_settings"
-        android:title="Display">
+        android:title="@string/display">
         <ListPreference
             android:entries="@array/sortentries"
             android:entryValues="@array/sortvalues"
             android:key="key_sort_contacts"
-            android:summary="Specify the ordering of the contacts"
-            android:title="Sort" />
+            android:summary="@string/specify_contacts_ordering"
+            android:title="@string/sort" />
     </PreferenceCategory>
 
     <PreferenceCategory

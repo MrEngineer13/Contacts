@@ -175,14 +175,17 @@ public class DatabaseAdapter {
     }
 
     /**
+     * @param ordering of the contacts
      * @return a list of all contacts.
      */
-    public List<Contact> getAllContacts() {
+    public List<Contact> getAllContacts(String ordering) {
         List<Contact> contacts = new ArrayList<>();
+        if (ordering != null)
+            ordering = KEY_NAME + " " + ordering;
 
         try (Cursor cursor = db.query(DATABASE_TABLE,
                 new String[]{KEY_ROWID, KEY_NAME, KEY_EMAIL, KEY_PHONE, KEY_ADDRESS, KEY_IMG_PATH},
-                null, null, null, null, null)) {
+                null, null, null, null, ordering)) {
             if (cursor.moveToFirst()) {
                 do {
                     contacts.add(new Contact.Builder()
