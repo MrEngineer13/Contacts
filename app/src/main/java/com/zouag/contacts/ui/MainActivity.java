@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -26,11 +27,14 @@ import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.threads.ExportThread;
+import com.zouag.contacts.threads.MainHandler;
 import com.zouag.contacts.utils.Actions;
 import com.zouag.contacts.utils.ContactPreferences;
+import com.zouag.contacts.utils.Contacts;
+import com.zouag.contacts.utils.Messages;
 import com.zouag.contacts.utils.ResultCodes;
 import com.zouag.contacts.utils.SpacesItemDecoration;
-import com.zouag.contacts.utils.Contacts;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -47,7 +51,8 @@ import ezvcard.Ezvcard;
 import ezvcard.VCard;
 import ezvcard.VCardVersion;
 
-public class MainActivity extends AppCompatActivity implements SearchView.OnQueryTextListener {
+public class MainActivity extends AppCompatActivity
+        implements SearchView.OnQueryTextListener {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_ADD_NEW = 100;
@@ -72,6 +77,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     @Bind(R.id.emptyLayout)
     RelativeLayout emptyView;
 
+    private Handler mHandler;
+    private ExportThread mExportThread;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -88,6 +96,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         databaseAdapter = DatabaseAdapter.getInstance(this);
         contactsRecyclerView.addItemDecoration(new SpacesItemDecoration(20));
+        mHandler = new Handler(new MainHandler(this));
+        mExportThread = new ExportThread(this, mHandler);
+        mExportThread.start();
     }
 
     @Override
@@ -128,6 +139,19 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         super.onResume();
 
         refreshContacts();
+    }
+
+    @Override
+    protected void onDestroy() {
+        mExportThread.getWorkerHandler()
+                .obtainMessage(Messages.MSG_SHUTDOWN).sendToTarget();
+        try {
+            mExportThread.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        super.onDestroy();
     }
 
     /**
@@ -336,53 +360,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                     R.string.no_contacts_to_export, Snackbar.LENGTH_LONG).show();
         else {
             List<VCard> cards = Contacts.parseContacts(mContacts);
-            writeContactsToFile(cards);
+
+            // Start exporting contacts
+            mExportThread.getWorkerHandler()
+                    .obtainMessage(Messages.MSG_START_EXPORTING, cards)
+                    .sendToTarget();
         }
-    }
-
-    /**
-     * Writes a list of VCards to external storage.
-     *
-     * @param cards to be saved
-     */
-    private void writeContactsToFile(List<VCard> cards) {
-        String appName = getString(R.string.app_name);
-        File mediaStorageDir = new File(
-                Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOCUMENTS),
-                appName);
-
-        if (!mediaStorageDir.exists()) {
-            if (!mediaStorageDir.mkdirs()) {
-                Log.e("CONTACTS", "Failed to create directory.");
-            }
-        }
-
-        String path = Contacts.getVCFSavePath(this);
-        File vcfFile = new File(path);
-
-        FileOutputStream out = null;
-        try {
-            out = new FileOutputStream(vcfFile);
-            OutputStreamWriter writer = new OutputStreamWriter(out);
-
-            String vcardString = Ezvcard.write(cards).version(VCardVersion.V4_0).go();
-
-            writer.write(vcardString);
-            writer.close();
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            try {
-                if (out != null) {
-                    out.close();
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
-
-        Snackbar.make(getWindow().getDecorView(),
-                R.string.contacts_export_success, Snackbar.LENGTH_LONG).show();
     }
 
     private void startAddContactActivity() {
