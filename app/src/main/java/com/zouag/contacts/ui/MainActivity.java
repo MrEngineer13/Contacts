@@ -26,10 +26,11 @@ import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.utils.Actions;
 import com.zouag.contacts.utils.ContactPreferences;
 import com.zouag.contacts.utils.ResultCodes;
 import com.zouag.contacts.utils.SpacesItemDecoration;
-import com.zouag.contacts.utils.VCFContactConverter;
+import com.zouag.contacts.utils.Contacts;
 
 import java.io.File;
 import java.io.FileInputStream;
@@ -177,7 +178,6 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
         if (mContacts.size() == 0) {
             // There are no stored contacts, so there is no need for the popup dialog
-
             // Get the list of contacts stored within the .vcf file
             try {
                 List<Contact> newContacts = getContactsFromFile();
@@ -194,13 +194,12 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             // There are contacts so show the popup to append/overwrite
             // Next, check if the 'default action setting' is set
             String default_action = ContactPreferences.getDefaultImportAction(this);
-            Log.i("DEFAULT", default_action);
             if (default_action.equals(getString(R.string.ask_for_action)))
                 showImportDialog();
             else if (default_action.equals(getString(R.string.action_append)))
-                executeImport(0);
+                executeImport(Actions.IMPORT_APPEND);
             else
-                executeImport(1);
+                executeImport(Actions.IMPORT_OVERWRITE);
         }
     }
 
@@ -212,7 +211,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle(R.string.import_options)
                 .setItems(options, (dialog, which) -> {
-                    executeImport(which);
+                    // which is 0 : append / 1 : overwrite
+                    executeImport(which == 0 ?
+                            Actions.IMPORT_APPEND : Actions.IMPORT_OVERWRITE);
                 });
         AlertDialog alertDialog = builder.create();
         alertDialog.setCanceledOnTouchOutside(true);
@@ -222,9 +223,9 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     /**
      * Executes the contacts' import based on the passed-in action.
      *
-     * @param action 0 : append / 1 : overwrite
+     * @param action to be executed (append/overwrite)
      */
-    private void executeImport(int action) {
+    private void executeImport(Actions action) {
         try {
             // Get the list of contacts stored within the .vcf file
             List<Contact> newContacts = getContactsFromFile();
@@ -232,11 +233,11 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             int nbr_contacts = 0;
 
             switch (action) {
-                case 0:
+                case IMPORT_APPEND:
                     // Append
                     nbr_contacts = appendContacts(newContacts);
                     break;
-                case 1:
+                case IMPORT_OVERWRITE:
                     // Overwrite
                     overwriteContacts(newContacts);
                     nbr_contacts = newContacts.size();
@@ -278,7 +279,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
 
     public List<Contact> getContactsFromFile() throws IOException {
         // Get the .vcf file
-        File file = new File(VCFContactConverter.getVCFSavePath(this));
+        File file = new File(Contacts.getVCFSavePath(this));
 
         FileInputStream fis = new FileInputStream(file);
         InputStreamReader reader = new InputStreamReader(fis);
@@ -287,7 +288,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
         List<VCard> vCards = Ezvcard.parse(reader).all();
 
         // Convert those cards to Contact objects & return them
-        return VCFContactConverter.parseVCards(vCards);
+        return Contacts.parseVCards(vCards);
     }
 
     /**
@@ -334,7 +335,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             Snackbar.make(getWindow().getDecorView(),
                     R.string.no_contacts_to_export, Snackbar.LENGTH_LONG).show();
         else {
-            List<VCard> cards = VCFContactConverter.parseContacts(mContacts);
+            List<VCard> cards = Contacts.parseContacts(mContacts);
             writeContactsToFile(cards);
         }
     }
@@ -356,7 +357,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             }
         }
 
-        String path = VCFContactConverter.getVCFSavePath(this);
+        String path = Contacts.getVCFSavePath(this);
         File vcfFile = new File(path);
 
         FileOutputStream out = null;

@@ -39,7 +39,7 @@
         android:key="key_import_export_settings"
         android:title="@string/import_export">
         <EditTextPreference
-            android:defaultValue=""
+            android:defaultValue="@string/contacts_save_default_filename"
             android:key="@string/contacts_save_file_name"
             android:summary="@string/specify_save_file_name"
             android:title="@string/saves_file" />

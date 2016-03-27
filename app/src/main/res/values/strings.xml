@@ -86,6 +86,7 @@
     <string name="ask_for_action">ASK</string>
     <string name="key_sort_contacts">key_sort_contacts</string>
     <string name="key_default_import_action">key_default_import_action</string>
+    <string name="contacts_save_default_filename">contacts_save</string>
 
     <string-array name="sortentries">
         <item>Default order</item>

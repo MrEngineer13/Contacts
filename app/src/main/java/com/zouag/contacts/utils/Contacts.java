@@ -23,7 +23,7 @@ import ezvcard.property.Photo;
 /**
  * Created by Mohammed Aouf ZOUAG on 23/03/2016.
  */
-public class VCFContactConverter {
+public class Contacts {
     /**
      * Converts a list of contacts to a list of VCards.
      *
@@ -90,7 +90,7 @@ public class VCFContactConverter {
 
         SharedPreferences sharedPref = PreferenceManager.getDefaultSharedPreferences(context);
         String save_file_name = sharedPref.getString(
-                context.getString(R.string.contacts_save_file_name), "contacts_save");
+                context.getString(R.string.contacts_save_file_name), context.getString(R.string.contacts_save_default_filename));
 
         return mediaStorageDir.getPath() + File.separator + save_file_name + ".vcf";
     }
