@@ -210,8 +210,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             switch (which) {
                                 case 0:
                                     // Append
-                                    appendContacts(newContacts);
-                                    nbr_contacts = Math.abs(mContacts.size() - newContacts.size());
+                                    nbr_contacts = appendContacts(newContacts);
                                     break;
                                 case 1:
                                     // Overwrite
@@ -276,12 +275,15 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      * Appends these contacts to the list of existing contacts.
      *
      * @param contacts to be appended
+     * @return the number of newly added contacts.
      */
-    private void appendContacts(List<Contact> contacts) {
+    private int appendContacts(List<Contact> contacts) {
         List<Contact> filteredContacts = filterExistingContacts(contacts);
 
         // Save new contacts to database
         databaseAdapter.insertContacts(filteredContacts);
+
+        return filteredContacts.size();
     }
 
     private List<Contact> filterExistingContacts(List<Contact> contacts) {
