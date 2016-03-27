@@ -86,11 +86,22 @@ public class ContactPreferences {
     }
 
     /**
+     * @param context
      * @return the ordering of the contacts. (ASC, DESC, NATURAL)
      */
     public static String getOrdering(Context context) {
         return PreferenceManager.getDefaultSharedPreferences(context)
-                .getString("key_sort_contacts",
+                .getString(context.getString(R.string.key_sort_contacts),
                         context.getString(R.string.default_order));
+    }
+
+    /**
+     * @param context
+     * @return the default contacts' import action.
+     */
+    public static String getDefaultImportAction(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getString(context.getString(R.string.key_default_import_action),
+                        context.getString(R.string.ask_for_action));
     }
 }

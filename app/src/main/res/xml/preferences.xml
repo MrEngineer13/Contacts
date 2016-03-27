@@ -10,7 +10,7 @@
             android:defaultValue="@string/default_order"
             android:entries="@array/sortentries"
             android:entryValues="@array/sortvalues"
-            android:key="key_sort_contacts"
+            android:key="@string/key_sort_contacts"
             android:summary="@string/specify_contacts_ordering"
             android:title="@string/sort_contacts" />
     </PreferenceCategory>
@@ -47,7 +47,7 @@
             android:defaultValue="@string/ask_for_action"
             android:entries="@array/importentries"
             android:entryValues="@array/importvalues"
-            android:key="key_default_import_action"
+            android:key="@string/key_default_import_action"
             android:summary="@string/appendto_overwrite"
             android:title="@string/default_import_action" />
     </PreferenceCategory>

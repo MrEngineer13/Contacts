@@ -84,6 +84,8 @@
 
     <string name="default_order">DEFAULT_ORDER</string>
     <string name="ask_for_action">ASK</string>
+    <string name="key_sort_contacts">key_sort_contacts</string>
+    <string name="key_default_import_action">key_default_import_action</string>
 
     <string-array name="sortentries">
         <item>Default order</item>
@@ -103,7 +105,7 @@
     </string-array>
     <string-array name="importvalues">
         <item>@string/ask_for_action</item>
-        <item>APPEND</item>
-        <item>OVERWRITE</item>
+        <item>@string/action_append</item>
+        <item>@string/action_overwrite</item>
     </string-array>
 </resources>

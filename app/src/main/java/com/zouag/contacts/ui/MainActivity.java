@@ -191,47 +191,66 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                 showFileNotFoundSnack();
             }
         } else {
-            // There are contacts, so show the popup to append/overwrite
+            // There are contacts so show the popup to append/overwrite
+            // Next, check if the 'default action setting' is set
+            String default_action = ContactPreferences.getDefaultImportAction(this);
+            Log.i("DEFAULT", default_action);
+            if (default_action.equals(getString(R.string.ask_for_action)))
+                showImportDialog();
+            else if (default_action.equals(getString(R.string.action_append)))
+                executeImport(0);
+            else
+                executeImport(1);
+        }
+    }
 
-            // Show alert dialog
-            CharSequence options[] = new CharSequence[]
-                    {getString(R.string.action_append), getString(R.string.action_overwrite)};
+    private void showImportDialog() {
+        // Show alert dialog
+        CharSequence options[] = new CharSequence[]
+                {getString(R.string.action_append), getString(R.string.action_overwrite)};
 
-            AlertDialog.Builder builder = new AlertDialog.Builder(this);
-            builder.setTitle(R.string.import_options)
-                    .setItems(options, (dialog, which) -> {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle(R.string.import_options)
+                .setItems(options, (dialog, which) -> {
+                    executeImport(which);
+                });
+        AlertDialog alertDialog = builder.create();
+        alertDialog.setCanceledOnTouchOutside(true);
+        alertDialog.show();
+    }
 
-                        try {
-                            // Get the list of contacts stored within the .vcf file
-                            List<Contact> newContacts = getContactsFromFile();
-                            // The number of new contacts
-                            int nbr_contacts = 0;
+    /**
+     * Executes the contacts' import based on the passed-in action.
+     *
+     * @param action 0 : append / 1 : overwrite
+     */
+    private void executeImport(int action) {
+        try {
+            // Get the list of contacts stored within the .vcf file
+            List<Contact> newContacts = getContactsFromFile();
+            // The number of new contacts
+            int nbr_contacts = 0;
 
-                            switch (which) {
-                                case 0:
-                                    // Append
-                                    nbr_contacts = appendContacts(newContacts);
-                                    break;
-                                case 1:
-                                    // Overwrite
-                                    overwriteContacts(newContacts);
-                                    nbr_contacts = newContacts.size();
-                                    break;
-                            }
+            switch (action) {
+                case 0:
+                    // Append
+                    nbr_contacts = appendContacts(newContacts);
+                    break;
+                case 1:
+                    // Overwrite
+                    overwriteContacts(newContacts);
+                    nbr_contacts = newContacts.size();
+                    break;
+            }
 
-                            // Show contacts
-                            refreshContactsAdapter();
-                            contactsRecyclerView.scrollToPosition(0);
+            // Show contacts
+            refreshContactsAdapter();
+            contactsRecyclerView.scrollToPosition(0);
 
-                            showImportSuccessSnack(nbr_contacts);
+            showImportSuccessSnack(nbr_contacts);
 
-                        } catch (IOException e) {
-                            showFileNotFoundSnack();
-                        }
-                    });
-            AlertDialog alertDialog = builder.create();
-            alertDialog.setCanceledOnTouchOutside(true);
-            alertDialog.show();
+        } catch (IOException e) {
+            showFileNotFoundSnack();
         }
     }
 
