@@ -94,4 +94,17 @@ public class Contacts {
 
         return mediaStorageDir.getPath() + File.separator + save_file_name + ".vcf";
     }
+
+    /**
+     * @param contacts to be filtered
+     * @param query    based upon the contacts will be filtered
+     * @return the filtered list of contacts
+     */
+    public static List<Contact> filter(List<Contact> contacts, String query) {
+        return Stream.of(contacts)
+                .filter(contact -> contact.getName()
+                        .toLowerCase()
+                        .contains(query.toLowerCase()))
+                .collect(Collectors.toList());
+    }
 }

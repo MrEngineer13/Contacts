@@ -89,6 +89,8 @@ public class MainActivity extends AppCompatActivity
         mHandler = new Handler(this);
         mIOThread = new IOThread(this, mHandler);
         mIOThread.start();
+
+        setupRecyclerView();
     }
 
     @Override
@@ -128,7 +130,86 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        refreshContacts();
+        refreshContactsAdapter();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        String message = ""; // Message to be displayed in the snack bar
+
+        switch (requestCode) {
+            case REQUEST_ADD_NEW:
+                switch (resultCode) {
+                    case ResultCodes.CONTACT_CREATED:
+                        message = getString(R.string.contact_added);
+                        break;
+                    case ResultCodes.CONTACT_SAVED_TO_DRAFT:
+                        message = getString(R.string.contact_saved_to_draft);
+                        break;
+                    case RESULT_CANCELED:
+                        message = getString(R.string.adding_contact_discarded);
+                        break;
+                }
+
+                Snackbar.make(getWindow().getDecorView(),
+                        message, Snackbar.LENGTH_LONG).show();
+                break;
+            case REQUEST_VIEW_CONTACT:
+                switch (resultCode) {
+                    case ResultCodes.CONTACT_DELETED:
+                        // A contact has been deleted
+                        Contact deletedContact =
+                                data.getParcelableExtra("deletedContact");
+                        message = getString(R.string.contact_removed);
+
+                        mContacts.remove(deletedContact);
+                        mAdapter.animateTo(mContacts);
+
+                        Snackbar.make(
+                                getWindow().getDecorView(),
+                                message,
+                                Snackbar.LENGTH_LONG)
+                                .setAction(R.string.undo, v -> {
+                                    // Re-add the deleted contact
+                                    undoDelete(deletedContact);
+                                })
+                                .show();
+                        break;
+                }
+                break;
+        }
+    }
+
+    @Override
+    public boolean handleMessage(Message msg) {
+
+        switch (msg.what) {
+            case Messages.MSG_EXPORT_ENDED:
+                Snackbar.make(getWindow().getDecorView(),
+                        R.string.contacts_export_success, Snackbar.LENGTH_LONG).show();
+                break;
+            case Messages.MSG_IMPORT_COMPLETED:
+                handleImportCompleted((List<Contact>) msg.obj, msg.arg1);
+                break;
+            case Messages.MSG_IMPORT_FAILED:
+                showFileNotFoundSnack();
+                break;
+        }
+
+        return true;
+    }
+
+    @Override
+    public boolean onQueryTextSubmit(String query) {
+        return false;
+    }
+
+    @Override
+    public boolean onQueryTextChange(String newText) {
+        final List<Contact> filteredContacts = Contacts.filter(mContacts, newText);
+        mAdapter.animateTo(filteredContacts);
+        contactsRecyclerView.scrollToPosition(0);
+        return true;
     }
 
     @Override
@@ -142,6 +223,13 @@ public class MainActivity extends AppCompatActivity
         }
 
         super.onDestroy();
+    }
+
+    /**
+     * @param view the empty view of the activity.
+     */
+    public void onEmptyViewClicked(View view) {
+        startAddContactActivity();
     }
 
     /**
@@ -165,7 +253,7 @@ public class MainActivity extends AppCompatActivity
                     List<Contact> allDeletedContacts = new ArrayList<>(mContacts);
 
                     databaseAdapter.deleteAllContacts();
-                    refreshContacts();
+                    refreshContactsAdapter();
 
                     Snackbar.make(getWindow().getDecorView(),
                             R.string.all_contacts_cleared,
@@ -316,20 +404,28 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * @param view the empty view of the activity.
+     * Initial setup of the contacts' RecyclerView.
      */
-    public void onEmptyViewClicked(View view) {
-        startAddContactActivity();
-    }
-
-    private void refreshContacts() {
-        // Get the list of contacts
+    private void setupRecyclerView() {
         mContacts = getContacts();
 
-        toggleRecyclerviewState();
+        mAdapter = new ContactsRecyclerAdapter(this, mContacts);
+        mAdapter.setContactClickListener((view, contact) -> {
+            Intent intent = new Intent(this, ViewContactActivity.class);
+            intent.putExtra("contact", contact);
 
-        // Setup the adapter & the RecyclerView
-        setupRecyclerView();
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                                new Pair<>(view, getString(R.string.transition_contact_img)));
+                ActivityCompat.startActivityForResult(
+                        this, intent, REQUEST_VIEW_CONTACT, options.toBundle());
+            } else
+                startActivityForResult(intent, REQUEST_VIEW_CONTACT);
+        });
+        contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        contactsRecyclerView.setHasFixedSize(true);
+        contactsRecyclerView.setAdapter(mAdapter);
     }
 
     /**
@@ -342,75 +438,10 @@ public class MainActivity extends AppCompatActivity
         contactsRecyclerView.setVisibility(mContacts.size() == 0 ? View.INVISIBLE : View.VISIBLE);
     }
 
-    private void setupRecyclerView() {
-        if (mAdapter == null) {
-            mAdapter = new ContactsRecyclerAdapter(this, mContacts);
-            mAdapter.setContactClickListener((view, contact) -> {
-                Intent intent = new Intent(this, ViewContactActivity.class);
-                intent.putExtra("contact", contact);
-
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    ActivityOptionsCompat options =
-                            ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                                    new Pair<>(view, getString(R.string.transition_contact_img)));
-                    ActivityCompat.startActivityForResult(
-                            this, intent, REQUEST_VIEW_CONTACT, options.toBundle());
-                } else
-                    startActivityForResult(intent, REQUEST_VIEW_CONTACT);
-            });
-            contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-            contactsRecyclerView.setHasFixedSize(true);
-            contactsRecyclerView.setAdapter(mAdapter);
-        } else {
-            mAdapter.animateTo(mContacts);
-        }
-    }
-
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        String message = ""; // Message to be displayed in the snack bar
-
-        switch (requestCode) {
-            case REQUEST_ADD_NEW:
-                switch (resultCode) {
-                    case ResultCodes.CONTACT_CREATED:
-                        message = getString(R.string.contact_added);
-                        break;
-                    case ResultCodes.CONTACT_SAVED_TO_DRAFT:
-                        message = getString(R.string.contact_saved_to_draft);
-                        break;
-                    case RESULT_CANCELED:
-                        message = getString(R.string.adding_contact_discarded);
-                        break;
-                }
-
-                Snackbar.make(getWindow().getDecorView(),
-                        message, Snackbar.LENGTH_LONG).show();
-                break;
-            case REQUEST_VIEW_CONTACT:
-                switch (resultCode) {
-                    case ResultCodes.CONTACT_DELETED:
-                        // A contact has been deleted
-                        Contact deletedContact =
-                                data.getParcelableExtra("deletedContact");
-                        message = getString(R.string.contact_removed);
-
-                        mContacts.remove(deletedContact);
-                        mAdapter.animateTo(mContacts);
-
-                        Snackbar.make(
-                                getWindow().getDecorView(),
-                                message,
-                                Snackbar.LENGTH_LONG)
-                                .setAction(R.string.undo, v -> {
-                                    // Re-add the deleted contact
-                                    undoDelete(deletedContact);
-                                })
-                                .show();
-                        break;
-                }
-                break;
-        }
+    private void refreshContactsAdapter() {
+        mContacts = getContacts();
+        toggleRecyclerviewState();
+        mAdapter.animateTo(mContacts);
     }
 
     /**
@@ -433,63 +464,12 @@ public class MainActivity extends AppCompatActivity
         refreshContactsAdapter();
     }
 
-    private void refreshContactsAdapter() {
-        mContacts = getContacts();
-        toggleRecyclerviewState();
-        mAdapter.animateTo(mContacts);
-    }
-
     /**
      * @return the full list of contacts.
      */
     private List<Contact> getContacts() {
         String ordering = ContactPreferences.getOrdering(this);
         return databaseAdapter.getAllContacts(ordering);
-    }
-
-    @Override
-    public boolean onQueryTextSubmit(String query) {
-        return false;
-    }
-
-    @Override
-    public boolean onQueryTextChange(String newText) {
-        final List<Contact> filteredContacts = filter(mContacts, newText);
-        mAdapter.animateTo(filteredContacts);
-        contactsRecyclerView.scrollToPosition(0);
-        return true;
-    }
-
-    /**
-     * @param contacts to be filtered
-     * @param query    based upon the contacts will be filtered
-     * @return the filtered list of contacts
-     */
-    private List<Contact> filter(List<Contact> contacts, String query) {
-        return Stream.of(contacts)
-                .filter(contact -> contact.getName()
-                        .toLowerCase()
-                        .contains(query.toLowerCase()))
-                .collect(Collectors.toList());
-    }
-
-    @Override
-    public boolean handleMessage(Message msg) {
-
-        switch (msg.what) {
-            case Messages.MSG_EXPORT_ENDED:
-                Snackbar.make(getWindow().getDecorView(),
-                        R.string.contacts_export_success, Snackbar.LENGTH_LONG).show();
-                break;
-            case Messages.MSG_IMPORT_COMPLETED:
-                handleImportCompleted((List<Contact>) msg.obj, msg.arg1);
-                break;
-            case Messages.MSG_IMPORT_FAILED:
-                showFileNotFoundSnack();
-                break;
-        }
-
-        return true;
     }
 
     /**
