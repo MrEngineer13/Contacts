@@ -8,12 +8,16 @@ import android.os.Message;
 import android.util.Log;
 
 import com.zouag.contacts.R;
+import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.utils.Actions;
 import com.zouag.contacts.utils.Contacts;
 import com.zouag.contacts.utils.Messages;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.util.List;
 
@@ -23,8 +27,10 @@ import ezvcard.VCardVersion;
 
 /**
  * Created by Mohammed Aouf ZOUAG on 27/03/2016.
+ * <p>
+ * Performs IO actions. (contacts' import/export)
  */
-public class ExportThread extends Thread implements Handler.Callback {
+public class IOThread extends Thread implements Handler.Callback {
 
     private Context mContext;
     private Handler mMainHandler;
@@ -32,7 +38,7 @@ public class ExportThread extends Thread implements Handler.Callback {
     private Looper mWorkerLooper;
     private Handler mWorkerHandler;
 
-    public ExportThread(Context context, Handler mainHandler) {
+    public IOThread(Context context, Handler mainHandler) {
         mContext = context;
         mMainHandler = mainHandler;
     }
@@ -50,6 +56,10 @@ public class ExportThread extends Thread implements Handler.Callback {
         switch (msg.what) {
             case Messages.MSG_START_EXPORTING:
                 writeContactsToFile((List<VCard>) msg.obj);
+                break;
+            case Messages.MSG_START_IMPORTING:
+                Actions action = (Actions) msg.obj;
+                getContactsFromFile(action);
                 break;
             case Messages.MSG_SHUTDOWN:
                 mWorkerLooper.quit();
@@ -106,5 +116,32 @@ public class ExportThread extends Thread implements Handler.Callback {
 
         mMainHandler.obtainMessage(Messages.MSG_EXPORT_ENDED)
                 .sendToTarget();
+    }
+
+    /**
+     * Fetches the contacts from the save' files.
+     *
+     * @param action to be taken. (Append/Overwrite)
+     */
+    public void getContactsFromFile(Actions action) {
+        try {
+            // Get the .vcf file
+            File file = new File(Contacts.getVCFSavePath(mContext));
+            FileInputStream fis = new FileInputStream(file);
+            InputStreamReader reader = new InputStreamReader(fis);
+
+            // Get the list of VCards stored inside the .vcf file
+            List<VCard> vCards = Ezvcard.parse(reader).all();
+
+            // Convert those cards to Contact objects & return them
+            List<Contact> importedContacts = Contacts.parseVCards(vCards);
+
+            mMainHandler.obtainMessage(Messages.MSG_IMPORT_COMPLETED,
+                    action.getId(), 0, importedContacts)
+                    .sendToTarget();
+        } catch (IOException e) {
+            mMainHandler.obtainMessage(Messages.MSG_IMPORT_FAILED)
+                    .sendToTarget();
+        }
     }
 }

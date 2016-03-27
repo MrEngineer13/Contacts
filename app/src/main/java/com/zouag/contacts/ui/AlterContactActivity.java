@@ -380,7 +380,7 @@ public class AlterContactActivity extends AppCompatActivity {
     public void onCancel(View view) {
         // Terminate the activity
         setResult(RESULT_CANCELED);
-        finish();
+        onBackPressed();
     }
 
     /**

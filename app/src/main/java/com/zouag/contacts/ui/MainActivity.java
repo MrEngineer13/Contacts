@@ -4,8 +4,8 @@ import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Environment;
 import android.os.Handler;
+import android.os.Message;
 import android.support.design.widget.Snackbar;
 import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.ActivityOptionsCompat;
@@ -15,7 +15,6 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.SearchView;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -27,8 +26,7 @@ import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.ContactsRecyclerAdapter;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
-import com.zouag.contacts.threads.ExportThread;
-import com.zouag.contacts.threads.MainHandler;
+import com.zouag.contacts.threads.IOThread;
 import com.zouag.contacts.utils.Actions;
 import com.zouag.contacts.utils.ContactPreferences;
 import com.zouag.contacts.utils.Contacts;
@@ -36,23 +34,15 @@ import com.zouag.contacts.utils.Messages;
 import com.zouag.contacts.utils.ResultCodes;
 import com.zouag.contacts.utils.SpacesItemDecoration;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
-import ezvcard.Ezvcard;
 import ezvcard.VCard;
-import ezvcard.VCardVersion;
 
 public class MainActivity extends AppCompatActivity
-        implements SearchView.OnQueryTextListener {
+        implements SearchView.OnQueryTextListener, Handler.Callback {
 
     private static final String TAG = MainActivity.class.getSimpleName();
     private static final int REQUEST_ADD_NEW = 100;
@@ -78,7 +68,7 @@ public class MainActivity extends AppCompatActivity
     RelativeLayout emptyView;
 
     private Handler mHandler;
-    private ExportThread mExportThread;
+    private IOThread mIOThread;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -96,9 +86,9 @@ public class MainActivity extends AppCompatActivity
 
         databaseAdapter = DatabaseAdapter.getInstance(this);
         contactsRecyclerView.addItemDecoration(new SpacesItemDecoration(20));
-        mHandler = new Handler(new MainHandler(this));
-        mExportThread = new ExportThread(this, mHandler);
-        mExportThread.start();
+        mHandler = new Handler(this);
+        mIOThread = new IOThread(this, mHandler);
+        mIOThread.start();
     }
 
     @Override
@@ -143,10 +133,10 @@ public class MainActivity extends AppCompatActivity
 
     @Override
     protected void onDestroy() {
-        mExportThread.getWorkerHandler()
+        mIOThread.getWorkerHandler()
                 .obtainMessage(Messages.MSG_SHUTDOWN).sendToTarget();
         try {
-            mExportThread.join();
+            mIOThread.join();
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
@@ -202,18 +192,7 @@ public class MainActivity extends AppCompatActivity
 
         if (mContacts.size() == 0) {
             // There are no stored contacts, so there is no need for the popup dialog
-            // Get the list of contacts stored within the .vcf file
-            try {
-                List<Contact> newContacts = getContactsFromFile();
-                overwriteContacts(newContacts);
-
-                // Show contacts
-                refreshContacts();
-                showImportSuccessSnack(newContacts.size());
-
-            } catch (IOException e) {
-                showFileNotFoundSnack();
-            }
+            executeImport(Actions.IMPORT_OVERWRITE);
         } else {
             // There are contacts so show the popup to append/overwrite
             // Next, check if the 'default action setting' is set
@@ -250,33 +229,10 @@ public class MainActivity extends AppCompatActivity
      * @param action to be executed (append/overwrite)
      */
     private void executeImport(Actions action) {
-        try {
-            // Get the list of contacts stored within the .vcf file
-            List<Contact> newContacts = getContactsFromFile();
-            // The number of new contacts
-            int nbr_contacts = 0;
-
-            switch (action) {
-                case IMPORT_APPEND:
-                    // Append
-                    nbr_contacts = appendContacts(newContacts);
-                    break;
-                case IMPORT_OVERWRITE:
-                    // Overwrite
-                    overwriteContacts(newContacts);
-                    nbr_contacts = newContacts.size();
-                    break;
-            }
-
-            // Show contacts
-            refreshContactsAdapter();
-            contactsRecyclerView.scrollToPosition(0);
-
-            showImportSuccessSnack(nbr_contacts);
-
-        } catch (IOException e) {
-            showFileNotFoundSnack();
-        }
+        // Start importing contacts
+        mIOThread.getWorkerHandler()
+                .obtainMessage(Messages.MSG_START_IMPORTING, action)
+                .sendToTarget();
     }
 
     /**
@@ -299,20 +255,6 @@ public class MainActivity extends AppCompatActivity
                 Snackbar.LENGTH_LONG)
                 .setAction(R.string.open_settings, view -> showSettings())
                 .show();
-    }
-
-    public List<Contact> getContactsFromFile() throws IOException {
-        // Get the .vcf file
-        File file = new File(Contacts.getVCFSavePath(this));
-
-        FileInputStream fis = new FileInputStream(file);
-        InputStreamReader reader = new InputStreamReader(fis);
-
-        // Get the list of VCards stored inside the .vcf file
-        List<VCard> vCards = Ezvcard.parse(reader).all();
-
-        // Convert those cards to Contact objects & return them
-        return Contacts.parseVCards(vCards);
     }
 
     /**
@@ -362,7 +304,7 @@ public class MainActivity extends AppCompatActivity
             List<VCard> cards = Contacts.parseContacts(mContacts);
 
             // Start exporting contacts
-            mExportThread.getWorkerHandler()
+            mIOThread.getWorkerHandler()
                     .obtainMessage(Messages.MSG_START_EXPORTING, cards)
                     .sendToTarget();
         }
@@ -529,5 +471,55 @@ public class MainActivity extends AppCompatActivity
                         .toLowerCase()
                         .contains(query.toLowerCase()))
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean handleMessage(Message msg) {
+
+        switch (msg.what) {
+            case Messages.MSG_EXPORT_ENDED:
+                Snackbar.make(getWindow().getDecorView(),
+                        R.string.contacts_export_success, Snackbar.LENGTH_LONG).show();
+                break;
+            case Messages.MSG_IMPORT_COMPLETED:
+                handleImportCompleted((List<Contact>) msg.obj, msg.arg1);
+                break;
+            case Messages.MSG_IMPORT_FAILED:
+                showFileNotFoundSnack();
+                break;
+        }
+
+        return true;
+    }
+
+    /**
+     * Handles the import request based on the passed-in action.
+     *
+     * @param importedContacts
+     * @param action           to be taken
+     */
+    private void handleImportCompleted(List<Contact> importedContacts, int action) {
+        // The number of new contacts
+        int nbr_contacts = 0;
+        // The action to take (append/overwrite)
+        Actions act = action == 0 ? Actions.IMPORT_APPEND : Actions.IMPORT_OVERWRITE;
+
+        switch (act) {
+            case IMPORT_APPEND:
+                // Append
+                nbr_contacts = appendContacts(importedContacts);
+                break;
+            case IMPORT_OVERWRITE:
+                // Overwrite
+                overwriteContacts(importedContacts);
+                nbr_contacts = importedContacts.size();
+                break;
+        }
+
+        // Show contacts
+        refreshContactsAdapter();
+        contactsRecyclerView.scrollToPosition(0);
+
+        showImportSuccessSnack(nbr_contacts);
     }
 }
