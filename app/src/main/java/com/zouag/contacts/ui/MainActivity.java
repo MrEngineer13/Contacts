@@ -67,6 +67,12 @@ public class MainActivity extends AppCompatActivity
     @Bind(R.id.emptyLayout)
     RelativeLayout emptyView;
 
+    /**
+     * The view to be displayed in case there were no stored contacts.
+     */
+    @Bind(R.id.importingLayout)
+    RelativeLayout importingView;
+
     private Handler mHandler;
     private IOThread mIOThread;
 
@@ -196,6 +202,8 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
+        importingView.setVisibility(View.INVISIBLE);
+
         return true;
     }
 
@@ -321,6 +329,9 @@ public class MainActivity extends AppCompatActivity
         mIOThread.getWorkerHandler()
                 .obtainMessage(Messages.MSG_START_IMPORTING, action)
                 .sendToTarget();
+
+        importingView.setVisibility(View.VISIBLE);
+        contactsRecyclerView.setVisibility(View.INVISIBLE);
     }
 
     /**
@@ -408,6 +419,9 @@ public class MainActivity extends AppCompatActivity
      */
     private void setupRecyclerView() {
         mContacts = getContacts();
+
+        // Hide the "Importing contacts..." text view
+        importingView.setVisibility(View.INVISIBLE);
 
         mAdapter = new ContactsRecyclerAdapter(this, mContacts);
         mAdapter.setContactClickListener((view, contact) -> {

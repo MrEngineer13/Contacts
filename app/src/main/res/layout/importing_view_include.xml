@@ -12,20 +12,12 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerInParent="true"
-        android:layout_marginLeft="20dp"
         android:layout_marginTop="10dp"
         android:gravity="center"
-        android:text="@string/no_contacts_add_new"
+        android:text="Importing contacts..."
         android:textColor="#ffffffff"
-        android:textStyle="bold" />
+        android:textSize="24sp"
+        android:textStyle="bold"
+        android:textIsSelectable="false" />
 
-    <de.hdodenhof.circleimageview.CircleImageView xmlns:app="http://schemas.android.com/apk/res-auto"
-        android:id="@+id/addImageView"
-        android:layout_width="60dp"
-        android:layout_height="60dp"
-        android:layout_centerInParent="true"
-        android:layout_toLeftOf="@+id/importingTextview"
-        android:src="@drawable/ic_action_add"
-        app:civ_border_color="#FFFFFFFF"
-        app:civ_border_width="1dp" />
 </RelativeLayout>
