@@ -43,6 +43,13 @@
             android:key="@string/contacts_save_file_name"
             android:summary="@string/specify_save_file_name"
             android:title="@string/saves_file" />
+        <ListPreference
+            android:defaultValue="@string/ask_for_action"
+            android:entries="@array/importentries"
+            android:entryValues="@array/importvalues"
+            android:key="key_default_import_action"
+            android:summary="@string/appendto_overwrite"
+            android:title="@string/default_import_action" />
     </PreferenceCategory>
 
 </PreferenceScreen>

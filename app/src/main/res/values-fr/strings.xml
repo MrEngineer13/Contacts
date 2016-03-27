@@ -72,15 +72,18 @@
     <string name="display">Affichage</string>
     <string name="specify_contacts_ordering">Spécifier l\'ordre d\'affichage des contacts</string>
     <string name="sort_contacts">Trier contacts</string>
+    <string name="default_import_action">Action d\'import par défaut</string>
+    <string name="appendto_overwrite">Ajouter aux/Ecraser existants</string>
 
     <string-array name="sortentries">
         <item>par order d\'insertion</item>
         <item>par ordre croissant</item>
         <item>par ordre décroissant</item>
     </string-array>
-    <string-array name="sortvalues">
-        <item>@string/default_order</item>
-        <item>ASC</item>
-        <item>DESC</item>
+
+    <string-array name="importentries">
+        <item>Demander à chaque fois</item>
+        <item>Ajouter</item>
+        <item>Ecraser</item>
     </string-array>
 </resources>

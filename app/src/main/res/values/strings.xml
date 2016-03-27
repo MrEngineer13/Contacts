@@ -79,7 +79,11 @@
     <string name="display">Display</string>
     <string name="specify_contacts_ordering">Specify the ordering of the contacts</string>
     <string name="sort_contacts">Sort contacts</string>
+    <string name="default_import_action">Default import action</string>
+    <string name="appendto_overwrite">Append to/Overwrite existing</string>
+
     <string name="default_order">DEFAULT_ORDER</string>
+    <string name="ask_for_action">ASK</string>
 
     <string-array name="sortentries">
         <item>Default order</item>
@@ -90,5 +94,16 @@
         <item>@string/default_order</item>
         <item>ASC</item>
         <item>DESC</item>
+    </string-array>
+
+    <string-array name="importentries">
+        <item>Ask for action</item>
+        <item>Append</item>
+        <item>Overwrite</item>
+    </string-array>
+    <string-array name="importvalues">
+        <item>@string/ask_for_action</item>
+        <item>APPEND</item>
+        <item>OVERWRITE</item>
     </string-array>
 </resources>
