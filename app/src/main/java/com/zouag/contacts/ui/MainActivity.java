@@ -66,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
     RecyclerView contactsRecyclerView;
 
     /**
-     * The TextView to be displayed in case there were no stored contacts.
+     * The view to be displayed in case there were no stored contacts.
      */
     @Bind(R.id.emptyLayout)
     RelativeLayout emptyView;
@@ -221,9 +221,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
                             }
 
                             // Show contacts
-                            mContacts = getContacts();
-                            toggleRecyclerviewState();
-                            mAdapter.animateTo(mContacts);
+                            refreshContactsAdapter();
                             contactsRecyclerView.scrollToPosition(0);
 
                             showImportSuccessSnack(nbr_contacts);
@@ -417,9 +415,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
             contactsRecyclerView.setHasFixedSize(true);
             contactsRecyclerView.setAdapter(mAdapter);
         } else {
-            mAdapter.refill(mContacts);
-            mAdapter.notifyDataSetChanged();
-            contactsRecyclerView.invalidate();
+            mAdapter.animateTo(mContacts);
         }
     }
 
@@ -477,8 +473,7 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     private void undoDelete(Contact contact) {
         databaseAdapter.insertContactByID(contact);
-        mContacts = getContacts();
-        mAdapter.animateTo(mContacts);
+        refreshContactsAdapter();
     }
 
     /**
@@ -488,6 +483,10 @@ public class MainActivity extends AppCompatActivity implements SearchView.OnQuer
      */
     private void undoDeleteAll(List<Contact> contacts) {
         databaseAdapter.insertContacts(contacts);
+        refreshContactsAdapter();
+    }
+
+    private void refreshContactsAdapter() {
         mContacts = getContacts();
         toggleRecyclerviewState();
         mAdapter.animateTo(mContacts);
