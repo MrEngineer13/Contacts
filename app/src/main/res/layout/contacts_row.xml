@@ -10,14 +10,14 @@
 
     <Space
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="60dp"
         android:layout_weight="10" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/mainContactImage"
         android:transitionName="@string/transition_contact_img"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="60dp"
         android:layout_weight="20"
         android:src="@drawable/ic_action_user"
         app:civ_border_color="#FFFFFFFF"
@@ -26,7 +26,7 @@
     <TextView
         android:id="@+id/nameText"
         android:layout_width="0dp"
-        android:layout_height="match_parent"
+        android:layout_height="60dp"
         android:layout_weight="70"
         android:gravity="left|center_vertical"
         android:paddingLeft="10dp"
