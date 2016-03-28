@@ -24,13 +24,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:orientation="horizontal"
-                android:weightSum="100"
-                android:gravity="center_vertical">
-
-                <Space
-                    android:layout_width="0dp"
-                    android:layout_height="20px"
-                    android:layout_weight="5" />
+                android:gravity="center_vertical"
+                android:weightSum="100">
 
                 <ImageView
                     android:id="@+id/imageView5"
@@ -41,11 +36,11 @@
 
                 <ImageView
                     android:id="@+id/contactImage"
-                    android:layout_width="100dp"
+                    android:layout_width="0dp"
                     android:layout_height="100dp"
                     android:contentDescription="@string/contact_img_desc"
                     android:onClick="onImageClicked"
-                    android:layout_weight="20" />
+                    android:layout_weight="40" />
 
             </LinearLayout>
 

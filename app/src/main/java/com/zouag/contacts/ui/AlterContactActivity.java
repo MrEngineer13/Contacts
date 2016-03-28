@@ -13,6 +13,7 @@ import android.provider.MediaStore;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
@@ -114,22 +115,10 @@ public class AlterContactActivity extends AppCompatActivity {
         setListenerOnSharedPreferences();
     }
 
-    private void setListenerOnSharedPreferences() {
-        SharedPreferences sharedPreferences =
-                PreferenceManager.getDefaultSharedPreferences(this);
-        sharedPreferences.registerOnSharedPreferenceChangeListener(
-                (sharedPref, key) -> {
-                    if (key.equals(getString(R.string.save_draft_contact)))
-                        ContactPreferences.clearDraft(this);
-                }
-        );
-    }
-
-    private void setupFieldValues(Contact contact) {
-        contactName.setText(contact.getName());
-        contactNumber.setText(contact.getPhoneNumber());
-        contactEmail.setText(contact.getEmail());
-        contactAddress.setText(contact.getAddress());
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.menu_alter_contact, menu);
+        return true;
     }
 
     @Override
@@ -137,6 +126,9 @@ public class AlterContactActivity extends AppCompatActivity {
         switch (item.getItemId()) {
             case android.R.id.home:
                 onBackPressed();
+                break;
+            case R.id.action_save:
+                onSave(null);
                 break;
         }
 
@@ -216,6 +208,24 @@ public class AlterContactActivity extends AppCompatActivity {
         }
 
         super.onBackPressed();
+    }
+
+    private void setListenerOnSharedPreferences() {
+        SharedPreferences sharedPreferences =
+                PreferenceManager.getDefaultSharedPreferences(this);
+        sharedPreferences.registerOnSharedPreferenceChangeListener(
+                (sharedPref, key) -> {
+                    if (key.equals(getString(R.string.save_draft_contact)))
+                        ContactPreferences.clearDraft(this);
+                }
+        );
+    }
+
+    private void setupFieldValues(Contact contact) {
+        contactName.setText(contact.getName());
+        contactNumber.setText(contact.getPhoneNumber());
+        contactEmail.setText(contact.getEmail());
+        contactAddress.setText(contact.getAddress());
     }
 
     /**
