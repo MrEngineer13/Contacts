@@ -86,7 +86,7 @@ public class AlterContactActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_add_contact);
+        setContentView(R.layout.activity_alter_contact);
         ButterKnife.bind(this);
 
         Intent intent = getIntent();
