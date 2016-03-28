@@ -6,13 +6,20 @@
     android:background="@color/colorPrimaryDark"
     tools:context=".ui.MainActivity">
 
-    <include android:id="@+id/importingLayout" layout="@layout/importing_view_include" />
+    <ViewAnimator
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/viewAnimator">
 
-    <include android:id="@+id/emptyLayout" layout="@layout/empty_view_include" />
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/contactsList"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/contactsList"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        <include android:id="@+id/emptyLayout" layout="@layout/empty_view_include" />
+
+        <include android:id="@+id/importingLayout" layout="@layout/importing_view_include" />
+
+    </ViewAnimator>
 
 </RelativeLayout>

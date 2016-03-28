@@ -18,7 +18,9 @@ import android.support.v7.widget.SearchView;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.RelativeLayout;
+import android.view.animation.Animation;
+import android.view.animation.AnimationUtils;
+import android.widget.ViewAnimator;
 
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -48,6 +50,11 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_ADD_NEW = 100;
     private static final int REQUEST_VIEW_CONTACT = 101;
 
+    // Concerning the ViewAnimator
+    private static final int VIEW_CONTACTS_RECYCLERVIEW = 0;
+    private static final int VIEW_RECYCLERVIEW_EMPTY_VIEW = 1;
+    private static final int VIEW_IMPORTING = 2;
+
     private DatabaseAdapter databaseAdapter;
     private List<Contact> mContacts;
     /**
@@ -61,17 +68,8 @@ public class MainActivity extends AppCompatActivity
     @Bind(R.id.contactsList)
     RecyclerView contactsRecyclerView;
 
-    /**
-     * The view to be displayed in case there were no stored contacts.
-     */
-    @Bind(R.id.emptyLayout)
-    RelativeLayout emptyView;
-
-    /**
-     * The view to be displayed in case there were no stored contacts.
-     */
-    @Bind(R.id.importingLayout)
-    RelativeLayout importingView;
+    @Bind(R.id.viewAnimator)
+    ViewAnimator viewAnimator;
 
     private Handler mHandler;
     private IOThread mIOThread;
@@ -96,6 +94,7 @@ public class MainActivity extends AppCompatActivity
         mIOThread = new IOThread(this, mHandler);
         mIOThread.start();
 
+        setupViewAnimator();
         setupRecyclerView();
     }
 
@@ -136,7 +135,8 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        refreshContactsAdapter();
+        mContacts = getContacts();
+        mAdapter.animateTo(mContacts);
     }
 
     @Override
@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
-        importingView.setVisibility(View.INVISIBLE);
+        toggleRecyclerviewState();
 
         return true;
     }
@@ -240,6 +240,14 @@ public class MainActivity extends AppCompatActivity
         startAddContactActivity();
     }
 
+    private void setupViewAnimator() {
+        Animation slide_in_left = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
+        Animation slide_out_right = AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right);
+
+        viewAnimator.setInAnimation(slide_in_left);
+        viewAnimator.setOutAnimation(slide_out_right);
+    }
+
     /**
      * Removes all contacts from the database.
      */
@@ -261,7 +269,7 @@ public class MainActivity extends AppCompatActivity
                     List<Contact> allDeletedContacts = new ArrayList<>(mContacts);
 
                     databaseAdapter.deleteAllContacts();
-                    refreshContactsAdapter();
+                    refreshContactsAdapter(true);
 
                     Snackbar.make(getWindow().getDecorView(),
                             R.string.all_contacts_cleared,
@@ -330,8 +338,7 @@ public class MainActivity extends AppCompatActivity
                 .obtainMessage(Messages.MSG_START_IMPORTING, action)
                 .sendToTarget();
 
-        importingView.setVisibility(View.VISIBLE);
-        contactsRecyclerView.setVisibility(View.INVISIBLE);
+        viewAnimator.setDisplayedChild(VIEW_IMPORTING);
     }
 
     /**
@@ -420,8 +427,10 @@ public class MainActivity extends AppCompatActivity
     private void setupRecyclerView() {
         mContacts = getContacts();
 
-        // Hide the "Importing contacts..." text view
-        importingView.setVisibility(View.INVISIBLE);
+        if (mContacts.size() == 0)
+            viewAnimator.setDisplayedChild(VIEW_RECYCLERVIEW_EMPTY_VIEW);
+        else
+            viewAnimator.setDisplayedChild(VIEW_CONTACTS_RECYCLERVIEW);
 
         mAdapter = new ContactsRecyclerAdapter(this, mContacts);
         mAdapter.setContactClickListener((view, contact) -> {
@@ -446,15 +455,22 @@ public class MainActivity extends AppCompatActivity
      * Toggles the visibility of the RecyclerView & the empty view associated with it.
      */
     private void toggleRecyclerviewState() {
-        /* Set the visibility of the empty view & the contactsListView
-        according to the contacts' state */
-        emptyView.setVisibility(mContacts.size() == 0 ? View.VISIBLE : View.INVISIBLE);
-        contactsRecyclerView.setVisibility(mContacts.size() == 0 ? View.INVISIBLE : View.VISIBLE);
+        if (mContacts.size() == 0)
+            viewAnimator.setDisplayedChild(VIEW_RECYCLERVIEW_EMPTY_VIEW);
+        else
+            viewAnimator.setDisplayedChild(VIEW_CONTACTS_RECYCLERVIEW);
     }
 
-    private void refreshContactsAdapter() {
+    /**
+     * @param toggle_views a boolean flag, indicating whether to show the slide animation
+     *                     during the refresh process or not.
+     */
+    private void refreshContactsAdapter(boolean toggle_views) {
         mContacts = getContacts();
-        toggleRecyclerviewState();
+
+        if (toggle_views)
+            toggleRecyclerviewState();
+
         mAdapter.animateTo(mContacts);
     }
 
@@ -465,7 +481,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void undoDelete(Contact contact) {
         databaseAdapter.insertContactByID(contact);
-        refreshContactsAdapter();
+        refreshContactsAdapter(false);
     }
 
     /**
@@ -475,7 +491,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void undoDeleteAll(List<Contact> contacts) {
         databaseAdapter.insertContacts(contacts);
-        refreshContactsAdapter();
+        refreshContactsAdapter(false);
     }
 
     /**
@@ -511,7 +527,7 @@ public class MainActivity extends AppCompatActivity
         }
 
         // Show contacts
-        refreshContactsAdapter();
+        refreshContactsAdapter(nbr_contacts != 0);
         contactsRecyclerView.scrollToPosition(0);
 
         showImportSuccessSnack(nbr_contacts);
