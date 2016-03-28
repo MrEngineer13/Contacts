@@ -90,10 +90,8 @@ public class MainActivity extends AppCompatActivity
 
         databaseAdapter = DatabaseAdapter.getInstance(this);
         contactsRecyclerView.addItemDecoration(new SpacesItemDecoration(20));
-        mHandler = new Handler(this);
-        mIOThread = new IOThread(this, mHandler);
-        mIOThread.start();
 
+        setupIOWorkerThread();
         setupViewAnimator();
         setupRecyclerView();
     }
@@ -135,8 +133,7 @@ public class MainActivity extends AppCompatActivity
     protected void onResume() {
         super.onResume();
 
-        mContacts = getContacts();
-        mAdapter.animateTo(mContacts);
+        refreshContactsAdapter(false);
     }
 
     @Override
@@ -240,12 +237,48 @@ public class MainActivity extends AppCompatActivity
         startAddContactActivity();
     }
 
+    private void setupIOWorkerThread() {
+        mHandler = new Handler(this);
+        mIOThread = new IOThread(this, mHandler);
+        mIOThread.start();
+    }
+
     private void setupViewAnimator() {
         Animation slide_in_left = AnimationUtils.loadAnimation(this, android.R.anim.slide_in_left);
         Animation slide_out_right = AnimationUtils.loadAnimation(this, android.R.anim.slide_out_right);
 
         viewAnimator.setInAnimation(slide_in_left);
         viewAnimator.setOutAnimation(slide_out_right);
+    }
+
+    /**
+     * Initial setup of the contacts' RecyclerView.
+     */
+    private void setupRecyclerView() {
+        mContacts = getContacts();
+
+        if (mContacts.size() == 0)
+            viewAnimator.setDisplayedChild(VIEW_RECYCLERVIEW_EMPTY_VIEW);
+        else
+            viewAnimator.setDisplayedChild(VIEW_CONTACTS_RECYCLERVIEW);
+
+        mAdapter = new ContactsRecyclerAdapter(this, mContacts);
+        mAdapter.setContactClickListener((view, contact) -> {
+            Intent intent = new Intent(this, ViewContactActivity.class);
+            intent.putExtra("contact", contact);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                                new Pair<>(view, getString(R.string.transition_contact_img)));
+                ActivityCompat.startActivityForResult(
+                        this, intent, REQUEST_VIEW_CONTACT, options.toBundle());
+            } else
+                startActivityForResult(intent, REQUEST_VIEW_CONTACT);
+        });
+        contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        contactsRecyclerView.setHasFixedSize(true);
+        contactsRecyclerView.setAdapter(mAdapter);
     }
 
     /**
@@ -422,36 +455,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     /**
-     * Initial setup of the contacts' RecyclerView.
-     */
-    private void setupRecyclerView() {
-        mContacts = getContacts();
-
-        if (mContacts.size() == 0)
-            viewAnimator.setDisplayedChild(VIEW_RECYCLERVIEW_EMPTY_VIEW);
-        else
-            viewAnimator.setDisplayedChild(VIEW_CONTACTS_RECYCLERVIEW);
-
-        mAdapter = new ContactsRecyclerAdapter(this, mContacts);
-        mAdapter.setContactClickListener((view, contact) -> {
-            Intent intent = new Intent(this, ViewContactActivity.class);
-            intent.putExtra("contact", contact);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                                new Pair<>(view, getString(R.string.transition_contact_img)));
-                ActivityCompat.startActivityForResult(
-                        this, intent, REQUEST_VIEW_CONTACT, options.toBundle());
-            } else
-                startActivityForResult(intent, REQUEST_VIEW_CONTACT);
-        });
-        contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        contactsRecyclerView.setHasFixedSize(true);
-        contactsRecyclerView.setAdapter(mAdapter);
-    }
-
-    /**
      * Toggles the visibility of the RecyclerView & the empty view associated with it.
      */
     private void toggleRecyclerviewState() {
@@ -491,7 +494,7 @@ public class MainActivity extends AppCompatActivity
      */
     private void undoDeleteAll(List<Contact> contacts) {
         databaseAdapter.insertContacts(contacts);
-        refreshContactsAdapter(false);
+        refreshContactsAdapter(true);
     }
 
     /**
