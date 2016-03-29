@@ -38,9 +38,9 @@
     <string name="title_activity_settings">Settings</string>
 
     <!-- Misc strings-->
-    <string name="transition_contact_img">transition:IMAGE</string>
-    <string name="show_confirm_dialog">show_confirm_dialog</string>
-    <string name="contacts_save_file_name">contact_save_filename</string>
+    <string name="transition_contact_img" translatable="false">transition:IMAGE</string>
+    <string name="show_confirm_dialog" translatable="false">show_confirm_dialog</string>
+    <string name="contacts_save_file_name" translatable="false">contact_save_filename</string>
 
     <string name="ten_digits">10 digits</string>
     <string name="empty_contacts_list">Your contacts\' list is already empty.</string>
@@ -69,7 +69,7 @@
     <string name="action_export">Export</string>
     <string name="settings">Settings</string>
     <string name="data">Data</string>
-    <string name="save_draft_contact">save_draft_contact</string>
+    <string name="save_draft_contact" translatable="false">save_draft_contact</string>
     <string name="save_draft_summary">Save the discarded contact to draft</string>
     <string name="save_contact">Save contact</string>
     <string name="contact_saved_to_draft">Contact saved to draft.</string>
@@ -82,18 +82,18 @@
     <string name="default_import_action">Default import action</string>
     <string name="appendto_overwrite">Append to/Overwrite existing</string>
 
-    <string name="default_order">DEFAULT_ORDER</string>
-    <string name="ask_for_action">ASK</string>
-    <string name="key_sort_contacts">key_sort_contacts</string>
-    <string name="key_default_import_action">key_default_import_action</string>
-    <string name="contacts_save_default_filename">contacts_save</string>
+    <string name="default_order" translatable="false">DEFAULT_ORDER</string>
+    <string name="ask_for_action" translatable="false">ASK</string>
+    <string name="key_sort_contacts" translatable="false">key_sort_contacts</string>
+    <string name="key_default_import_action" translatable="false">key_default_import_action</string>
+    <string name="contacts_save_default_filename" translatable="false">contacts_save</string>
 
     <string-array name="sortentries">
         <item>Default order</item>
         <item>Ascending order</item>
         <item>Descending order</item>
     </string-array>
-    <string-array name="sortvalues">
+    <string-array name="sortvalues" translatable="false">
         <item>@string/default_order</item>
         <item>ASC</item>
         <item>DESC</item>

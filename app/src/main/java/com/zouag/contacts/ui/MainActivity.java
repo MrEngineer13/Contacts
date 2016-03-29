@@ -19,10 +19,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.animation.Animation;
-import android.view.animation.AnimationUtils;
 import android.widget.RelativeLayout;
-import android.widget.ViewAnimator;
 
 import com.annimon.stream.Collectors;
 import com.annimon.stream.Stream;
@@ -52,11 +49,6 @@ public class MainActivity extends AppCompatActivity
     private static final int REQUEST_ADD_NEW = 100;
     private static final int REQUEST_VIEW_CONTACT = 101;
 
-    // Concerning the ViewAnimator
-    private static final int VIEW_CONTACTS_RECYCLERVIEW = 0;
-    private static final int VIEW_RECYCLERVIEW_EMPTY_VIEW = 1;
-    private static final int VIEW_IMPORTING = 2;
-
     private DatabaseAdapter databaseAdapter;
     private List<Contact> mContacts;
     /**
@@ -75,12 +67,6 @@ public class MainActivity extends AppCompatActivity
      */
     @Bind(R.id.emptyLayout)
     RelativeLayout emptyView;
-
-    /**
-     * The view to be displayed in case there were no stored contacts.
-     */
-    @Bind(R.id.importingLayout)
-    RelativeLayout importingView;
 
     private Handler mHandler;
     private IOThread mIOThread;
@@ -102,7 +88,7 @@ public class MainActivity extends AppCompatActivity
         databaseAdapter = DatabaseAdapter.getInstance(this);
         contactsRecyclerView.addItemDecoration(new SpacesItemDecoration(20));
 
-        setupIOWorkerThread();
+        setupIOThread();
         setupRecyclerView();
     }
 
@@ -209,8 +195,6 @@ public class MainActivity extends AppCompatActivity
                 break;
         }
 
-        importingView.setVisibility(View.INVISIBLE);
-
         return true;
     }
 
@@ -245,40 +229,6 @@ public class MainActivity extends AppCompatActivity
      */
     public void onEmptyViewClicked(View view) {
         startAddContactActivity();
-    }
-
-    private void setupIOWorkerThread() {
-        mHandler = new Handler(this);
-        mIOThread = new IOThread(this, mHandler);
-        mIOThread.start();
-    }
-
-    /**
-     * Initial setup of the contacts' RecyclerView.
-     */
-    private void setupRecyclerView() {
-        mContacts = getContacts();
-
-        // Hide the "Importing contacts..." text view
-        importingView.setVisibility(View.INVISIBLE);
-
-        mAdapter = new ContactsRecyclerAdapter(this, mContacts);
-        mAdapter.setContactClickListener((view, contact) -> {
-            Intent intent = new Intent(this, ViewContactActivity.class);
-            intent.putExtra("contact", contact);
-
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                                new Pair<>(view, getString(R.string.transition_contact_img)));
-                ActivityCompat.startActivityForResult(
-                        this, intent, REQUEST_VIEW_CONTACT, options.toBundle());
-            } else
-                startActivityForResult(intent, REQUEST_VIEW_CONTACT);
-        });
-        contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
-        contactsRecyclerView.setHasFixedSize(true);
-        contactsRecyclerView.setAdapter(mAdapter);
     }
 
     /**
@@ -344,7 +294,6 @@ public class MainActivity extends AppCompatActivity
     }
 
     private void showImportDialog() {
-
         // Show alert dialog
         CharSequence options[] = new CharSequence[]
                 {getString(R.string.action_append), getString(R.string.action_overwrite)};
@@ -371,14 +320,10 @@ public class MainActivity extends AppCompatActivity
         mIOThread.getWorkerHandler()
                 .obtainMessage(Messages.MSG_START_IMPORTING, action)
                 .sendToTarget();
-
-        importingView.setVisibility(View.VISIBLE);
-        emptyView.setVisibility(View.INVISIBLE);
-        contactsRecyclerView.setVisibility(View.INVISIBLE);
     }
 
     /**
-     * @param nbr_contacts the number of contacts that were added in the last import.
+     * @param nbr_contacts that were added.
      */
     private void showImportSuccessSnack(int nbr_contacts) {
         Snackbar.make(getWindow().getDecorView(),
@@ -391,9 +336,6 @@ public class MainActivity extends AppCompatActivity
                 .show();
     }
 
-    /**
-     * Shows a "File not found" snack bar message.
-     */
     private void showFileNotFoundSnack() {
         Snackbar.make(getWindow().getDecorView(),
                 R.string.save_file_not_found,
@@ -417,10 +359,6 @@ public class MainActivity extends AppCompatActivity
         return filteredContacts.size();
     }
 
-    /**
-     * @param contacts (the filter)
-     * @return a new list of Contact objects to be added after filtering.
-     */
     private List<Contact> filterExistingContacts(List<Contact> contacts) {
         return Stream.of(contacts)
                 .filter(contact -> !Stream.of(mContacts)
@@ -464,6 +402,37 @@ public class MainActivity extends AppCompatActivity
                 new Intent(this, AlterContactActivity.class), REQUEST_ADD_NEW);
     }
 
+    private void setupIOThread() {
+        mHandler = new Handler(this);
+        mIOThread = new IOThread(this, mHandler);
+        mIOThread.start();
+    }
+
+    /**
+     * Initial setup of the contacts' RecyclerView.
+     */
+    private void setupRecyclerView() {
+        mContacts = getContacts();
+
+        mAdapter = new ContactsRecyclerAdapter(this, mContacts);
+        mAdapter.setContactClickListener((view, contact) -> {
+            Intent intent = new Intent(this, ViewContactActivity.class);
+            intent.putExtra("contact", contact);
+
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                ActivityOptionsCompat options =
+                        ActivityOptionsCompat.makeSceneTransitionAnimation(this,
+                                new Pair<>(view, getString(R.string.transition_contact_img)));
+                ActivityCompat.startActivityForResult(
+                        this, intent, REQUEST_VIEW_CONTACT, options.toBundle());
+            } else
+                startActivityForResult(intent, REQUEST_VIEW_CONTACT);
+        });
+        contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        contactsRecyclerView.setHasFixedSize(true);
+        contactsRecyclerView.setAdapter(mAdapter);
+    }
+
     /**
      * Toggles the visibility of the RecyclerView & the empty view associated with it.
      */
@@ -471,8 +440,7 @@ public class MainActivity extends AppCompatActivity
         /* Set the visibility of the empty view & the contactsListView
         according to the contacts' state */
         emptyView.setVisibility(mContacts.size() == 0 ? View.VISIBLE : View.INVISIBLE);
-        contactsRecyclerView.setVisibility(
-                mContacts.size() == 0 ? View.INVISIBLE : View.VISIBLE);
+        contactsRecyclerView.setVisibility(mContacts.size() == 0 ? View.INVISIBLE : View.VISIBLE);
     }
 
     private void refreshContactsAdapter() {
