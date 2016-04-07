@@ -23,7 +23,9 @@ import android.widget.Toast;
 import com.zouag.contacts.R;
 import com.zouag.contacts.adapters.DatabaseAdapter;
 import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.utils.Actions;
 import com.zouag.contacts.utils.ContactPreferences;
+import com.zouag.contacts.utils.Files;
 import com.zouag.contacts.utils.ResultCodes;
 import com.zouag.contacts.utils.Validation;
 
@@ -154,7 +156,7 @@ public class AlterContactActivity extends AppCompatActivity {
                         // Check the selected image's size
                         if (isSizeAppropriate(imageData)) {
                             // Save the path of the retrieved image
-                            current_img_path = getRealPathFromURI(imageData);
+                            current_img_path = Files.getRealPathFromURI(this, imageData);
                             contactImage.setImageURI(imageData);
                             break;
                         } else {
@@ -362,24 +364,6 @@ public class AlterContactActivity extends AppCompatActivity {
         }
 
         Log.i("CONTACTS", "Image successfully saved.");
-    }
-
-    /**
-     * @param contentURI of the image
-     * @return the path of this image in disk.
-     */
-    private String getRealPathFromURI(Uri contentURI) {
-        String result;
-        Cursor cursor = getContentResolver().query(contentURI, null, null, null, null);
-        if (cursor == null) { // Source is Dropbox or other similar local file path
-            result = contentURI.getPath();
-        } else {
-            cursor.moveToFirst();
-            int idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA);
-            result = cursor.getString(idx);
-            cursor.close();
-        }
-        return result;
     }
 
     /**

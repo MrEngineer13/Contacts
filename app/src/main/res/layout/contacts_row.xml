@@ -11,15 +11,24 @@
     <Space
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_weight="10" />
+        android:layout_weight="5" />
+
+    <CheckBox
+        android:id="@+id/selectCheckbox"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="10"
+        android:visibility="invisible"
+        tools:visibility="visible" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/mainContactImage"
-        android:transitionName="@string/transition_contact_img"
         android:layout_width="0dp"
         android:layout_height="60dp"
         android:layout_weight="20"
         android:src="@drawable/ic_action_user"
+        android:transitionName="@string/transition_contact_img"
         app:civ_border_color="#FFFFFFFF"
         app:civ_border_width="0dp" />
 
@@ -27,12 +36,12 @@
         android:id="@+id/nameText"
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_weight="70"
+        android:layout_weight="65"
         android:gravity="left|center_vertical"
         android:paddingLeft="10dp"
+        android:paddingRight="10dp"
         android:textColor="#ffffffff"
         android:textSize="20sp"
-        tools:text="Mohammed Aouf ZOUAG"
-        android:paddingRight="10dp" />
+        tools:text="Mohammed Aouf ZOUAG" />
 
 </LinearLayout>

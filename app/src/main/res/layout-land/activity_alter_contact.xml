@@ -22,9 +22,9 @@
                 android:id="@+id/imageLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center_vertical"
                 android:orientation="horizontal"
-                android:weightSum="100"
-                android:gravity="center_vertical">
+                android:weightSum="100">
 
                 <Space
                     android:layout_width="0dp"
@@ -42,9 +42,9 @@
                     android:id="@+id/contactImage"
                     android:layout_width="100dp"
                     android:layout_height="100dp"
+                    android:layout_weight="20"
                     android:contentDescription="@string/contact_img_desc"
-                    android:onClick="onImageClicked"
-                    android:layout_weight="20" />
+                    android:onClick="onImageClicked" />
 
             </LinearLayout>
 
@@ -52,9 +52,9 @@
                 android:id="@+id/nameLayout"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:orientation="horizontal"
                 android:layout_below="@+id/imageLayout"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/imageView4"
@@ -81,8 +81,8 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_below="@+id/nameLayout"
-                android:orientation="horizontal"
-                android:layout_marginTop="20dp">
+                android:layout_marginTop="20dp"
+                android:orientation="horizontal">
 
                 <ImageView
                     android:id="@+id/imageView"
