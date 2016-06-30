@@ -284,6 +284,7 @@ public class MainActivity extends AppCompatActivity
         boolean isDeleting = ContactPreferences.getIsDeleting(this);
         if (isDeleting) {
             hideDeleteCheckboxes();
+            deleteIndices = new HashSet<>();
         }
     }
 
