@@ -36,7 +36,9 @@ import com.zouag.contacts.utils.ResultCodes;
 import com.zouag.contacts.utils.SpacesItemDecoration;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
@@ -51,10 +53,12 @@ public class MainActivity extends AppCompatActivity
 
     private DatabaseAdapter databaseAdapter;
     private List<Contact> mContacts;
+    private Set<String> deleteIndices;
     /**
      * The RecyclerView's adapter.
      */
     private ContactsRecyclerAdapter mAdapter;
+    private LinearLayoutManager layoutManager;
 
     /**
      * The main contacts' RecyclerView.
@@ -86,10 +90,43 @@ public class MainActivity extends AppCompatActivity
         getSupportActionBar().setDisplayShowTitleEnabled(false);
 
         databaseAdapter = DatabaseAdapter.getInstance(this);
+        deleteIndices = new HashSet<>();
         contactsRecyclerView.addItemDecoration(new SpacesItemDecoration(20));
 
         setupIOThread();
         setupRecyclerView();
+    }
+
+    @Override
+    public boolean onPrepareOptionsMenu(Menu menu) {
+        super.onPrepareOptionsMenu(menu);
+
+        boolean isDeleting = ContactPreferences.getIsDeleting(this);
+        if (isDeleting) {
+            Stream.of(
+                    menu.findItem(R.id.action_import_contacts),
+                    menu.findItem(R.id.action_export_contacts),
+                    menu.findItem(R.id.action_clear_contacts),
+                    menu.findItem(R.id.action_settings),
+                    menu.findItem(R.id.action_add),
+                    menu.findItem(R.id.action_search))
+                    .forEach(item -> item.setVisible(false));
+            menu.findItem(R.id.action_delete)
+                    .setVisible(true);
+        } else {
+            menu.findItem(R.id.action_delete)
+                    .setVisible(false);
+            Stream.of(
+                    menu.findItem(R.id.action_import_contacts),
+                    menu.findItem(R.id.action_export_contacts),
+                    menu.findItem(R.id.action_clear_contacts),
+                    menu.findItem(R.id.action_settings),
+                    menu.findItem(R.id.action_add),
+                    menu.findItem(R.id.action_search))
+                    .forEach(item -> item.setVisible(true));
+        }
+
+        return true;
     }
 
     @Override
@@ -119,6 +156,20 @@ public class MainActivity extends AppCompatActivity
                 return true;
             case R.id.action_settings:
                 showSettings();
+                return true;
+            case R.id.action_delete:
+                if (deleteIndices.size() != 0) {
+                    Stream.of(deleteIndices)
+                            .map(Integer::valueOf)
+                            .forEach(index -> {
+                                Contact contactToDelete = mContacts.get(index);
+                                databaseAdapter.deleteContact(contactToDelete.getId());
+                            });
+
+                    hideDeleteCheckboxes();
+                    deleteIndices = new HashSet<>();
+                    refreshContactsAdapter();
+                }
                 return true;
         }
 
@@ -199,6 +250,21 @@ public class MainActivity extends AppCompatActivity
     }
 
     @Override
+    public void onBackPressed() {
+        boolean isDeleting = ContactPreferences.getIsDeleting(this);
+        if (isDeleting) {
+            hideDeleteCheckboxes();
+            deleteIndices = new HashSet<>();
+        } else super.onBackPressed();
+    }
+
+    private void hideDeleteCheckboxes() {
+        ContactPreferences.setIsDeleting(this, false);
+        invalidateOptionsMenu();
+        mAdapter.setActionMode("NORMAL");
+    }
+
+    @Override
     public boolean onQueryTextSubmit(String query) {
         return false;
     }
@@ -209,6 +275,16 @@ public class MainActivity extends AppCompatActivity
         mAdapter.animateTo(filteredContacts);
         contactsRecyclerView.scrollToPosition(0);
         return true;
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        boolean isDeleting = ContactPreferences.getIsDeleting(this);
+        if (isDeleting) {
+            hideDeleteCheckboxes();
+        }
     }
 
     @Override
@@ -413,22 +489,43 @@ public class MainActivity extends AppCompatActivity
      */
     private void setupRecyclerView() {
         mContacts = getContacts();
+        layoutManager = new LinearLayoutManager(this);
 
         mAdapter = new ContactsRecyclerAdapter(this, mContacts);
-        mAdapter.setContactClickListener((view, contact) -> {
-            Intent intent = new Intent(this, ViewContactActivity.class);
-            intent.putExtra("contact", contact);
+        mAdapter.setContactClickListener(new ContactsRecyclerAdapter.ContactClickListener() {
+            @Override
+            public void showContact(View view, Contact contact) {
+                Intent intent = new Intent(MainActivity.this, ViewContactActivity.class);
+                intent.putExtra("contact", contact);
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                ActivityOptionsCompat options =
-                        ActivityOptionsCompat.makeSceneTransitionAnimation(this,
-                                new Pair<>(view, getString(R.string.transition_contact_img)));
-                ActivityCompat.startActivityForResult(
-                        this, intent, REQUEST_VIEW_CONTACT, options.toBundle());
-            } else
-                startActivityForResult(intent, REQUEST_VIEW_CONTACT);
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    ActivityOptionsCompat options =
+                            ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this,
+                                    new Pair<>(view, getString(R.string.transition_contact_img)));
+                    ActivityCompat.startActivityForResult(
+                            MainActivity.this, intent, REQUEST_VIEW_CONTACT, options.toBundle());
+                } else
+                    startActivityForResult(intent, REQUEST_VIEW_CONTACT);
+            }
+
+            @Override
+            public void showCheckboxes() {
+                mAdapter.notifyDataSetChanged();
+                ContactPreferences.setIsDeleting(MainActivity.this, true);
+                invalidateOptionsMenu();
+                mAdapter.setActionMode("DELETE_MODE");
+            }
+
+            @Override
+            public void onContactChanged(int position, boolean state) {
+                if (state)
+                    deleteIndices.add(position + "");
+                else
+                    deleteIndices.remove(position + "");
+                Log.i("CONTACTV", "Selected indices: " + deleteIndices);
+            }
         });
-        contactsRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        contactsRecyclerView.setLayoutManager(layoutManager);
         contactsRecyclerView.setHasFixedSize(true);
         contactsRecyclerView.setAdapter(mAdapter);
     }

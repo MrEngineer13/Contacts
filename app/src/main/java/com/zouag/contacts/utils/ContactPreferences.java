@@ -3,12 +3,9 @@ package com.zouag.contacts.utils;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.preference.PreferenceManager;
-import android.util.Log;
 
 import com.zouag.contacts.R;
 import com.zouag.contacts.models.Contact;
-
-import java.util.Comparator;
 
 /**
  * Created by Mohammed Aouf ZOUAG on 25/03/2016.
@@ -22,6 +19,7 @@ public class ContactPreferences {
     private static final String CONTACT_NUMBER = "contactNumber";
     private static final String CONTACT_EMAIL = "contactEmail";
     private static final String CONTACT_ADDRESS = "contactAddress";
+    private static final String IS_DELETING = "isDeleting";
 
     /**
      * @param context
@@ -83,6 +81,18 @@ public class ContactPreferences {
                 .remove(CONTACT_EMAIL)
                 .remove(CONTACT_ADDRESS)
                 .apply();
+    }
+
+    public static void setIsDeleting(Context context, boolean state) {
+        PreferenceManager.getDefaultSharedPreferences(context)
+                .edit()
+                .putBoolean(IS_DELETING, state)
+                .apply();
+    }
+
+    public static boolean getIsDeleting(Context context) {
+        return PreferenceManager.getDefaultSharedPreferences(context)
+                .getBoolean(IS_DELETING, false);
     }
 
     /**

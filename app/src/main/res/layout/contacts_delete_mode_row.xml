@@ -11,7 +11,16 @@
     <Space
         android:layout_width="0dp"
         android:layout_height="60dp"
-        android:layout_weight="15" />
+        android:layout_weight="5" />
+
+    <CheckBox
+        android:id="@+id/selectCheckbox"
+        android:layout_width="0dp"
+        android:layout_height="match_parent"
+        android:layout_gravity="center"
+        android:layout_weight="10"
+        android:visibility="invisible"
+        tools:visibility="visible" />
 
     <de.hdodenhof.circleimageview.CircleImageView
         android:id="@+id/mainContactImage"

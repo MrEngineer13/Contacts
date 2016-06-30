@@ -34,4 +34,11 @@
         app:actionViewClass="android.support.v7.widget.SearchView"
         app:showAsAction="always" />
 
+    <item
+        android:id="@+id/action_delete"
+        android:icon="@android:drawable/ic_menu_delete"
+        android:orderInCategory="105"
+        android:title="@string/remove_selected"
+        app:showAsAction="always|withText" />
+
 </menu>

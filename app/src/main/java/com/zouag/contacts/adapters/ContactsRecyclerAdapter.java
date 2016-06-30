@@ -3,14 +3,17 @@ package com.zouag.contacts.adapters;
 import android.content.Context;
 import android.net.Uri;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CheckBox;
 import android.widget.TextView;
 
 import com.annimon.stream.function.FunctionalInterface;
 import com.zouag.contacts.R;
 import com.zouag.contacts.models.Contact;
+import com.zouag.contacts.utils.ContactPreferences;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -29,18 +32,24 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
      * A listener on the items handled by this adapter.
      */
     private ContactClickListener listener;
+    private String actionMode;
 
     public ContactsRecyclerAdapter(Context context, List<Contact> contacts) {
         mContext = context;
         mContacts = new ArrayList<>(contacts);
+        actionMode = "NORMAL";
     }
 
     @Override
-    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int i) {
+    public ViewHolder onCreateViewHolder(ViewGroup viewGroup, int viewType) {
+        int layout = viewType == 0 ? R.layout.contacts_row :
+                R.layout.contacts_delete_mode_row;
         View v = LayoutInflater.from(viewGroup.getContext())
-                .inflate(R.layout.contacts_row, viewGroup, false);
+                .inflate(layout, viewGroup, false);
 
-        return new ViewHolder(v);
+        ViewHolder viewHolder = new ViewHolder(v);
+        v.setTag(viewHolder);
+        return viewHolder;
     }
 
     @Override
@@ -52,6 +61,11 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
     @Override
     public int getItemCount() {
         return mContacts.size();
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return actionMode.equals("NORMAL") ? 0 : 1;
     }
 
     public Contact removeItem(int position) {
@@ -103,27 +117,46 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
         }
     }
 
-    public void refill(List<Contact> contacts) {
-        mContacts.clear();
-        mContacts.addAll(contacts);
+    public void setActionMode(String actionMode) {
+        this.actionMode = actionMode;
+        notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
 
-        private final TextView nameText;
-        private final CircleImageView contactImage;
+        public final TextView nameText;
+        public final CircleImageView contactImage;
+        public final CheckBox checkBox;
 
         ViewHolder(View v) {
             super(v);
             nameText = (TextView) v.findViewById(R.id.nameText);
             contactImage = (CircleImageView) v.findViewById(R.id.mainContactImage);
+            checkBox = (CheckBox) v.findViewById(R.id.selectCheckbox);
+
+            if (checkBox != null) {
+                if (ContactPreferences.getIsDeleting(mContext)) {
+                    checkBox.setVisibility(View.VISIBLE);
+                    checkBox.setOnCheckedChangeListener((buttonView, isChecked) ->
+                            listener.onContactChanged(getAdapterPosition(), isChecked));
+                }
+            }
 
             // Notify the activity to display the contact
             v.setOnClickListener(view -> listener.showContact(
                     contactImage, mContacts.get(getLayoutPosition())));
+
+            v.setOnLongClickListener(v1 -> {
+                listener.showCheckboxes();
+                return true;
+            });
         }
 
         public void bind(Contact contact) {
+            Log.i("CONTACTV", "bind() got called.");
+            if (checkBox != null) {
+                checkBox.setChecked(false);
+            }
             nameText.setText(contact.getName());
 
             String imgPath = contact.getImgPath();
@@ -143,6 +176,8 @@ public class ContactsRecyclerAdapter extends RecyclerView.Adapter<ContactsRecycl
     @FunctionalInterface
     public interface ContactClickListener {
         void showContact(View view, Contact contact);
+        void showCheckboxes();
+        void onContactChanged(int position, boolean state);
     }
 
     public void setContactClickListener(ContactClickListener listener) {

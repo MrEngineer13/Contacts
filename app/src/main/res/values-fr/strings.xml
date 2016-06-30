@@ -74,6 +74,7 @@
     <string name="sort_contacts">Trier contacts</string>
     <string name="default_import_action">Action d\'import par défaut</string>
     <string name="appendto_overwrite">Ajouter aux/Ecraser existants</string>
+    <string name="remove_selected">Supprimer contacts sélectionnés</string>
 
     <string-array name="sortentries">
         <item>par order d\'insertion</item>

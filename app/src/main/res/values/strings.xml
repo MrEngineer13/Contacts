@@ -87,6 +87,7 @@
     <string name="key_sort_contacts" translatable="false">key_sort_contacts</string>
     <string name="key_default_import_action" translatable="false">key_default_import_action</string>
     <string name="contacts_save_default_filename" translatable="false">contacts_save</string>
+    <string name="remove_selected">Remove selected contacts</string>
 
     <string-array name="sortentries">
         <item>Default order</item>
